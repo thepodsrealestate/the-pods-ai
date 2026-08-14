@@ -1,0 +1,118 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { AIService } from '@/lib/services/aiService';
+
+// Ultra-fast webhook — skips DB, responds to ManyChat within timeout
+// DB logging happens in background after response is sent
+export async function POST(req: NextRequest) {
+  const startTime = Date.now();
+  try {
+    const body = await req.json();
+
+    const phone = body.whatsapp_phone || body.phone || body.phone_number || "unknown";
+    const userText = body.last_input_text || body.payload?.text || body.text || body.message || "Hi";
+    const senderName = body.first_name || body.name || body.sender_name || "Guest";
+
+    console.log(`[FAST] ${senderName} (${phone}): "${userText}"`);
+
+    if (!phone || phone === "unknown") {
+      return NextResponse.json({ status: 'error', reply: 'Welcome to The Pods Real Estate! How can I help?' });
+    }
+
+    // Generate AI Response (the only slow call — typically 2-5 seconds)
+    const aiResult = await AIService.generateResponse({
+      leadName: senderName || undefined,
+      conversationHistory: [],
+      userMessage: userText,
+    });
+
+    const latency = Date.now() - startTime;
+    console.log(`[FAST] AI replied in ${latency}ms: "${aiResult.reply.substring(0, 80)}..."`);
+
+    // Fire-and-forget: log to DB in background (doesn't block response)
+    logToDatabase(body, userText, senderName, phone, aiResult).catch(err =>
+      console.error('[BG-LOG] DB logging error:', err.message)
+    );
+
+    return NextResponse.json({
+      status: 'success',
+      reply: aiResult.reply,
+      language: aiResult.language || 'en',
+      latency_ms: latency,
+    });
+  } catch (error: any) {
+    console.error('Webhook Error:', error.message);
+    return NextResponse.json({
+      status: 'error',
+      reply: 'Welcome to The Pods Real Estate! Send us a message and our luxury property specialist will assist you shortly.',
+    });
+  }
+}
+
+// Background DB logging — runs AFTER response is sent to ManyChat
+async function logToDatabase(body: any, userText: string, senderName: string, phone: string, aiResult: any) {
+  try {
+    const { prisma } = await import('@/lib/prisma');
+    const { LeadService } = await import('@/lib/services/leadService');
+    const { MessageService } = await import('@/lib/services/messageService');
+    const { SenderType } = await import('@prisma/client');
+
+    // Idempotency
+    const eventId = body.event_id || body.message_id || `evt_${Date.now()}_${Math.random()}`;
+    const existing = await prisma.webhookEvent.findUnique({ where: { eventId } });
+    if (existing) return;
+
+    await prisma.webhookEvent.create({
+      data: { eventId, eventType: 'inbound_whatsapp', payload: body },
+    });
+
+    // Parse attribution details from ManyChat payload dynamically
+    let leadSource = 'WHATSAPP_DIRECT';
+    let attributionObj = undefined;
+
+    const utmSource = body.utm_source || body.source || undefined;
+    const utmCampaign = body.utm_campaign || body.campaign_name || undefined;
+    const utmMedium = body.utm_medium || body.medium || undefined;
+
+    if (utmSource || utmCampaign || body.campaign_id || body.ad_id) {
+      leadSource = utmSource ? String(utmSource).toUpperCase() : 'FACEBOOK_ADS';
+      attributionObj = {
+        source: leadSource,
+        medium: utmMedium || 'cpc',
+        campaign: utmCampaign || 'Ad Campaign',
+        campaignId: body.campaign_id || undefined,
+        adSet: body.adset_name || body.adset_id || undefined,
+        adId: body.ad_id || undefined,
+        utmSource: utmSource || undefined,
+        utmMedium: utmMedium || undefined,
+        utmCampaign: utmCampaign || undefined,
+      };
+    }
+
+    const lead = await LeadService.findOrCreateLead({
+      phone,
+      fullName: senderName,
+      leadSource,
+      attribution: attributionObj,
+    });
+
+    const conversation = await LeadService.getOrCreateConversation(lead.id);
+
+    await Promise.all([
+      MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.LEAD, content: userText, externalId: undefined }),
+      MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.AI, content: aiResult.reply }),
+    ]);
+
+    console.log('[BG-LOG] ✅ Messages and attribution saved to DB');
+  } catch (err: any) {
+    console.error('[BG-LOG] Error:', err.message);
+  }
+}
+
+export async function GET() {
+  return NextResponse.json({
+    status: 'online',
+    service: 'The Pods Real Estate WhatsApp AI Concierge',
+    prompt_version: AIService.PROMPT_VERSION,
+    timestamp: new Date().toISOString(),
+  });
+}

@@ -1,0 +1,240 @@
+{
+  "developers": [
+    {
+      "name": "Danube Properties",
+      "projects": [
+        {
+          "id": "danube-bayz-101",
+          "projectName": "BAYZ 101",
+          "location": "Business Bay, Dubai",
+          "startingPriceAed": 650000,
+          "paymentPlan": "20% Down Payment + 4% DLD fee, 1% (or 0.5%) per month during construction, 40% Post-Handover",
+          "handover": "Q2 2028",
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed",
+            "3-Bed"
+          ],
+          "keyFacts": [
+            "101 levels ultra-luxury tower with private swimming pools in select units",
+            "Prime Business Bay location 2 minutes from Burj Khalifa and Dubai Mall",
+            "Studios starting at AED 650K, 1-Bed starting at AED 1.1M",
+            "Official Danube Structure: 20% down payment + 4% DLD, 1% (or 0.5%) monthly until handover, and 40% post-handover balance"
+          ]
+        },
+        {
+          "id": "danube-diamondz",
+          "projectName": "DIAMONDZ",
+          "location": "Jumeirah Lake Towers (JLT), Dubai",
+          "startingPriceAed": 1100000,
+          "paymentPlan": "20% Down Payment + 4% DLD fee, 1% (or 0.5%) per month during construction, 40% Post-Handover",
+          "handover": "Q4 2027",
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed"
+          ],
+          "keyFacts": [
+            "Fully furnished luxury residences with Turkish brand interior design",
+            "40+ resort-style amenities including bowling alley and sky golf",
+            "Official Danube Structure: 20% down payment + 4% DLD, 1% (or 0.5%) monthly until handover, and 40% post-handover balance"
+          ]
+        },
+        {
+          "id": "danube-sportz",
+          "projectName": "SPORTZ by Danube",
+          "location": "Dubai Sports City, Dubai",
+          "startingPriceAed": 590000,
+          "paymentPlan": "20% Down Payment + 4% DLD fee, 1% (or 0.5%) per month during construction, 40% Post-Handover",
+          "handover": "Q2 2027",
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed",
+            "3-Bed"
+          ],
+          "keyFacts": [
+            "First-of-its-kind sports-infused residential twin towers",
+            "40+ sports & leisure amenities including Olympic pool, padel tennis, and cricket pitch",
+            "Studios starting at AED 590K with 1% monthly payment plan",
+            "Official Danube Structure: 20% down payment + 4% DLD, 1% (or 0.5%) monthly until handover, and 40% post-handover balance"
+          ]
+        },
+        {
+          "id": "danube-oceanz",
+          "projectName": "OCEANZ by Danube",
+          "location": "Dubai Maritime City, Dubai",
+          "startingPriceAed": 1100000,
+          "paymentPlan": "20% Down Payment + 4% DLD fee, 1% (or 0.5%) per month during construction, 40% Post-Handover",
+          "handover": "Q1 2027",
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed",
+            "3-Bed"
+          ],
+          "keyFacts": [
+            "Luxury waterfront tower with interior design by Tonino Lamborghini Casa",
+            "Unobstructed Arabian Gulf sea views",
+            "1-Bed starting from AED 1.1M with 1% monthly payment plan",
+            "Official Danube Structure: 20% down payment + 4% DLD, 1% (or 0.5%) monthly until handover, and 40% post-handover balance"
+          ]
+        },
+        {
+          "id": "danube-breez",
+          "projectName": "BREEZ by Danube",
+          "location": "Dubai Maritime City, Dubai",
+          "startingPriceAed": 1200000,
+          "paymentPlan": "20% Down Payment + 4% DLD fee, 1% (or 0.5%) per month during construction, 40% Post-Handover",
+          "handover": "Q4 2027",
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed"
+          ],
+          "keyFacts": [
+            "Waterfront luxury tower in Dubai Maritime City",
+            "1% monthly payment plan over 80 months",
+            "Official Danube Structure: 20% down payment + 4% DLD, 1% (or 0.5%) monthly until handover, and 40% post-handover balance"
+          ]
+        },
+        {
+          "id": "danube-serenz",
+          "projectName": "SERENZ by Danube",
+          "location": "Jumeirah Village Circle (JVC), Dubai",
+          "startingPriceAed": 720000,
+          "paymentPlan": "20% Down Payment + 4% DLD fee, 1% (or 0.5%) per month during construction, 40% Post-Handover",
+          "handover": "Q2 2027",
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed"
+          ],
+          "keyFacts": [
+            "Serene residential living in high-demand JVC corridor",
+            "1% monthly payment plan over 80 months",
+            "Official Danube Structure: 20% down payment + 4% DLD, 1% (or 0.5%) monthly until handover, and 40% post-handover balance"
+          ]
+        },
+        {
+          "id": "danube-shahrukhz",
+          "projectName": "SHAHRUKHZ by Danube",
+          "location": "Dubai Silicon Oasis / Studio City, Dubai",
+          "startingPriceAed": 690000,
+          "paymentPlan": "20% Down Payment + 4% DLD fee, 1% (or 0.5%) per month during construction, 40% Post-Handover",
+          "handover": "Q3 2027",
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed"
+          ],
+          "keyFacts": [
+            "Celebrity-branded residential luxury tower by Danube",
+            "1% monthly payment plan over 80 months",
+            "Official Danube Structure: 20% down payment + 4% DLD, 1% (or 0.5%) monthly until handover, and 40% post-handover balance"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sobha Realty",
+      "projects": [
+        {
+          "id": "sobha-hartland-2",
+          "projectName": "Sobha Hartland II",
+          "location": "Sobha Hartland, MBR City, Dubai",
+          "startingPriceAed": 1400000,
+          "paymentPlan": "40/60 flexible payment plan (10% down payment, 30% during construction, 60% on handover)",
+          "handover": "Q4 2027",
+          "unitsAvailable": [
+            "1-Bed Waterfront",
+            "2-Bed",
+            "3-Bed",
+            "Villas"
+          ],
+          "keyFacts": [
+            "Lagoon-front luxury community with 50% green open spaces",
+            "8 minutes from Downtown Dubai and Ras Al Khor Wildlife Sanctuary",
+            "1-Bed Waterfront starting at AED 1.4M",
+            "UK London Office meeting option at Park Lane with UK Director Gopesh"
+          ]
+        },
+        {
+          "id": "sobha-terraces-abu-dhabi",
+          "projectName": "The Terraces at Sobha City",
+          "location": "Abu Dhabi / MBR City Corridor",
+          "startingPriceAed": 1250000,
+          "paymentPlan": "40/60 flexible payment plan",
+          "handover": "Q3 2027",
+          "unitsAvailable": [
+            "1-Bed",
+            "2-Bed",
+            "Duplex"
+          ],
+          "keyFacts": [
+            "Ultra-luxury terrace residences with direct waterfront and skyline views",
+            "Starting from AED 1.25M"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Binghatti Developers",
+      "projects": [
+        {
+          "id": "binghatti-skyflame",
+          "projectName": "Binghatti Skyflame",
+          "location": "Majan, Dubai",
+          "startingPriceAed": 750000,
+          "paymentPlan": "70/30 or 60/40 flexible payment plan (20% down payment)",
+          "handover": "Q4 2026",
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed"
+          ],
+          "keyFacts": [
+            "Iconic architectural design with panoramic skyline and park views",
+            "High ROI investment corridor in Majan",
+            "UK London Central Office meeting option with Binghatti Director Dorothee"
+          ]
+        },
+        {
+          "id": "binghatti-mercedes-benz",
+          "projectName": "Mercedes-Benz Places by Binghatti",
+          "location": "Nad Al Sheba / Downtown Dubai",
+          "startingPriceAed": 8800000,
+          "paymentPlan": "70/30 payment plan",
+          "handover": "Q4 2026",
+          "unitsAvailable": [
+            "2-Bed Suite",
+            "3-Bed Penthouse",
+            "Sky Mansion"
+          ],
+          "keyFacts": [
+            "World's first Mercedes-Benz branded luxury residential tower",
+            "Unobstructed views of Burj Khalifa with smart home integration"
+          ]
+        },
+        {
+          "id": "binghatti-bugatti",
+          "projectName": "Bugatti Residences by Binghatti",
+          "location": "Business Bay, Dubai",
+          "startingPriceAed": 19000000,
+          "paymentPlan": "70/30 payment plan",
+          "handover": "Q4 2026",
+          "unitsAvailable": [
+            "2-Bed Mansions",
+            "3-Bed Mansions",
+            "Penthouse"
+          ],
+          "keyFacts": [
+            "World's first Bugatti Residences featuring Riviera-inspired private beach lagoon",
+            "Car lift direct to sky mansion penthouses"
+          ]
+        }
+      ]
+    }
+  ]
+}
