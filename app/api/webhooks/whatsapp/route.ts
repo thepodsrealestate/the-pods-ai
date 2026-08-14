@@ -102,6 +102,22 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.AI, content: aiResult.reply }),
     ]);
 
+    if (aiResult.action === 'BOOK_MEETING' || aiResult.action === 'CHECK_CALENDAR') {
+      const { CalendarService } = await import('@/lib/services/calendarService');
+      const meetingTime = new Date(Date.now() + 86400000 * 2);
+      meetingTime.setHours(14, 0, 0, 0);
+      await CalendarService.createBooking({
+        leadId: lead.id,
+        meetingTime,
+        location: 'The Pods, Bluewaters Island, Dubai',
+      });
+      console.log('[BG-LOG] ✅ Meeting Booking created & notification sent!');
+    } else if (aiResult.action === 'HANDOFF') {
+      const { NotificationService } = await import('@/lib/services/notificationService');
+      await NotificationService.notifyMineshHandoff(senderName, phone, aiResult.handoff_reason || 'Human takeover requested');
+      console.log('[BG-LOG] ✅ Handoff alert sent!');
+    }
+
     console.log('[BG-LOG] ✅ Messages and attribution saved to DB');
   } catch (err: any) {
     console.error('[BG-LOG] Error:', err.message);

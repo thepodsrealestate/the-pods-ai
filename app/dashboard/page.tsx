@@ -115,6 +115,28 @@ export default function MasterDashboardPage() {
   const [savingSettings, setSavingSettings] = useState<boolean>(false);
   const [settingsSaveMsg, setSettingsSaveMsg] = useState<string | null>(null);
 
+  // Test Booking State
+  const [testingBooking, setTestingBooking] = useState<boolean>(false);
+  const [testBookingMsg, setTestBookingMsg] = useState<string | null>(null);
+
+  const handleTriggerTestBooking = async () => {
+    setTestingBooking(true);
+    setTestBookingMsg(null);
+    try {
+      const res = await fetch("/api/test-booking", { method: "POST" });
+      const data = await res.json();
+      if (res.ok) {
+        setTestBookingMsg(`VIP Meeting Booked! Alert dispatched to ${data.notifiedPhone}`);
+        fetchData();
+        setTimeout(() => setTestBookingMsg(null), 5000);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setTestingBooking(false);
+    }
+  };
+
   useEffect(() => {
     fetch("/api/settings")
       .then((res) => res.json())
@@ -854,12 +876,28 @@ export default function MasterDashboardPage() {
           {/* TAB 4: VIP BOOKINGS */}
           {activeTab === "bookings" && (
             <div className="space-y-6 max-w-7xl mx-auto">
-              <div>
-                <h1 className="text-2xl font-black text-white tracking-tight">VIP Presentation Bookings</h1>
-                <p className="text-xs text-slate-400 mt-1">
-                  Scheduled client presentations at Bluewaters Island Pods & London Office
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h1 className="text-2xl font-black text-white tracking-tight">VIP Presentation Bookings</h1>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Scheduled client presentations at Bluewaters Island Pods & London Office
+                  </p>
+                </div>
+
+                <button
+                  onClick={handleTriggerTestBooking}
+                  disabled={testingBooking}
+                  className="px-5 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-lg hover:brightness-110 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+                >
+                  <span>{testingBooking ? "Simulating AI Booking..." : "+ Simulate Test AI Booking"}</span>
+                </button>
               </div>
+
+              {testBookingMsg && (
+                <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-xs font-semibold">
+                  {testBookingMsg}
+                </div>
+              )}
 
               <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl shadow-xl overflow-hidden">
                 <div className="overflow-x-auto">
