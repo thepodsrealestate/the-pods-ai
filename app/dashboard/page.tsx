@@ -112,8 +112,13 @@ export default function MasterDashboardPage() {
   // Settings States
   const [adminPhone, setAdminPhone] = useState<string>("+971509876543");
   const [adminEmail, setAdminEmail] = useState<string>("info@thepodsrealestate.ae");
+  const [resendApiKey, setResendApiKey] = useState<string>("");
   const [savingSettings, setSavingSettings] = useState<boolean>(false);
   const [settingsSaveMsg, setSettingsSaveMsg] = useState<string | null>(null);
+
+  // Test Email State
+  const [sendingTestEmail, setSendingTestEmail] = useState<boolean>(false);
+  const [testEmailMsg, setTestEmailMsg] = useState<string | null>(null);
 
   // Test Booking State
   const [testingBooking, setTestingBooking] = useState<boolean>(false);
@@ -137,12 +142,32 @@ export default function MasterDashboardPage() {
     }
   };
 
+  const handleSendTestEmail = async () => {
+    setSendingTestEmail(true);
+    setTestEmailMsg(null);
+    try {
+      const res = await fetch("/api/test-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: adminEmail, resendApiKey }),
+      });
+      const data = await res.json();
+      setTestEmailMsg(data.message);
+      setTimeout(() => setTestEmailMsg(null), 7000);
+    } catch (e) {
+      setTestEmailMsg("Failed to dispatch test email");
+    } finally {
+      setSendingTestEmail(false);
+    }
+  };
+
   useEffect(() => {
     fetch("/api/settings")
       .then((res) => res.json())
       .then((data) => {
         if (data.adminPhone) setAdminPhone(data.adminPhone);
         if (data.adminEmail) setAdminEmail(data.adminEmail);
+        if (data.resendApiKey) setResendApiKey(data.resendApiKey);
       })
       .catch((err) => console.error("Failed to load settings:", err));
   }, []);
@@ -154,7 +179,7 @@ export default function MasterDashboardPage() {
       const res = await fetch("/api/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ adminPhone, adminEmail }),
+        body: JSON.stringify({ adminPhone, adminEmail, resendApiKey }),
       });
       if (res.ok) {
         setSettingsSaveMsg("Notification alert recipient settings updated successfully!");
@@ -1033,6 +1058,16 @@ export default function MasterDashboardPage() {
                   </div>
                 )}
 
+                {testEmailMsg && (
+                  <div className={`p-3.5 rounded-xl text-xs font-semibold ${
+                    testEmailMsg.includes("successfully") || testEmailMsg.includes("dispatched")
+                      ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-400"
+                      : "bg-amber-500/10 border border-amber-500/30 text-amber-400"
+                  }`}>
+                    {testEmailMsg}
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
@@ -1061,13 +1096,36 @@ export default function MasterDashboardPage() {
                     />
                     <p className="text-[11px] text-slate-500">Receives Google Calendar event invitations and booking confirmations.</p>
                   </div>
+
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                      Resend Email Dispatch API Key (Optional)
+                    </label>
+                    <input
+                      type="password"
+                      value={resendApiKey}
+                      onChange={(e) => setResendApiKey(e.target.value)}
+                      placeholder="re_123456789... (Leave blank to use Vercel RESEND_API_KEY)"
+                      className="w-full bg-[#151824] border border-[#1E2230] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#C5A059] font-mono transition-colors"
+                    />
+                    <p className="text-[11px] text-slate-500">Enter your Resend API Key to deliver live booking alert emails directly to your inbox.</p>
+                  </div>
                 </div>
 
-                <div className="pt-2 flex justify-end">
+                <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <button
+                    type="button"
+                    onClick={handleSendTestEmail}
+                    disabled={sendingTestEmail}
+                    className="w-full sm:w-auto px-5 py-2.5 bg-[#151824] border border-[#C5A059]/40 text-[#C5A059] font-bold text-xs rounded-xl shadow hover:bg-[#1E2230] transition-all disabled:opacity-50"
+                  >
+                    {sendingTestEmail ? "Sending Email..." : "Send Test Email to Inbox"}
+                  </button>
+
                   <button
                     onClick={handleSaveSettings}
                     disabled={savingSettings}
-                    className="px-6 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-lg hover:brightness-110 transition-all disabled:opacity-50"
+                    className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-lg hover:brightness-110 transition-all disabled:opacity-50"
                   >
                     {savingSettings ? "Saving..." : "Save Notification Settings"}
                   </button>

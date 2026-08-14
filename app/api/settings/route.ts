@@ -13,17 +13,20 @@ export async function GET() {
       return NextResponse.json({
         adminPhone: parsed.adminPhone || '+971509876543',
         adminEmail: parsed.adminEmail || 'info@thepodsrealestate.ae',
+        resendApiKey: parsed.resendApiKey || process.env.RESEND_API_KEY || '',
       });
     }
 
     return NextResponse.json({
       adminPhone: process.env.MINESH_NOTIFY_PHONE || '+971509876543',
       adminEmail: process.env.MINESH_NOTIFY_EMAIL || 'info@thepodsrealestate.ae',
+      resendApiKey: process.env.RESEND_API_KEY || '',
     });
   } catch (e: any) {
     return NextResponse.json({
       adminPhone: '+971509876543',
       adminEmail: 'info@thepodsrealestate.ae',
+      resendApiKey: '',
     });
   }
 }
@@ -33,8 +36,9 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const adminPhone = body.adminPhone || '+971509876543';
     const adminEmail = body.adminEmail || 'info@thepodsrealestate.ae';
+    const resendApiKey = body.resendApiKey || '';
 
-    const settingPayload = JSON.stringify({ adminPhone, adminEmail });
+    const settingPayload = JSON.stringify({ adminPhone, adminEmail, resendApiKey });
 
     await prisma.systemEvent.create({
       data: {
@@ -47,6 +51,7 @@ export async function POST(req: NextRequest) {
       status: 'success',
       adminPhone,
       adminEmail,
+      resendApiKey,
       message: 'Notification alert settings updated successfully',
     });
   } catch (error: any) {
