@@ -27,8 +27,69 @@ import {
   Play,
   Gift,
   ShieldCheck,
-  FileText
+  FileText,
+  Megaphone,
+  Lightbulb,
+  Globe
 } from "lucide-react";
+
+function SourceBadge({ source }: { source: string }) {
+  const upper = (source || "DIRECT").toUpperCase();
+
+  if (upper.includes("WHATSAPP")) {
+    return (
+      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 2a10 10 0 0 0-8.59 15.11L2 22l4.99-1.31A10 10 0 1 0 12 2zm0 18a7.95 7.95 0 0 1-4.07-1.12l-.29-.17-3.02.79.81-2.94-.19-.3A7.96 7.96 0 1 1 12 20z"/>
+        </svg>
+        <span>WhatsApp Direct</span>
+      </span>
+    );
+  }
+
+  if (upper.includes("INSTAGRAM")) {
+    return (
+      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/30">
+        <svg className="w-3.5 h-3.5 fill-none stroke-current stroke-[2]" viewBox="0 0 24 24">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        </svg>
+        <span>Instagram Ads</span>
+      </span>
+    );
+  }
+
+  if (upper.includes("FACEBOOK")) {
+    return (
+      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/30">
+        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+        <span>Facebook Ads</span>
+      </span>
+    );
+  }
+
+  if (upper.includes("GOOGLE")) {
+    return (
+      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/30">
+        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+          <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+        </svg>
+        <span>Google Search</span>
+      </span>
+    );
+  }
+
+  return (
+    <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-[#C5A059]/10 text-[#C5A059] border border-[#C5A059]/30">
+      <Globe className="w-3.5 h-3.5" />
+      <span>{upper.replace("_", " ")}</span>
+    </span>
+  );
+}
 
 export default function MasterDashboardPage() {
   const router = useRouter();
@@ -482,7 +543,10 @@ export default function MasterDashboardPage() {
                   </div>
 
                   <div className="p-4 bg-[#151824] rounded-xl border border-[#C5A059]/20 text-xs text-slate-300 space-y-2">
-                    <p className="font-semibold text-white text-xs">💡 VIP Client Privilege Policy</p>
+                    <div className="flex items-center space-x-2">
+                      <Lightbulb className="w-4 h-4 text-[#C5A059]" />
+                      <p className="font-semibold text-white text-xs">VIP Client Privilege Policy</p>
+                    </div>
                     <p className="text-[11px] text-slate-400 leading-relaxed">
                       AED 20,000 VIP Fine-Dining Vouchers at The Pods Bluewaters are offered to clients upon closing property deals with Minesh Patel.
                     </p>
@@ -566,12 +630,11 @@ export default function MasterDashboardPage() {
 
                               <td className="px-6 py-4">
                                 <div className="flex flex-col space-y-1">
-                                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase w-fit ${badgeStyle}`}>
-                                    {source.replace("_", " ")}
-                                  </span>
+                                  <SourceBadge source={source} />
                                   {campaign && (
-                                    <span className="text-[10px] text-slate-450 truncate max-w-[150px]" title={campaign}>
-                                      📣 {campaign}
+                                    <span className="inline-flex items-center text-[10px] text-slate-400 space-x-1 truncate max-w-[160px]" title={campaign}>
+                                      <Megaphone className="w-3 h-3 text-[#C5A059] shrink-0" />
+                                      <span className="truncate">{campaign}</span>
                                     </span>
                                   )}
                                 </div>
@@ -849,10 +912,10 @@ export default function MasterDashboardPage() {
                     else if (src.includes("GOOGLE")) barColor = "bg-red-500";
 
                     return (
-                      <div key={src} className="p-4 rounded-xl bg-[#151824] border border-[#1E2230] space-y-2">
+                      <div key={src} className="p-4 rounded-xl bg-[#151824] border border-[#1E2230] space-y-2.5">
                         <div className="flex justify-between items-center text-xs font-semibold">
-                          <span className="text-[#C5A059] uppercase">{src.replace("_", " ")}</span>
-                          <span className="text-slate-300">{count} ({percentage}%)</span>
+                          <SourceBadge source={src} />
+                          <span className="text-slate-300 font-mono text-[11px]">{count} ({percentage}%)</span>
                         </div>
                         <div className="w-full bg-[#1E2230] rounded-full h-1.5 overflow-hidden">
                           <div className={`h-1.5 rounded-full ${barColor}`} style={{ width: `${percentage}%` }}></div>
@@ -899,9 +962,10 @@ export default function MasterDashboardPage() {
               <div className="p-4 rounded-2xl bg-[#151824] border border-[#1E2230] flex items-center justify-between shadow-md">
                 <div>
                   <p className="text-xs font-bold text-white uppercase tracking-wider">AI Concierge Control</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
-                    {selectedLead.aiEnabled ? "🟢 AI Auto-Reply Active" : "🔴 AI Paused for Human Agent"}
-                  </p>
+                  <div className="flex items-center text-[11px] text-slate-400 mt-0.5 space-x-1.5">
+                    <span className={`w-2 h-2 rounded-full ${selectedLead.aiEnabled ? "bg-emerald-400 animate-pulse" : "bg-rose-400"}`}></span>
+                    <span>{selectedLead.aiEnabled ? "AI Auto-Reply Active" : "AI Paused for Human Agent"}</span>
+                  </div>
                 </div>
 
                 <button
@@ -934,7 +998,9 @@ export default function MasterDashboardPage() {
                   </div>
                   <div className="p-3.5 rounded-xl bg-[#151824] border border-[#1E2230]">
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Traffic Source</span>
-                    <p className="text-xs font-bold text-blue-400 uppercase mt-1">{selectedLead.leadSource || "DIRECT"}</p>
+                    <div className="mt-1">
+                      <SourceBadge source={selectedLead.leadSource || "DIRECT"} />
+                    </div>
                   </div>
                   <div className="p-3.5 rounded-xl bg-[#151824] border border-[#1E2230]">
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Qualification Status</span>
@@ -960,7 +1026,10 @@ export default function MasterDashboardPage() {
                   <div className="p-4 rounded-xl bg-[#0D0F17] border border-[#C5A059] text-center space-y-1.5 shadow-inner">
                     <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Voucher Code Issued</span>
                     <p className="text-xl font-mono font-black text-[#C5A059] tracking-widest">{issuedVoucher.code}</p>
-                    <p className="text-[10px] text-emerald-400 font-medium">✅ Valid at Bluewaters Island • Linked to Lead Record</p>
+                    <div className="flex items-center justify-center space-x-1 text-[10px] text-emerald-400 font-medium">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Valid at Bluewaters Island • Linked to Lead Record</span>
+                    </div>
                   </div>
                 ) : (
                   <button

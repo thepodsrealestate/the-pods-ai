@@ -1,32 +1,11 @@
-datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
-enum Role {
-  ADMIN
-  SALES
-  VIEWER
-}
-
-enum LeadStatus {
-  NEW
-  AI_ENGAGED
-  QUALIFIED
-  MEETING_BOOKED
-  CLOSED
-}
-
-enum SenderType {
-  LEAD
-  AI
-  HUMAN_AGENT
-  SYSTEM
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -40,34 +19,33 @@ model User {
 }
 
 model Lead {
-  id                   String            @id @default(uuid())
-  phone                String            @unique
-  fullName             String?
-  email                String?
-  leadSource           String            @default("DIRECT")
-  buyerLocation        String?
-  purchasePurpose      String?
-  budgetMin            Float?
-  budgetMax            Float?
-  timeline             String?
-  meetingPreference    String?
-  status               LeadStatus        @default(NEW)
-  aiEnabled            Boolean           @default(true)
-  handoffStatus        Boolean           @default(false)
-  slaResponseTimeSec   Int?
-  createdAt            DateTime          @default(now())
-  updatedAt            DateTime          @updatedAt
-  conversations        Conversation[]
-  attributions         LeadAttribution[]
-  bookings             Booking[]
-  vouchers             Voucher[]
-  handoffs             Handoff[]
+  id                 String            @id @default(uuid())
+  phone              String            @unique
+  fullName           String?
+  email              String?
+  leadSource         String            @default("DIRECT")
+  buyerLocation      String?
+  purchasePurpose    String?
+  budgetMin          Float?
+  budgetMax          Float?
+  timeline           String?
+  meetingPreference  String?
+  status             LeadStatus        @default(NEW)
+  aiEnabled          Boolean           @default(true)
+  handoffStatus      Boolean           @default(false)
+  slaResponseTimeSec Int?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  bookings           Booking[]
+  conversations      Conversation[]
+  handoffs           Handoff[]
+  attributions       LeadAttribution[]
+  vouchers           Voucher[]
 }
 
 model LeadAttribution {
   id          String   @id @default(uuid())
   leadId      String
-  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
   source      String
   medium      String?
   campaign    String?
@@ -78,90 +56,91 @@ model LeadAttribution {
   utmMedium   String?
   utmCampaign String?
   createdAt   DateTime @default(now())
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
 }
 
 model Conversation {
   id        String    @id @default(uuid())
   leadId    String
-  lead      Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
   active    Boolean   @default(true)
-  messages  Message[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  lead      Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  messages  Message[]
 }
 
 model Message {
   id             String       @id @default(uuid())
   conversationId String
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   senderType     SenderType
   content        String
   externalId     String?      @unique
   deliveredAt    DateTime?
   readAt         DateTime?
   createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 }
 
 model PropertyProject {
-  id           String             @id @default(uuid())
-  developer    String
-  projectName  String
-  location     String
+  id            String             @id @default(uuid())
+  developer     String
+  projectName   String
+  location      String
   startingPrice Float
-  paymentPlan  String
-  handover     String
-  documents    PropertyDocument[]
-  facts        PropertyFact[]
-  createdAt    DateTime           @default(now())
+  paymentPlan   String
+  handover      String
+  createdAt     DateTime           @default(now())
+  documents     PropertyDocument[]
+  facts         PropertyFact[]
 }
 
 model PropertyDocument {
   id        String          @id @default(uuid())
   projectId String
-  project   PropertyProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
   docName   String
   fileUrl   String
+  project   PropertyProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model PropertyFact {
   id        String          @id @default(uuid())
   projectId String
-  project   PropertyProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
   factKey   String
   factValue String
   verified  Boolean         @default(true)
+  project   PropertyProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Booking {
   id              String    @id @default(uuid())
   leadId          String
-  lead            Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
   calendarEventId String    @unique
   meetingTime     DateTime
   location        String    @default("The Pods, Bluewaters Island, Dubai")
   status          String    @default("CONFIRMED")
   createdAt       DateTime  @default(now())
+  lead            Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
   vouchers        Voucher[]
 }
 
 model Voucher {
   id        String   @id @default(uuid())
   leadId    String
-  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
   bookingId String
-  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   code      String   @unique
   valueAed  Float    @default(20000)
   issuedAt  DateTime @default(now())
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
 }
 
 model Handoff {
-  id        String    @id @default(uuid())
+  id        String   @id @default(uuid())
   leadId    String
-  lead      Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
   reason    String
-  resolved  Boolean   @default(false)
-  createdAt DateTime  @default(now())
+  resolved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
 }
 
 model WebhookEvent {
@@ -185,4 +164,25 @@ model SystemEvent {
   eventType String
   message   String
   createdAt DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  SALES
+  VIEWER
+}
+
+enum LeadStatus {
+  NEW
+  AI_ENGAGED
+  QUALIFIED
+  MEETING_BOOKED
+  CLOSED
+}
+
+enum SenderType {
+  LEAD
+  AI
+  HUMAN_AGENT
+  SYSTEM
 }
