@@ -4,6 +4,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "The Pods Real Estate — AI Command Center",
   description: "Luxury Real Estate AI Sales Concierge & Lead Management System",
+  icons: {
+    icon: "/logo_white.jpeg",
+    shortcut: "/logo_white.jpeg",
+    apple: "/logo_white.jpeg",
+  },
 };
 
 export default function RootLayout({
