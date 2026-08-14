@@ -10,6 +10,7 @@ import {
   BarChart3,
   Building2,
   ChevronRight,
+  ChevronLeft,
   Sparkles,
   AlertCircle,
   Download,
@@ -99,6 +100,7 @@ export default function MasterDashboardPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [selectedConvIndex, setSelectedConvIndex] = useState<number>(0);
+  const [mobileShowChat, setMobileShowChat] = useState<boolean>(false);
 
   // Lead Slide-Over Drawer States
   const [selectedLead, setSelectedLead] = useState<any>(null);
@@ -238,9 +240,9 @@ export default function MasterDashboardPage() {
         </button>
       </div>
 
-      {/* 📱 MOBILE DROPDOWN MENU */}
+      {/* 📱 MOBILE DROPDOWN MENU - FIXED OVERLAY */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-[#0D0F17] border-b border-[#1E2230] p-4 space-y-2 z-40">
+        <div className="md:hidden fixed top-14 left-0 right-0 z-50 bg-[#0D0F17]/95 backdrop-blur-xl border-b border-[#1E2230] p-4 space-y-2 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -482,25 +484,25 @@ export default function MasterDashboardPage() {
                         <div 
                           key={lead.id} 
                           onClick={() => { setSelectedLead(lead); setDrawerOpen(true); setIssuedVoucher(null); }}
-                          className="py-3.5 flex items-center justify-between hover:bg-[#151824] px-3 rounded-xl transition-colors cursor-pointer group"
+                          className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#151824] px-3.5 rounded-xl transition-colors cursor-pointer group"
                         >
-                          <div className="flex items-center space-x-3">
-                            <div className="w-9 h-9 rounded-full bg-[#151824] border border-[#C5A059]/30 flex items-center justify-center font-bold text-xs text-[#C5A059]">
+                          <div className="flex items-center space-x-3 min-w-0">
+                            <div className="w-9 h-9 rounded-full bg-[#151824] border border-[#C5A059]/30 flex items-center justify-center font-bold text-xs text-[#C5A059] shrink-0">
                               {lead.fullName ? lead.fullName.slice(0, 2).toUpperCase() : "WA"}
                             </div>
-                            <div>
-                              <p className="text-sm font-semibold text-white">{lead.fullName || "WhatsApp Inquiry"}</p>
-                              <p className="text-xs text-slate-400 font-mono">{lead.phone}</p>
+                            <div className="min-w-0">
+                              <p className="text-sm font-semibold text-white truncate">{lead.fullName || "WhatsApp Inquiry"}</p>
+                              <p className="text-xs text-slate-400 font-mono truncate">{lead.phone}</p>
                             </div>
                           </div>
-                          <div className="flex items-center space-x-3">
-                            <span className="text-xs text-slate-400 font-mono">{lead.budgetMax ? `AED ${lead.budgetMax.toLocaleString()}` : "Budget Pending"}</span>
-                            <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                          <div className="flex items-center justify-between sm:justify-end space-x-3 w-full sm:w-auto shrink-0 pt-1.5 sm:pt-0 border-t sm:border-t-0 border-[#1E2230]/50">
+                            <span className="text-xs text-[#C5A059] font-mono font-semibold">{lead.budgetMax ? `AED ${lead.budgetMax.toLocaleString()}` : "Budget Pending"}</span>
+                            <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shrink-0 ${
                               lead.status === "QUALIFIED"
                                 ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
                                 : "bg-slate-800 text-slate-400"
                             }`}>
-                              {lead.status}
+                              {lead.status.replace("_", " ")}
                             </span>
                           </div>
                         </div>
@@ -681,9 +683,11 @@ export default function MasterDashboardPage() {
 
           {/* TAB 3: CONVERSATIONS */}
           {activeTab === "conversations" && (
-            <div className="h-[calc(100vh-10rem)] flex flex-col md:flex-row gap-6 max-w-7xl mx-auto overflow-hidden">
-              {/* Left List */}
-              <div className="w-full md:w-80 bg-[#0D0F17] border border-[#1E2230] rounded-2xl flex flex-col shadow-xl overflow-hidden select-none shrink-0">
+            <div className="h-[calc(100vh-7.5rem)] md:h-[calc(100vh-10rem)] flex flex-col md:flex-row gap-6 max-w-7xl mx-auto overflow-hidden">
+              {/* Left Thread List */}
+              <div className={`w-full md:w-80 bg-[#0D0F17] border border-[#1E2230] rounded-2xl flex-col shadow-xl overflow-hidden select-none shrink-0 ${
+                mobileShowChat ? "hidden md:flex" : "flex h-full"
+              }`}>
                 <div className="p-4 border-b border-[#1E2230] bg-[#151824]">
                   <h3 className="font-bold text-white text-sm">Active Threads</h3>
                   <p className="text-[11px] text-slate-400">Live WhatsApp Chat Feeds</p>
@@ -701,7 +705,10 @@ export default function MasterDashboardPage() {
                       return (
                         <div
                           key={conv.id}
-                          onClick={() => setSelectedConvIndex(idx)}
+                          onClick={() => {
+                            setSelectedConvIndex(idx);
+                            setMobileShowChat(true);
+                          }}
                           className={`p-4 cursor-pointer transition-colors space-y-1 ${
                             isSelected ? "bg-[#C5A059]/10 border-l-4 border-[#C5A059]" : "hover:bg-[#151824]/50"
                           }`}
@@ -733,7 +740,9 @@ export default function MasterDashboardPage() {
               </div>
 
               {/* Right Transcript */}
-              <div className="flex-1 bg-[#0D0F17] border border-[#1E2230] rounded-2xl flex flex-col shadow-xl overflow-hidden">
+              <div className={`flex-1 bg-[#0D0F17] border border-[#1E2230] rounded-2xl flex-col shadow-xl overflow-hidden ${
+                mobileShowChat ? "flex h-full" : "hidden md:flex"
+              }`}>
                 {conversations.length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-slate-500 space-y-2 p-8">
                     <MessageSquare className="w-10 h-10 text-[#C5A059]" />
@@ -744,35 +753,44 @@ export default function MasterDashboardPage() {
                   </div>
                 ) : (
                   <div className="flex-1 flex flex-col h-full">
-                    {/* Header */}
+                    {/* Header with Back Button on Mobile */}
                     <div className="p-4 border-b border-[#1E2230] bg-[#151824] flex items-center justify-between">
-                      <div>
-                        <h3 className="font-bold text-white text-sm">
-                          {conversations[selectedConvIndex]?.lead.fullName || conversations[selectedConvIndex]?.lead.phone}
-                        </h3>
-                        <p className="text-xs text-[#C5A059] font-mono">
-                          {conversations[selectedConvIndex]?.lead.phone}
-                        </p>
+                      <div className="flex items-center space-x-3">
+                        <button
+                          onClick={() => setMobileShowChat(false)}
+                          className="md:hidden p-1.5 rounded-lg bg-[#0D0F17] border border-[#1E2230] text-[#C5A059] font-bold text-xs flex items-center space-x-1"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                          <span>Back</span>
+                        </button>
+                        <div>
+                          <h3 className="font-bold text-white text-sm">
+                            {conversations[selectedConvIndex]?.lead.fullName || conversations[selectedConvIndex]?.lead.phone}
+                          </h3>
+                          <p className="text-xs text-[#C5A059] font-mono">
+                            {conversations[selectedConvIndex]?.lead.phone}
+                          </p>
+                        </div>
                       </div>
 
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${
                         conversations[selectedConvIndex]?.lead.aiEnabled
                           ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
                           : "bg-rose-500/10 text-rose-400 border border-rose-500/30"
                       }`}>
-                        {conversations[selectedConvIndex]?.lead.aiEnabled ? "AI Engine Active" : "Human Handoff Takeover"}
+                        {conversations[selectedConvIndex]?.lead.aiEnabled ? "AI Active" : "Human Control"}
                       </span>
                     </div>
 
                     {/* Messages */}
-                    <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-[#07080C]/60">
+                    <div className="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 bg-[#07080C]/60">
                       {conversations[selectedConvIndex]?.messages.map((msg: any) => (
                         <div
                           key={msg.id}
                           className={`flex ${msg.senderType === "AI" ? "justify-end" : "justify-start"}`}
                         >
                           <div
-                            className={`max-w-md p-4 rounded-2xl shadow-lg space-y-1 ${
+                            className={`max-w-[85%] md:max-w-md p-3.5 md:p-4 rounded-2xl shadow-lg space-y-1 ${
                               msg.senderType === "AI"
                                 ? "bg-[#151824] border border-[#C5A059]/40 text-white rounded-br-none"
                                 : "bg-[#1E2230] text-slate-200 rounded-bl-none"
