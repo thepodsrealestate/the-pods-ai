@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import LuxuryLoader from "../components/LuxuryLoader";
 import {
   LayoutDashboard,
   Users,
@@ -31,7 +32,8 @@ import {
   FileText,
   Megaphone,
   Lightbulb,
-  Globe
+  Globe,
+  Sliders
 } from "lucide-react";
 
 function SourceBadge({ source }: { source: string }) {
@@ -95,7 +97,7 @@ function SourceBadge({ source }: { source: string }) {
 export default function MasterDashboardPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [activeTab, setActiveTab] = useState<"overview" | "leads" | "conversations" | "bookings" | "analytics">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "leads" | "conversations" | "bookings" | "analytics" | "settings">("overview");
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
@@ -283,14 +285,11 @@ export default function MasterDashboardPage() {
     { id: "conversations", name: "Conversations", icon: MessageSquare },
     { id: "bookings", name: "VIP Bookings", icon: Calendar },
     { id: "analytics", name: "Analytics & Export", icon: BarChart3 },
+    { id: "settings", name: "Alert Settings", icon: Sliders },
   ];
 
   if (isAuthenticated === null) {
-    return (
-      <div className="min-h-screen bg-[#07080C] flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-2 border-[#C5A059]/20 border-t-[#C5A059] animate-spin"></div>
-      </div>
-    );
+    return <LuxuryLoader text="AUTHENTICATING EXECUTIVE COMMAND CENTER..." />;
   }
 
   return (
@@ -1041,6 +1040,16 @@ export default function MasterDashboardPage() {
                     );
                   })}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6: ALERT SETTINGS */}
+          {activeTab === "settings" && (
+            <div className="space-y-8 max-w-7xl mx-auto">
+              <div>
+                <h1 className="text-2xl font-black text-white tracking-tight">Notification & Alert Settings</h1>
+                <p className="text-xs text-slate-400 mt-1">Configure target WhatsApp numbers, email dispatchers, and test booking alerts</p>
               </div>
 
               {/* Notification Alert Settings Card */}
