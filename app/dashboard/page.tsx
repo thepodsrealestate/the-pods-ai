@@ -109,6 +109,42 @@ export default function MasterDashboardPage() {
   const [generatingVoucher, setGeneratingVoucher] = useState<boolean>(false);
   const [togglingAi, setTogglingAi] = useState<boolean>(false);
 
+  // Settings States
+  const [adminPhone, setAdminPhone] = useState<string>("+971509876543");
+  const [adminEmail, setAdminEmail] = useState<string>("info@thepodsrealestate.ae");
+  const [savingSettings, setSavingSettings] = useState<boolean>(false);
+  const [settingsSaveMsg, setSettingsSaveMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.adminPhone) setAdminPhone(data.adminPhone);
+        if (data.adminEmail) setAdminEmail(data.adminEmail);
+      })
+      .catch((err) => console.error("Failed to load settings:", err));
+  }, []);
+
+  const handleSaveSettings = async () => {
+    setSavingSettings(true);
+    setSettingsSaveMsg(null);
+    try {
+      const res = await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ adminPhone, adminEmail }),
+      });
+      if (res.ok) {
+        setSettingsSaveMsg("Notification alert recipient settings updated successfully!");
+        setTimeout(() => setSettingsSaveMsg(null), 4000);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("pods_auth_token");
     if (token !== "authenticated_minesh_pods") {
@@ -941,6 +977,62 @@ export default function MasterDashboardPage() {
                       </div>
                     );
                   })}
+                </div>
+              </div>
+
+              {/* Notification Alert Settings Card */}
+              <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-6 shadow-xl space-y-5">
+                <div>
+                  <h3 className="text-base font-bold text-white">Booking Alert & Notification Recipients</h3>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Set the target phone number and email where Minesh Patel will receive instant booking alerts
+                  </p>
+                </div>
+
+                {settingsSaveMsg && (
+                  <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-xs font-semibold">
+                    {settingsSaveMsg}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                      Notification Phone Number (WhatsApp / SMS)
+                    </label>
+                    <input
+                      type="text"
+                      value={adminPhone}
+                      onChange={(e) => setAdminPhone(e.target.value)}
+                      placeholder="+971 50 123 4567"
+                      className="w-full bg-[#151824] border border-[#1E2230] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#C5A059] font-mono transition-colors"
+                    />
+                    <p className="text-[11px] text-slate-500">Receives direct WhatsApp alert pings for new meeting bookings.</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                      Notification Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={adminEmail}
+                      onChange={(e) => setAdminEmail(e.target.value)}
+                      placeholder="info@thepodsrealestate.ae"
+                      className="w-full bg-[#151824] border border-[#1E2230] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#C5A059] transition-colors"
+                    />
+                    <p className="text-[11px] text-slate-500">Receives Google Calendar event invitations and booking confirmations.</p>
+                  </div>
+                </div>
+
+                <div className="pt-2 flex justify-end">
+                  <button
+                    onClick={handleSaveSettings}
+                    disabled={savingSettings}
+                    className="px-6 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-lg hover:brightness-110 transition-all disabled:opacity-50"
+                  >
+                    {savingSettings ? "Saving..." : "Save Notification Settings"}
+                  </button>
                 </div>
               </div>
             </div>
