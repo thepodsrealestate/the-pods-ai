@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { NotificationService } from './notificationService';
 
 export interface BookingInput {
   leadId: string;
@@ -16,7 +17,7 @@ export class CalendarService {
   }
 
   /**
-   * Create Confirmed Meeting Booking
+   * Create Confirmed Meeting Booking & Notify Minesh
    */
   static async createBooking(input: BookingInput) {
     const calendarEventId = `gcal_evt_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
@@ -29,6 +30,7 @@ export class CalendarService {
         location: input.location || 'The Pods, Bluewaters Island, Dubai',
         status: 'CONFIRMED',
       },
+      include: { lead: true },
     });
 
     // Update Lead Status to MEETING_BOOKED
@@ -37,6 +39,15 @@ export class CalendarService {
       data: { status: 'MEETING_BOOKED' },
     });
 
+    // Trigger Instant Notification Alert for Minesh Patel
+    await NotificationService.notifyMineshBooking({
+      leadName: booking.lead.fullName || 'VIP Client',
+      phone: booking.lead.phone,
+      meetingTime: booking.meetingTime,
+      location: booking.location,
+    });
+
     return booking;
   }
 }
+
