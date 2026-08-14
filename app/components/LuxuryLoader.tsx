@@ -10,17 +10,12 @@ export default function LuxuryLoader({ text = "INITIALIZING EXECUTIVE COMMAND CE
       <div className="relative z-10 flex flex-col items-center space-y-6 max-w-sm text-center">
         <div className="relative">
           {/* Outer Pulsing Metallic Ring */}
-          <div className="w-20 h-20 rounded-2xl bg-[#0D0F17] border border-[#C5A059]/40 shadow-2xl flex items-center justify-center relative overflow-hidden group">
-            {/* Shimmer sweep effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#C5A059]/20 to-transparent animate-shimmer"></div>
-            
-            {/* Pods Crest Icon */}
-            <svg className="w-10 h-10 text-[#C5A059]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M6 22V12a6 6 0 0 1 12 0v10" />
-              <path d="M12 2v4" />
-              <path d="M4 22h16" />
-              <circle cx="12" cy="12" r="2" fill="currentColor" />
-            </svg>
+          <div className="p-1 rounded-2xl bg-gradient-to-tr from-[#C5A059] via-[#E6C786] to-[#C5A059] shadow-2xl flex items-center justify-center relative overflow-hidden">
+            <img
+              src="/logo_white.jpeg"
+              alt="The Pods Real Estate"
+              className="h-20 w-auto max-w-[220px] object-contain rounded-xl bg-[#0D0F17] p-2"
+            />
           </div>
 
           {/* Glowing dot status */}

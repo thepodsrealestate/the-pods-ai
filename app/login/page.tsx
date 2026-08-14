@@ -50,14 +50,16 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-[#0D0F17] border border-[#1E2230] rounded-3xl p-8 md:p-10 shadow-2xl relative z-10 space-y-8">
         
         {/* Branding */}
-        <div className="text-center space-y-3">
-          <div className="mx-auto w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#C5A059] to-[#E6C786] p-0.5 shadow-lg shadow-[#C5A059]/10">
-            <div className="w-full h-full bg-[#0D0F17] rounded-[14px] flex items-center justify-center font-black text-lg text-[#C5A059]">
-              P
-            </div>
+        <div className="text-center space-y-3 flex flex-col items-center justify-center">
+          <div className="relative p-1 rounded-2xl bg-gradient-to-tr from-[#C5A059] via-[#E6C786] to-[#C5A059] shadow-xl shadow-[#C5A059]/10 inline-block">
+            <img
+              src="/logo_white.jpeg"
+              alt="The Pods Real Estate"
+              className="h-16 w-auto max-w-[180px] object-contain rounded-xl bg-[#0D0F17] p-1.5"
+            />
           </div>
           <div>
-            <h2 className="font-extrabold text-white text-base tracking-wider uppercase">The Pods</h2>
+            <h2 className="font-extrabold text-white text-base tracking-widest uppercase">The Pods</h2>
             <p className="text-[10px] text-[#C5A059] font-bold tracking-widest uppercase">Command Center</p>
           </div>
         </div>
