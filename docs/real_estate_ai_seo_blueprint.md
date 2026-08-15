@@ -1,169 +1,201 @@
-# ULTIMATE MASTER SEO & SERVICE PAGE BLUEPRINT
-## REAL ESTATE AI AUTOMATION & CUSTOM COMMAND DASHBOARD DEVELOPMENT
-### Target Agency Website: `asifdigital.agency`
+# ASIF DIGITAL — ULTIMATE MASTER REAL ESTATE AI SEO BLUEPRINT (2026 EDITION)
+## Targeted Website: `asifdigital.agency` | GCC & Global B2B Enterprise Real Estate
 
 ---
 
-## 1. Multi-AI Competitor Synthesis & Market Intelligence Audit
+## PART 1 — MULTI-AI COMPETITOR INTELLIGENCE & MARKET GAP SYNTHESIS
 
-We conducted a deep synthesis of intelligence across **Google Gemini**, **ChatGPT-4o**, global platforms (**Roof AI**, **Structurely**, **Ylopo**), and UAE regional competitors (**BotSense**, **Commbots**, **PropPilot**, **Zena AI**, **Saed AI**, **PropCRM**, **BrandStory**, **Groovy Web**):
+We synthesized live market research across **Claude 3.5**, **Google Gemini**, **ChatGPT-4o**, global proptech platforms (**Roof AI**, **Structurely**, **Ylopo**), and UAE market leaders (**BotSense**, **PropPilot**, **Commbots**, **Gallabox**, **Zena AI**, **Saed AI**, **PropCRM**).
 
-### Key UAE Market Data Points (To Use as Conversion Hooks):
-1. **90%+ WhatsApp Penetration in UAE:** Over 90% of all real estate inquiries in Dubai and Abu Dhabi initiate or convert on WhatsApp.
-2. **The 30-Minute Decay Curve (BotSense Stat):** Real estate leads unanswered after 30 minutes suffer an **85% conversion drop**.
-3. **The 5-Minute Speed-to-Lead Multiplier (MIT / InsideSales Stat):** Inbound inquiries contacted within < 5 minutes yield a **21x higher qualification rate** than those contacted after 30 minutes.
-4. **40% Non-English Inquiries (BotSense Stat):** Over 40% of international property buyers in Dubai communicate in non-English languages (Khaleeji Arabic, Russian, French, Mandarin, Hindi).
+### High-Converting UAE Market Data Hooks (To Embed on Landing Pages):
+
+| Metric / Stat | Verifiable Source | Value Proposition & Placement |
+| :--- | :--- | :--- |
+| **78% of UAE Buyers Close With 1st Agent Who Responds** | InsideSales / PropPilot Study | Hero & Latency Section Hook |
+| **68% of Dubai Property Inquiries Arrive 8PM–2AM** | 2026 Dubai Market Research | "After-Hours Conversion Leak" Section |
+| **Average Dubai Agent Takes 6 Hours to Reply** | PropPilot Mystery Shopper Data | Speed-to-Lead Comparison Cards |
+| **85% Conversion Loss If Unanswered > 30 Mins** | BotSense Market Audit | Latency Warning Stat Card |
+| **21x Higher Qualification If Contacted < 5 Mins** | MIT / Lead Response Mgmt Study | SLA Response Speed Guarantee |
+| **40% of Inquiries Are Non-English** | BotSense Regional Data | Multilingual NLP Grid (Khaleeji AR, RU, FR, ZH) |
+| **Dubai AED 761 Billion Transaction Volume (97k+ Deals)** | UAE Land Dept / Propphy Data | Hero Context & Enterprise Authority |
 
 ---
 
-### Competitor Landscape & Vulnerability Matrix
+### Competitor Vulnerability & Asif Digital Moat Matrix
 
-| Competitor / Platform | Primary Positioning Hook | Key Strength | Major Weakness & How Asif Digital Wins |
+| Competitor | Primary Angle | Competitor Weakness & Flaw | How Asif Digital Wins |
 | :--- | :--- | :--- | :--- |
-| **BotSense** (`botsense.ai`) | "WhatsApp Chatbot Real Estate Dubai" | Highlights 90% WhatsApp usage & language diversity | Closed SaaS tool; lacks custom command dashboards and voice note AI. |
-| **Commbots** (`commbots.com`) | "WhatsApp Real Estate Lead Qualification" | Shared inbox & CRM sync | Basic decision-tree chatbot; no LLM reasoning or off-plan payment calculators. |
-| **PropPilot** (`proppilot.ai`) | "Property Inquiry & Viewing Bot" | Document sharing & viewing booking | Generic SaaS per-seat pricing; lacks custom database ownership. |
-| **Zena AI** (`zena.ai`) | "Arabic-First GCC WhatsApp AI" | Strong Khaleeji Arabic Cloud API integration | Rigid pre-built templates; no OpenAI Whisper voice note transcription. |
-| **Saed AI** (`saed.ai`) | "24/7 Dubai Lead Automation" | Quick automated WhatsApp replies | Vendor lock-in; no custom Next.js codebase delivery. |
-| **PropCRM** (`propcrm.ae`) | "Dubai Portal Lead CRM" | Portal integration (Property Finder, Bayut) | Traditional static CRM; lacks autonomous AI reasoning & executive reply co-pilots. |
+| **BotSense** (`botsense.io`) | "WhatsApp CRM Real Estate UAE" | Indian SaaS company (Indore) using shallow geo-slug templates. No voice notes, no portal webhooks, no codebase ownership. | **Custom Next.js Enterprise Software + 100% Owned Supabase PostgreSQL DB.** |
+| **PropPilot** (`proppilot.ai`) | "AI Sales Copilot Real Estate" | SaaS per-seat rent. No UAE command dashboard, no Bayut/Property Finder webhooks, no payment calculators. | **Direct API Webhooks for Property Finder & Bayut + Off-Plan Payment Calculator.** |
+| **Commbots** (`commbots.com`) | "AI WhatsApp + Shared Inbox" | Decision-tree bot, not LLM reasoning. Lacks real-estate native voice note intelligence. | **Autonomous GPT-4o-mini Reasoning + OpenAI Whisper Voice Note Transcriber.** |
+| **Zena AI** (`zena.ai`) | "Arabic-First GCC WhatsApp AI" | Closed SaaS platform with fixed templates. No executive broker reply co-pilots. | **1-Click AI Executive Reply Co-Pilot (3 options during human takeover).** |
+| **PropCRM** (`propcrm.ae`) | "Dubai Portal Lead CRM" | Traditional static CRM. Lacks AI reasoning, latency badges, and automated payment plans. | **Sub-10s Latency SLA Monitoring + Live AI Deal Heat Scoring (HOT/WARM/COLD).** |
 
 ---
 
-### Asif Digital’s Core Positioning Statement:
-**"We don't rent generic SaaS chatbot templates. We custom-code 100% owned, enterprise Next.js AI Command Platforms and WhatsApp Cloud API Concierges built on your private Supabase PostgreSQL database."**
+## PART 2 — HIGH-INTENT KEYWORD ARCHITECTURE & MATRIX
 
----
+### Primary Transactional Keywords (High Commercial Intent)
 
-## 2. Master Keyword Matrix & Intent Mapping
-
-| Keyword Target | Search Intent | Target Landing Page Slug | Primary Pain Point Solved |
+| Keyword Target | Search Intent | Target Route Slug | Primary Competitor Stolen Traffic |
 | :--- | :--- | :--- | :--- |
-| **Real Estate AI WhatsApp Automation Dubai** | Transactional (High Buyer Intent) | `/real-estate/whatsapp-ai-automation` | Eliminates 85% lead loss caused by delayed broker replies. |
-| **Property Finder Bayut WhatsApp CRM Integration** | Critical Problem Intent | `/real-estate/whatsapp-ai-automation` | Stops lead leakage between UAE portals and WhatsApp. |
-| **Real Estate Lead Dashboard Agency Dubai** | Commercial (Retainer Intent) | `/real-estate/ai-lead-dashboard` | Solves untracked marketing spend across Meta, Google & TikTok. |
-| **Multilingual WhatsApp Real Estate Bot UAE** | Commercial (Solution Intent) | `/real-estate/whatsapp-ai-automation` | Captures 40% non-English investors (Arabic, Russian, French). |
-| **Human Handoff WhatsApp Bot Real Estate** | Technical Intent | `/real-estate/ai-lead-dashboard` | Gives human brokers seamless takeover control with AI 1-click replies. |
+| **Real estate AI WhatsApp automation Dubai** | High-Buy | `/real-estate/whatsapp-ai-automation/` | BotSense, PropPilot |
+| **WhatsApp chatbot real estate Dubai** | High-Buy | `/real-estate/whatsapp-ai-automation/` | BotSense, Commbots |
+| **AI real estate lead qualification UAE** | High-Buy | `/real-estate/whatsapp-ai-automation/` | PropPilot, Gallabox |
+| **Real estate AI lead dashboard agency Dubai** | Commercial Retainer | `/real-estate/ai-lead-dashboard/` | Salesforce, PropSpace |
+| **Property Finder Bayut WhatsApp integration agency** | Critical Problem | `/real-estate/whatsapp-ai-automation/` | PropCRM (Zero Direct Competitor) |
+| **WhatsApp voice note transcription real estate UAE** | Unique Feature | `/real-estate/whatsapp-ai-automation/` | **Zero Competition (100% Ownership)** |
+| **Real estate broker WhatsApp AI reply co-pilot Dubai** | Unique Feature | `/real-estate/ai-lead-dashboard/` | **Zero Competition (100% Ownership)** |
+| **Sub-10 second WhatsApp lead response real estate** | Technical SLA | `/real-estate/whatsapp-ai-automation/` | PropPilot |
 
 ---
 
-## 3. Silo Folder Architecture (`asifdigital.agency`)
-
-To build maximum topical authority on Google UAE, create a dedicated Real Estate Silo:
+## PART 3 — SILO SITE ARCHITECTURE & BLOG SUPPORT FUNNEL
 
 ```
 asifdigital.agency/
-├── /real-estate/ (Silo Hub / Pillar Page)
-├── /real-estate/whatsapp-ai-automation/ (Dedicated Service Page 1)
-└── /real-estate/ai-lead-dashboard/ (Dedicated Service Page 2)
+├── /real-estate/                                  ← PILLAR HUB PAGE
+│   ├── /real-estate/whatsapp-ai-automation/       ← SERVICE PAGE 1
+│   └── /real-estate/ai-lead-dashboard/            ← SERVICE PAGE 2
+│
+└── /blog/
+    ├── /blog/whatsapp-response-time-dubai-real-estate/
+    ├── /blog/off-plan-payment-plan-bot-dubai-developers/
+    ├── /blog/bayut-property-finder-whatsapp-automation/
+    ├── /blog/real-estate-lead-attribution-meta-google-tiktok/
+    └── /blog/whatsapp-voice-note-ai-real-estate-uae/
 ```
 
 ---
 
-## 4. Deep Page Architecture & Content Blueprints
+## PART 4 — FULL LANDING PAGE BLUEPRINTS
 
 ---
 
-### SERVICE PAGE 1: WhatsApp AI Concierge for Real Estate Agencies
-* **Target Route:** `asifdigital.agency/real-estate/whatsapp-ai-automation/`
-* **Primary Keyword:** Real Estate AI WhatsApp Automation Dubai
-* **Secondary Keywords:** `property finder bayut whatsapp crm integration`, `multilingual whatsapp real estate bot uae`
-* **Meta Title:** Real Estate AI WhatsApp Automation Dubai | Sub-10s Speed-to-Lead
-* **Meta Description:** Stop losing 85% of real estate inquiries to delayed replies. Our 24/7 Multilingual AI WhatsApp Concierge qualifies buyers, transcribes voice notes, and books viewings automatically.
+### PAGE 0: PILLAR HUB — `/real-estate/`
+* **Meta Title:** Real Estate AI Automation Dubai | WhatsApp, CRM & Command Dashboard | Asif Digital
+* **Meta Description:** Dubai's only agency that custom-codes 100%-owned AI WhatsApp concierges and command dashboards for real estate. Sub-10s speed-to-lead. Bayut & Property Finder direct. No SaaS rent.
+* **H1:** Real Estate AI Automation for Dubai & UAE Agencies
 
-#### Section-by-Section Layout:
+---
+
+### PAGE 1: SERVICE PAGE 1 — `/real-estate/whatsapp-ai-automation/`
+* **Meta Title:** Real Estate AI WhatsApp Automation Dubai | Sub-10s Speed-to-Lead | Asif Digital
+* **Meta Description:** Stop losing 85% of real estate inquiries to delayed replies. Our 24/7 multilingual AI WhatsApp concierge qualifies buyers, transcribes voice notes, and books viewings — built on your 100%-owned codebase.
+* **H1:** Real Estate AI WhatsApp Automation Dubai
+
+#### Section Structure:
 1. **Hero Section:**
-   * **Headline:** Automate Your Dubai Real Estate WhatsApp Leads With Sub-10s Conversational AI Intelligence
-   * **Sub-headline:** While your brokers are showing properties, our 24/7 multilingual AI concierge greets buyers, answers complex off-plan payment queries, transcribes voice notes, and books consultations into your brokers' calendars.
-   * **CTA Buttons:** [Book a Live Demo] | [Test WhatsApp Bot Live]
-   * **Visual Hook:** Interactive simulated WhatsApp UI demonstrating live bilingual (Khaleeji Arabic/English/Russian) conversation flow.
+   * **Eyebrow:** Enterprise AI WhatsApp Automation · Dubai & UAE
+   * **Headline:** While Your Brokers Are Showing Properties, Our AI Is Qualifying the Next 50 Buyers on WhatsApp
+   * **Sub-headline:** 24/7 multilingual AI concierge. Sub-10s response SLA. Khaleeji Arabic, English, Russian, French, and Mandarin. Voice note transcription. Bayut & Property Finder direct webhooks. 100% owned — not rented SaaS.
+   * **CTAs:** [Book a Live Demo] | [Test WhatsApp Bot Live →]
+   * **Hero Visual:** Interactive simulated WhatsApp chat UI demonstrating live Khaleeji Arabic & English exchange.
 
 2. **The "Cost of Latency" Problem Section:**
-   * **The 85% Lead Decay Stat (BotSense):** Unanswered real estate inquiries after 30 minutes suffer an **85% conversion loss**.
-   * **The 21x Qualification Stat (MIT / InsideSales):** Inbound leads contacted within < 5 minutes yield a **21x higher qualification rate**.
-   * **Visual Card:** Manual broker delays (4–24 hours) vs. Asif Digital sub-10s response SLA.
+   * **Card 1 (The 78% Rule):** 78% of UAE buyers close with the first agent who responds — not the best agent.
+   * **Card 2 (The 21x Multiplier):** Leads contacted within 5 minutes are 21× more likely to qualify than those reached after 30 minutes.
+   * **Card 3 (The 8PM–2AM Reality):** 68% of Dubai property inquiries arrive between 8PM and 2AM — when your brokerage is closed.
 
 3. **Core Feature Grid (6 Cards):**
-   * **Sub-10s Response SLA:** Instant 24/7 engagement across international time zones (UK, EU, CIS, GCC).
-   * **Multilingual Khaleeji & Global NLP:** Native fluency in Khaleeji Arabic, English, Russian, French, and Mandarin (capturing the 40% non-English market).
-   * **WhatsApp Voice Note Intelligence (OpenAI Whisper):** Automatically transcribes client audio messages into text and extracts target budget, location, and timeline.
-   * **Property Finder & Bayut Direct Ingestion:** Instant webhook routing connecting UAE portals directly to WhatsApp AI greetings within < 5 seconds.
-   * **Off-Plan Payment Plan Knowledge:** Pre-loaded with developer inventory (Sobha, Danube, Binghatti, Emaar) and 20% down / 1% monthly installment calculations.
-   * **Google Calendar & Human Handoff:** Auto-syncs viewing slots and triggers instant WhatsApp alerts when HNW buyers request human takeover.
+   * **Card 1 (Sub-10s Response SLA):** Contextual, intelligent reply within 10 seconds across all international time zones (UK, EU, CIS, GCC).
+   * **Card 2 (Khaleeji Arabic + 5 Global Languages):** Native NLP fluency in Khaleeji Arabic, English, Russian, French, and Mandarin (capturing 40% non-English inquiries).
+   * **Card 3 (OpenAI Whisper Voice Note Intelligence):** Transcribes audio messages in real time, extracts budget, location, and timeline parameters automatically.
+   * **Card 4 (Bayut & Property Finder Direct Webhooks):** Direct API webhook integration routing incoming portal inquiries into immediate WhatsApp AI greetings in < 5 seconds.
+   * **Card 5 (Off-Plan Payment Knowledge Engine):** Pre-loaded with developer inventory (Sobha, Danube, Binghatti, Emaar) calculating 20% down, 1% monthly terms, and DLD fees.
+   * **Card 6 (Human Handoff & Google Calendar Sync):** Auto-syncs viewing slots and triggers WhatsApp alerts when HNW clients request human takeover.
 
-4. **Security & Meta Cloud API Compliance Box:**
-   * Official Meta WhatsApp Cloud API compliance (zero ban risk vs. unofficial scrapers).
-   * 100% private Supabase PostgreSQL database ownership.
+4. **Head-to-Head Comparison Matrix (Asif Digital vs SaaS):**
 
----
-
-### SERVICE PAGE 2: Real Estate AI Lead Attribution & Command Dashboard
-* **Target Route:** `asifdigital.agency/real-estate/ai-lead-dashboard/`
-* **Primary Keyword:** Real Estate AI Lead Dashboard Agency Dubai
-* **Secondary Keywords:** `real estate crm dashboard development uae`, `whatsapp crm integration real estate uae`
-* **Meta Title:** Real Estate AI Lead Dashboard & Attribution Agency Dubai | Asif Digital
-* **Meta Description:** Eliminate lead leakage across Meta, Google, TikTok, and property portals. Get a real-time command dashboard with source attribution, lead scoring, and pipeline visibility.
-
-#### Section-by-Section Layout:
-1. **Hero Section:**
-   * **Headline:** Unified Real Estate Command Dashboard: Track Every Lead From Ad Click to Closed Deal
-   * **Sub-headline:** Gain complete visibility into your agency's marketing spend. Track multi-channel lead attribution, AI qualification rates, broker response latency, and booked viewings in one live web portal.
-   * **Visual Hook:** Live UI preview mockup showcasing KPI scorecards, lead matrix, and traffic source attribution graphs.
-
-2. **The "Untracked Marketing Spend" Problem Section:**
-   * Dubai brokerages spend AED 50k–150k/month on Meta Ads, Google Search, TikTok, and Portals (Bayut, Property Finder), but lose track of leads across individual broker phones and unassigned CRM queues.
-
-3. **Core Feature Grid (6 Cards):**
-   * **Multi-Channel Source Attribution:** Pinpoints exact lead origins (`Meta_Sobha_Ad`, `Google_Search_Luxury`, `TikTok_Reel`, `Property_Finder`).
-   * **Real-Time Pipeline Tracking:** Track leads from `NEW` $\rightarrow$ `AI ENGAGED` $\rightarrow$ `QUALIFIED` $\rightarrow$ `VIEWING BOOKED` $\rightarrow$ `DEAL CLOSED`.
-   * **AI 1-Click Executive Reply Co-Pilot:** Gives brokers 3 AI-suggested responses (*Direct*, *Investment/ROI Focus*, *VIP Presentation*) during manual takeover.
-   * **AI Lead Briefing & Deal Heat Score:** Automatically ranks every buyer (HOT / WARM / COLD) with intent summaries, motivators, and recommended broker actions.
-   * **Sub-10s SLA Response Monitor:** Real-time red badges and alerts when inbound inquiries exceed your SLA threshold.
-   * **Sanitized 1-Click CSV Export:** Export clean lead matrix spreadsheets for audit compliance.
-
----
-
-## 5. Head-to-Head Enterprise Comparison Table (For Pages)
-
-| Feature | Standard SaaS Tools (BotSense / PropCRM / Zena) | Asif Digital Custom AI Platform |
+| Feature | Generic SaaS (BotSense / PropPilot / Commbots) | Asif Digital Custom AI Platform |
 | :--- | :--- | :--- |
-| **Code & Data Ownership** | ❌ Monthly SaaS Rent (Vendor Lock-in) | **100% Owned Next.js Codebase & Supabase DB** |
-| **Portal Ingestion** | ⚠️ Basic email parsing | **Direct API Webhooks (Property Finder & Bayut)** |
-| **Voice Note Intelligence** | ❌ Not available | **Integrated OpenAI Whisper Audio Transcriber** |
-| **Broker Reply Co-Pilot** | ❌ Not available | **1-Click AI Reply Suggestions (3 Options)** |
-| **Response Latency SLA** | ❌ Unmonitored | **Sub-10 Second Latency Monitor & Red Badges** |
-| **Off-Plan Calculator** | ❌ Manual Spreadsheets | **Automated 20% Down / 1% Monthly Engine** |
+| **Code Ownership** | ❌ Rent the bot (Monthly SaaS) | **100% Owned Next.js Codebase** |
+| **Database Architecture** | ❌ Data on vendor servers | **Private Supabase PostgreSQL Database** |
+| **Portal Integration** | ⚠️ Email parsing (2–5 min delay) | **Direct Bayut & Property Finder Webhooks** |
+| **Voice Note Intelligence** | ❌ Not supported | **OpenAI Whisper Audio Transcription** |
+| **Off-Plan Calculator** | ❌ Manual spreadsheets | **Automated 20% Down / 1% Monthly Engine** |
+| **Response SLA** | ❌ Unmonitored | **Sub-10s SLA with Red Badge Alerts** |
+| **Reply Co-Pilot** | ❌ Not available | **3 AI-Suggested Replies for Agent Handoff** |
+
+5. **FAQ Accordion & JSON-LD Schema (5 Core Questions):**
+   * Setup timeline (7–14 days), Developer inventory handling (Sobha, Emaar, Danube), Escalation logic, Code ownership, CRM sync (HubSpot, PropSpace, Salesforce).
 
 ---
 
-## 6. Schema Markup Strategy (JSON-LD)
+### PAGE 2: SERVICE PAGE 2 — `/real-estate/ai-lead-dashboard/`
+* **Meta Title:** Real Estate AI Lead Dashboard & Attribution Agency Dubai | Asif Digital
+* **Meta Description:** Stop losing track of AED 50k–150k/month in ad spend. Get a custom-coded command dashboard: real-time lead attribution (Meta/Google/TikTok/Portals), pipeline tracking, HOT/WARM/COLD scoring, and broker SLA monitoring.
+* **H1:** Real Estate AI Lead Attribution & Command Dashboard — Dubai
 
-Each page will embed `SoftwareApplication`, `Service`, and `FAQPage` JSON-LD structured data for Google SERP Rich Snippets and AI Search Engines (Perplexity, ChatGPT, Gemini, SearchGPT):
+#### Section Structure:
+1. **Hero Section:**
+   * **Eyebrow:** Real Estate Command Intelligence · Built for Dubai Brokerages
+   * **Headline:** You're Spending AED 50k–150k/Month on Ads. Do You Know Which One Closed the Deal?
+   * **Sub-headline:** A custom AI command dashboard that tracks every lead from Meta ad click $\rightarrow$ WhatsApp conversation $\rightarrow$ Viewing booked $\rightarrow$ Deal closed. Real-time pipeline. HOT/WARM/COLD scoring. Broker SLA monitoring. 1-click AI reply co-pilot.
+   * **CTAs:** [Book a Demo] | [See Live Dashboard Preview]
+   * **Visual Hook:** Live UI Preview Mockup showcasing scorecards, source attribution chart, pipeline Kanban, and red SLA alerts.
+
+2. **The "Marketing Leak" Problem Section:**
+   * Highlights untracked lead sprawl across individual broker phones vs centralized command control.
+
+3. **Core Feature Grid (6 Cards):**
+   * **Card 1 (Multi-Channel Source Attribution):** Tags lead origins (`Meta_Sobha_Ad`, `Google_Search`, `TikTok_Reel`, `Property_Finder`, `Bayut`).
+   * **Card 2 (Real-Time Pipeline Tracking):** Live Kanban view: `NEW` $\rightarrow$ `AI ENGAGED` $\rightarrow$ `QUALIFIED` $\rightarrow$ `VIEWING BOOKED` $\rightarrow$ `DEAL CLOSED`.
+   * **Card 3 (AI 1-Click Executive Reply Co-Pilot):** Provides 3 AI-suggested responses (*Direct*, *Investment/ROI Focus*, *VIP Presentation*) during manual takeover.
+   * **Card 4 (AI Lead Briefing & Deal Heat Score):** Ranks every buyer (HOT / WARM / COLD) with intent summaries, motivators, and recommended broker actions.
+   * **Card 5 (Sub-10s SLA Response Monitor):** Real-time red badges and alerts when inbound leads exceed response thresholds.
+   * **Card 6 (Sanitized 1-Click CSV Export):** Clean lead matrix exports for audit compliance.
+
+---
+
+## PART 5 — JSON-LD STRUCTURED SCHEMA MARKUP
 
 ```json
 {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "Asif Digital Real Estate AI & Command Center Platform",
-  "operatingSystem": "Web-based",
-  "applicationCategory": "BusinessApplication",
-  "provider": {
-    "@type": "Organization",
-    "name": "Asif Digital Agency",
-    "url": "https://asifdigital.agency"
-  },
-  "offers": {
-    "@type": "Offer",
-    "priceCurrency": "AED",
-    "description": "Custom Real Estate AI WhatsApp Automation and Next.js Command Dashboard Development"
-  }
+  "@graph": [
+    {
+      "@type": "Service",
+      "name": "Real Estate AI WhatsApp Automation Dubai",
+      "provider": {
+        "@type": "Organization",
+        "name": "Asif Digital Agency",
+        "url": "https://asifdigital.agency"
+      },
+      "serviceType": "AI WhatsApp Automation for Real Estate",
+      "areaServed": ["Dubai", "Abu Dhabi", "Sharjah", "London"],
+      "description": "Custom-coded 100%-owned AI WhatsApp concierge for Dubai real estate agencies. Sub-10s speed-to-lead, Khaleeji Arabic, OpenAI Whisper voice note transcription, Bayut & Property Finder direct webhooks."
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How long does WhatsApp AI automation setup take for real estate?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Typically 7–14 working days from kickoff to live deployment including Meta Cloud API setup, AI portfolio training, portal webhooks, and handoff testing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I own the code and database?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Unlike SaaS platforms, the Next.js codebase and Supabase PostgreSQL database are yours. You own the asset — zero monthly vendor lock-in."
+          }
+        }
+      ]
+    }
+  ]
 }
 ```
 
 ---
 
-## 7. Master Execution Prompt for Google Antigravity
+## PART 6 — MASTER EXECUTION PROMPT FOR GOOGLE ANTIGRAVITY
 
-When you start your new Google Antigravity session to build these pages for `asifdigital.agency`, copy and paste this exact prompt:
+When you open your separate Google Antigravity session to build these pages for `asifdigital.agency`, copy and paste this exact prompt:
 
 ```text
 PROMPT FOR NEW ANTIGRAVITY SESSION:
@@ -179,10 +211,11 @@ Primary Keyword: "Real Estate AI WhatsApp Automation Dubai"
 Tech Stack: Next.js (App Router), Tailwind CSS, Framer Motion, Lucide Icons, Structured JSON-LD Schema.
 Page Sections:
 - Hero Section: Headline, subheadline, CTAs, interactive simulated WhatsApp chat UI (bilingual Khaleeji Arabic/English).
-- Speed-to-Lead Problem Section: 85% lead decay stat (BotSense) + MIT/InsideSales 21x qualification stat card comparing 4-24h manual delays vs sub-10s AI SLA.
-- Feature Grid (6 Cards): Sub-10s SLA, Multilingual (Khaleeji Arabic/English/Russian/French), OpenAI Whisper Voice Note Transcriber, Off-Plan Payment Knowledge (20%, 1% monthly, DLD fees), Property Finder & Bayut Integration, Google Calendar & Human Handoff.
+- Speed-to-Lead Problem Section: 85% lead decay stat (BotSense), 78% 1st-responder rule (InsideSales), 68% after-hours (8PM-2AM) stat card comparing 4-24h manual delays vs sub-10s AI SLA.
+- Feature Grid (6 Cards): Sub-10s SLA, Multilingual (Khaleeji Arabic/English/Russian/French/Mandarin), OpenAI Whisper Voice Note Transcriber, Off-Plan Payment Knowledge (20%, 1% monthly, DLD fees), Property Finder & Bayut Integration, Google Calendar & Human Handoff.
+- Comparison Table: Asif Digital Custom Platform vs SaaS (BotSense / PropPilot / Commbots).
 - Security & Compliance Box: Official Meta WhatsApp Cloud API compliance and 100% private database ownership.
-- FAQ Accordion (3-5 key questions with FAQPage JSON-LD schema).
+- FAQ Accordion (5 key questions with FAQPage JSON-LD schema).
 - Final Conversion CTA.
 
 ====================================================================================
