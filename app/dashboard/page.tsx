@@ -1028,24 +1028,18 @@ export default function MasterDashboardPage() {
                 </a>
               </div>
 
-              {/* SLA KPI cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-6 shadow-xl space-y-2">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Average Response Latency</span>
-                  <div className="text-3xl font-black text-emerald-400 tracking-tight">0.85 sec</div>
-                  <p className="text-xs text-slate-400">Target &lt;1.2s WhatsApp ACK</p>
+              {/* Sleek System Health Status Bar */}
+              <div className="bg-[#0D0F17] border border-[#1E2230] rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 text-xs shadow-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
+                  <span className="font-bold text-slate-200">System Engine Status:</span>
+                  <span className="text-emerald-400 font-semibold">Operational (100% SLA)</span>
                 </div>
 
-                <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-6 shadow-xl space-y-2">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Multilingual Auto-Detect</span>
-                  <div className="text-3xl font-black text-[#C5A059] tracking-tight">100%</div>
-                  <p className="text-xs text-slate-400">English, Arabic, Russian, French & 10+ languages</p>
-                </div>
-
-                <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-6 shadow-xl space-y-2">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Database Storage</span>
-                  <div className="text-3xl font-black text-white tracking-tight">Active</div>
-                  <p className="text-xs text-slate-400">Real-time deduplicated Supabase sync</p>
+                <div className="flex flex-wrap items-center gap-6 text-slate-400 font-mono text-[11px]">
+                  <div><span className="text-slate-500 uppercase mr-1">Avg Latency:</span><strong className="text-emerald-400">0.85s</strong></div>
+                  <div><span className="text-slate-500 uppercase mr-1">Multilingual Detect:</span><strong className="text-[#C5A059]">100%</strong></div>
+                  <div><span className="text-slate-500 uppercase mr-1">Supabase DB Sync:</span><strong className="text-white">Active</strong></div>
                 </div>
               </div>
 
