@@ -28,6 +28,7 @@ import {
   Pause,
   Play,
   Gift,
+  Volume2,
   ShieldCheck,
   FileText,
   Megaphone,
@@ -132,6 +133,115 @@ export default function MasterDashboardPage() {
   // Test Booking State
   const [testingBooking, setTestingBooking] = useState<boolean>(false);
   const [testBookingMsg, setTestBookingMsg] = useState<string | null>(null);
+
+  // AI Co-Pilot & Executive Briefing State
+  const [aiSuggestions, setAiSuggestions] = useState<any[]>([]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState<boolean>(false);
+  const [leadBriefings, setLeadBriefings] = useState<Record<string, any>>({});
+  const [loadingBriefing, setLoadingBriefing] = useState<Record<string, boolean>>({});
+  const [chatReplyInput, setChatReplyInput] = useState<string>("");
+
+  const handleGenerateAiSuggestions = async (convId: string) => {
+    setLoadingSuggestions(true);
+    try {
+      const res = await fetch("/api/ai/suggest-reply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ conversationId: convId }),
+      });
+      const data = await res.json();
+      if (data.success && data.suggestions) {
+        setAiSuggestions(data.suggestions);
+      }
+    } catch (e) {
+      console.error("AI Suggestions Error:", e);
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  };
+
+  const handleGenerateLeadBriefing = async (leadId: string) => {
+    setLoadingBriefing((prev) => ({ ...prev, [leadId]: true }));
+    try {
+      const res = await fetch("/api/ai/summarize-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leadId }),
+      });
+      const data = await res.json();
+      if (data.success && data.briefing) {
+        setLeadBriefings((prev) => ({ ...prev, [leadId]: data.briefing }));
+      }
+    } catch (e) {
+      console.error("AI Briefing Error:", e);
+    } finally {
+      setLoadingBriefing((prev) => ({ ...prev, [leadId]: false }));
+    }
+  };
+
+  // Additional AI Features State
+  const [voiceData, setVoiceData] = useState<Record<string, any>>({});
+  const [loadingVoice, setLoadingVoice] = useState<Record<string, boolean>>({});
+  const [matchedProjects, setMatchedProjects] = useState<Record<string, any[]>>({});
+  const [loadingProjects, setLoadingProjects] = useState<Record<string, boolean>>({});
+  const [generatingNudge, setGeneratingNudge] = useState<boolean>(false);
+
+  const handleTranscribeVoice = async (leadId: string) => {
+    setLoadingVoice((prev) => ({ ...prev, [leadId]: true }));
+    try {
+      const res = await fetch("/api/ai/transcribe-voice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leadId }),
+      });
+      const data = await res.json();
+      if (data.success && data.result) {
+        setVoiceData((prev) => ({ ...prev, [leadId]: data.result }));
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingVoice((prev) => ({ ...prev, [leadId]: false }));
+    }
+  };
+
+  const handleMatchProjects = async (leadId: string, budgetMax?: number, buyerLocation?: string) => {
+    setLoadingProjects((prev) => ({ ...prev, [leadId]: true }));
+    try {
+      const res = await fetch("/api/ai/match-property", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ budgetMax, buyerLocation }),
+      });
+      const data = await res.json();
+      if (data.success && data.projects) {
+        setMatchedProjects((prev) => ({ ...prev, [leadId]: data.projects }));
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingProjects((prev) => ({ ...prev, [leadId]: false }));
+    }
+  };
+
+  const handleGenerateNudge = async (leadId?: string) => {
+    setGeneratingNudge(true);
+    try {
+      const res = await fetch("/api/ai/generate-nudge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leadId }),
+      });
+      const data = await res.json();
+      if (data.success && data.nudge) {
+        setChatReplyInput(data.nudge);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setGeneratingNudge(false);
+    }
+  };
 
   const handleTriggerTestBooking = async () => {
     setTestingBooking(true);
@@ -927,6 +1037,76 @@ export default function MasterDashboardPage() {
                         </div>
                       ))}
                     </div>
+
+                    {/* AI Co-Pilot 1-Click Executive Reply Bar */}
+                    <div className="p-4 border-t border-[#1E2230] bg-[#151824] space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-extrabold text-[#C5A059] uppercase tracking-wider flex items-center space-x-1.5">
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>AI Executive Reply Co-Pilot</span>
+                        </span>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            type="button"
+                            onClick={() => handleGenerateNudge(conversations[selectedConvIndex]?.lead?.id)}
+                            disabled={generatingNudge}
+                            className="px-3 py-1 bg-[#0D0F17] hover:bg-[#1E2230] border border-emerald-500/40 text-emerald-400 font-bold text-[11px] rounded-lg transition-all disabled:opacity-50"
+                          >
+                            {generatingNudge ? "Generating Nudge..." : "Generate 48h Nudge"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleGenerateAiSuggestions(conversations[selectedConvIndex]?.id)}
+                            disabled={loadingSuggestions}
+                            className="px-3 py-1 bg-[#0D0F17] hover:bg-[#1E2230] border border-[#C5A059]/40 text-[#C5A059] font-bold text-[11px] rounded-lg transition-all disabled:opacity-50"
+                          >
+                            {loadingSuggestions ? "Generating Options..." : "Generate 1-Click Replies"}
+                          </button>
+                        </div>
+                      </div>
+
+                      {aiSuggestions.length > 0 && (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                          {aiSuggestions.map((sug, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => setChatReplyInput(sug.text)}
+                              className="p-2.5 rounded-xl bg-[#0D0F17] border border-[#1E2230] hover:border-[#C5A059]/50 text-left space-y-1 transition-all group"
+                            >
+                              <span className="text-[10px] font-bold text-[#C5A059] uppercase tracking-wider block">
+                                {sug.type}
+                              </span>
+                              <p className="text-xs text-slate-300 line-clamp-2 group-hover:text-white">
+                                {sug.text}
+                              </p>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="text"
+                          value={chatReplyInput}
+                          onChange={(e) => setChatReplyInput(e.target.value)}
+                          placeholder="Type or select an AI Co-Pilot reply above..."
+                          className="flex-1 bg-[#0D0F17] border border-[#1E2230] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#C5A059]"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (chatReplyInput.trim()) {
+                              alert(`Message prepared for dispatch: "${chatReplyInput}"`);
+                              setChatReplyInput("");
+                            }
+                          }}
+                          className="px-4 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow hover:brightness-110"
+                        >
+                          Send
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -1268,10 +1448,151 @@ export default function MasterDashboardPage() {
                     </div>
                   </div>
                   <div className="p-3.5 rounded-xl bg-[#151824] border border-[#1E2230]">
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Qualification Status</span>
-                    <p className="text-xs font-bold text-emerald-400 uppercase mt-1">{selectedLead.status}</p>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Qualification Status</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                      {selectedLead.status}
+                    </span>
                   </div>
                 </div>
+              </div>
+
+              {/* AI Executive Intelligence Briefing Card */}
+              <div className="p-5 rounded-2xl bg-[#151824] border border-[#C5A059]/30 space-y-4 shadow-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Sparkles className="w-4 h-4 text-[#C5A059]" />
+                    <h4 className="text-xs font-bold text-[#C5A059] uppercase tracking-widest">Executive AI Briefing</h4>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleGenerateLeadBriefing(selectedLead.id)}
+                    disabled={loadingBriefing[selectedLead.id]}
+                    className="px-3 py-1 bg-[#0D0F17] hover:bg-[#1E2230] border border-[#C5A059]/40 text-[#C5A059] font-bold text-[11px] rounded-lg transition-all disabled:opacity-50"
+                  >
+                    {loadingBriefing[selectedLead.id] ? "Analyzing..." : "Generate Briefing"}
+                  </button>
+                </div>
+
+                {leadBriefings[selectedLead.id] ? (
+                  <div className="space-y-3 pt-1 text-xs">
+                    {/* Deal Heat Index Pill & Explanation */}
+                    <div className="bg-[#0D0F17] p-3.5 rounded-xl border border-[#1E2230] space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider">Deal Heat Index</span>
+                        <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] uppercase tracking-wider ${
+                          leadBriefings[selectedLead.id].dealHeatScore === "HOT"
+                            ? "bg-[#C5A059]/15 text-[#C5A059] border border-[#C5A059]/40"
+                            : leadBriefings[selectedLead.id].dealHeatScore === "WARM"
+                            ? "bg-amber-500/10 text-amber-400 border border-amber-500/30"
+                            : "bg-slate-800 text-slate-400 border border-slate-700"
+                        }`}>
+                          {leadBriefings[selectedLead.id].dealHeatScore} PRIORITY
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-300 font-normal leading-relaxed">
+                        {leadBriefings[selectedLead.id].heatReason}
+                      </p>
+                    </div>
+
+                    {/* Buying Intent */}
+                    <div className="bg-[#0D0F17] p-3.5 rounded-xl border border-[#1E2230] space-y-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Buying Intent</span>
+                      <p className="text-slate-200 font-normal leading-relaxed">{leadBriefings[selectedLead.id].buyingIntent}</p>
+                    </div>
+
+                    {/* Core Motivator */}
+                    <div className="bg-[#0D0F17] p-3.5 rounded-xl border border-[#1E2230] space-y-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Core Motivator</span>
+                      <p className="text-slate-200 font-normal leading-relaxed">{leadBriefings[selectedLead.id].coreMotivator}</p>
+                    </div>
+
+                    {/* Recommended Action */}
+                    <div className="bg-[#0D0F17] p-3.5 rounded-xl border border-[#C5A059]/30 space-y-1">
+                      <span className="text-[10px] font-bold text-[#C5A059] uppercase tracking-wider block">Recommended Broker Action</span>
+                      <p className="text-slate-200 font-medium leading-relaxed">{leadBriefings[selectedLead.id].recommendedAction}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-400 italic">
+                    Click "Generate Briefing" to run instant AI intent analysis and deal heat scoring for this lead.
+                  </p>
+                )}
+              </div>
+
+              {/* Feature 3: WhatsApp Voice Note Intelligence */}
+              <div className="p-5 rounded-2xl bg-[#151824] border border-[#1E2230] space-y-3 shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Volume2 className="w-4 h-4 text-[#C5A059]" />
+                    <h4 className="text-xs font-bold text-white uppercase tracking-wider">WhatsApp Voice Note Intelligence</h4>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleTranscribeVoice(selectedLead.id)}
+                    disabled={loadingVoice[selectedLead.id]}
+                    className="px-3 py-1 bg-[#0D0F17] hover:bg-[#1E2230] border border-[#C5A059]/40 text-[#C5A059] font-bold text-[10px] rounded-lg transition-all disabled:opacity-50"
+                  >
+                    {loadingVoice[selectedLead.id] ? "Transcribing Audio..." : "Transcribe Voice Note"}
+                  </button>
+                </div>
+
+                {voiceData[selectedLead.id] ? (
+                  <div className="space-y-2 pt-1 text-xs bg-[#0D0F17] p-3.5 rounded-xl border border-[#1E2230]">
+                    <div className="flex items-center justify-between text-[10px] text-slate-400">
+                      <span className="font-bold text-[#C5A059] uppercase">Voice Transcript</span>
+                      <span className="font-mono">OpenAI Whisper Engine</span>
+                    </div>
+                    <p className="text-slate-200 italic">"{voiceData[selectedLead.id].transcript}"</p>
+                    <div className="pt-2 grid grid-cols-2 gap-2 text-[11px] font-mono border-t border-[#1E2230] text-slate-300">
+                      <div>Target: <span className="text-[#C5A059] font-semibold">{voiceData[selectedLead.id].extractedPropertyType}</span></div>
+                      <div>Budget: <span className="text-emerald-400 font-semibold">{voiceData[selectedLead.id].extractedBudget}</span></div>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-400 italic">
+                    Click "Transcribe Voice Note" to process audio messages sent by this client into clean text and extracted criteria.
+                  </p>
+                )}
+              </div>
+
+              {/* Feature 5: AI Property Matcher & Payment Plan Calculator */}
+              <div className="p-5 rounded-2xl bg-[#151824] border border-[#1E2230] space-y-3 shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Building2 className="w-4 h-4 text-[#C5A059]" />
+                    <h4 className="text-xs font-bold text-white uppercase tracking-wider">AI Off-Plan Property Matcher</h4>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleMatchProjects(selectedLead.id, selectedLead.budgetMax, selectedLead.buyerLocation)}
+                    disabled={loadingProjects[selectedLead.id]}
+                    className="px-3 py-1 bg-[#0D0F17] hover:bg-[#1E2230] border border-[#C5A059]/40 text-[#C5A059] font-bold text-[10px] rounded-lg transition-all disabled:opacity-50"
+                  >
+                    {loadingProjects[selectedLead.id] ? "Matching Projects..." : "Calculate Matches"}
+                  </button>
+                </div>
+
+                {matchedProjects[selectedLead.id] ? (
+                  <div className="space-y-3 pt-1 text-xs">
+                    {matchedProjects[selectedLead.id].map((proj: any, idx: number) => (
+                      <div key={idx} className="bg-[#0D0F17] p-3.5 rounded-xl border border-[#1E2230] space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-white text-xs">{proj.projectName}</span>
+                          <span className="text-[10px] font-mono text-[#C5A059] font-bold">{proj.startingPrice}</span>
+                        </div>
+                        <p className="text-[11px] text-slate-400">{proj.developer} • {proj.location}</p>
+                        <div className="grid grid-cols-2 gap-2 text-[10px] font-mono bg-[#151824] p-2 rounded-lg text-slate-300">
+                          <div>Down Payment (20%): <span className="text-white font-bold">{proj.downPayment}</span></div>
+                          <div>Monthly (1%): <span className="text-emerald-400 font-bold">{proj.monthlyInstallment}</span></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-400 italic">
+                    Click "Calculate Matches" to run instant AI project matching and payment plan calculations based on this lead's budget.
+                  </p>
+                )}
               </div>
 
               {/* VIP Voucher Perks Generator */}
