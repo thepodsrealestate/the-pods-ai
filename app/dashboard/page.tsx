@@ -118,9 +118,16 @@ export default function MasterDashboardPage() {
   const [savingSettings, setSavingSettings] = useState<boolean>(false);
   const [settingsSaveMsg, setSettingsSaveMsg] = useState<string | null>(null);
 
+  // Lead Filter State
+  const [leadStatusFilter, setLeadStatusFilter] = useState<string>("ALL");
+
   // Test Email State
   const [sendingTestEmail, setSendingTestEmail] = useState<boolean>(false);
   const [testEmailMsg, setTestEmailMsg] = useState<string | null>(null);
+
+  // Test WhatsApp State
+  const [sendingTestWa, setSendingTestWa] = useState<boolean>(false);
+  const [testWaMsg, setTestWaMsg] = useState<string | null>(null);
 
   // Test Booking State
   const [testingBooking, setTestingBooking] = useState<boolean>(false);
@@ -160,6 +167,28 @@ export default function MasterDashboardPage() {
       setTestEmailMsg("Failed to dispatch test email");
     } finally {
       setSendingTestEmail(false);
+    }
+  };
+
+  const handleSendTestWa = async () => {
+    setSendingTestWa(true);
+    setTestWaMsg(null);
+    try {
+      const res = await fetch("/api/test-booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leadPhone: adminPhone }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setTestWaMsg(`WhatsApp booking alert dispatched to ${adminPhone}!`);
+        fetchData();
+        setTimeout(() => setTestWaMsg(null), 6000);
+      }
+    } catch (e) {
+      setTestWaMsg("Failed to dispatch WhatsApp alert");
+    } finally {
+      setSendingTestWa(false);
     }
   };
 
@@ -1084,6 +1113,12 @@ export default function MasterDashboardPage() {
                   </div>
                 )}
 
+                {testWaMsg && (
+                  <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-xs font-semibold">
+                    {testWaMsg}
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
@@ -1114,8 +1149,11 @@ export default function MasterDashboardPage() {
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                      Resend Email Dispatch API Key (Optional)
+                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
+                      <span>Resend Email Dispatch API Key (Optional)</span>
+                      <span className={`text-[10px] font-mono font-normal px-2 py-0.5 rounded ${resendApiKey ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30" : "bg-slate-800 text-slate-400"}`}>
+                        {resendApiKey ? "Live Resend Engine Active" : "Database Alert Logging Active"}
+                      </span>
                     </label>
                     <input
                       type="password"
@@ -1129,14 +1167,25 @@ export default function MasterDashboardPage() {
                 </div>
 
                 <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <button
-                    type="button"
-                    onClick={handleSendTestEmail}
-                    disabled={sendingTestEmail}
-                    className="w-full sm:w-auto px-5 py-2.5 bg-[#151824] border border-[#C5A059]/40 text-[#C5A059] font-bold text-xs rounded-xl shadow hover:bg-[#1E2230] transition-all disabled:opacity-50"
-                  >
-                    {sendingTestEmail ? "Sending Email..." : "Send Test Email to Inbox"}
-                  </button>
+                  <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                    <button
+                      type="button"
+                      onClick={handleSendTestEmail}
+                      disabled={sendingTestEmail}
+                      className="w-full sm:w-auto px-5 py-2.5 bg-[#151824] border border-[#C5A059]/40 text-[#C5A059] font-bold text-xs rounded-xl shadow hover:bg-[#1E2230] transition-all disabled:opacity-50"
+                    >
+                      {sendingTestEmail ? "Sending Email..." : "Send Test Email"}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleSendTestWa}
+                      disabled={sendingTestWa}
+                      className="w-full sm:w-auto px-5 py-2.5 bg-[#151824] border border-emerald-500/40 text-emerald-400 font-bold text-xs rounded-xl shadow hover:bg-[#1E2230] transition-all disabled:opacity-50"
+                    >
+                      {sendingTestWa ? "Sending WhatsApp..." : "Send Test WhatsApp Ping"}
+                    </button>
+                  </div>
 
                   <button
                     onClick={handleSaveSettings}
