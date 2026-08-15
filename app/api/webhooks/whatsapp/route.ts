@@ -1,11 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AIService } from '@/lib/services/aiService';
 
+// Sliding Window Rate Limiter (tracks phone -> request timestamps)
+const requestTracker = new Map<string, number[]>();
+
+function checkRateLimit(identifier: string, limit: number = 10, windowMs: number = 60000): boolean {
+  const now = Date.now();
+  const timestamps = (requestTracker.get(identifier) || []).filter((ts) => now - ts < windowMs);
+  
+  if (timestamps.length >= limit) {
+    return false;
+  }
+  
+  timestamps.push(now);
+  requestTracker.set(identifier, timestamps);
+  return true;
+}
+
 // Ultra-fast webhook — skips DB, responds to ManyChat within timeout
 // DB logging happens in background after response is sent
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
   try {
+    // 1. Webhook Secret Verification (if MANYCHAT_WEBHOOK_SECRET is set)
+    const secretHeader = req.headers.get('x-manychat-secret') || req.headers.get('authorization');
+    const expectedSecret = process.env.MANYCHAT_WEBHOOK_SECRET;
+    if (expectedSecret && secretHeader !== expectedSecret && secretHeader !== `Bearer ${expectedSecret}`) {
+      console.warn('[SECURITY] Webhook signature mismatch');
+      return NextResponse.json({ status: 'unauthorized', error: 'Invalid webhook authorization' }, { status: 401 });
+    }
+
     const body = await req.json();
 
     const phone = body.whatsapp_phone || body.phone || body.phone_number || "unknown";
@@ -16,6 +40,17 @@ export async function POST(req: NextRequest) {
 
     if (!phone || phone === "unknown") {
       return NextResponse.json({ status: 'error', reply: 'Welcome to The Pods Real Estate! How can I help?' });
+    }
+
+    // 2. Rate Limiting (max 10 requests per minute per phone number)
+    const ip = req.headers.get('x-forwarded-for') || 'anon';
+    const rateLimitKey = `${phone}_${ip}`;
+    if (!checkRateLimit(rateLimitKey, 10, 60000)) {
+      console.warn(`[SECURITY RATE LIMIT] Exceeded for ${phone}`);
+      return NextResponse.json({
+        status: 'rate_limited',
+        reply: 'Thank you for contacting The Pods Real Estate. Our team is preparing your details.',
+      }, { status: 429 });
     }
 
     // Generate AI Response (the only slow call — typically 2-5 seconds)

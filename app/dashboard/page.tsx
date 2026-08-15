@@ -195,12 +195,18 @@ export default function MasterDashboardPage() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("pods_auth_token");
-    if (token !== "authenticated_minesh_pods") {
-      router.push("/login");
-    } else {
-      setIsAuthenticated(true);
-    }
+    fetch("/api/auth/verify")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated) {
+          setIsAuthenticated(true);
+        } else {
+          router.push("/login");
+        }
+      })
+      .catch(() => {
+        router.push("/login");
+      });
   }, [router]);
 
   const fetchData = async () => {
@@ -418,7 +424,8 @@ export default function MasterDashboardPage() {
               </div>
             </div>
             <button
-              onClick={() => {
+              onClick={async () => {
+                await fetch("/api/auth/logout", { method: "POST" });
                 localStorage.removeItem("pods_auth_token");
                 router.push("/login");
               }}

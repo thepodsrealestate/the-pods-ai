@@ -12,32 +12,39 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // If already logged in, redirect directly
-    if (localStorage.getItem("pods_auth_token") === "authenticated_minesh_pods") {
-      router.push("/dashboard");
-    }
+    fetch("/api/auth/verify")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated) {
+          router.push("/dashboard");
+        }
+      })
+      .catch(() => {});
   }, [router]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    // Support changing password via environment variable (defaults to MineshPods0070)
-    const validPassword = process.env.NEXT_PUBLIC_DASHBOARD_PASSCODE || "MineshPods0070";
-    const validEmail = process.env.NEXT_PUBLIC_DASHBOARD_EMAIL || "info@thepodsrealestate.ae";
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
 
-    if (email.toLowerCase().trim() === validEmail.toLowerCase().trim() && password === validPassword) {
-      setTimeout(() => {
+      if (res.ok && data.success) {
         localStorage.setItem("pods_auth_token", "authenticated_minesh_pods");
         router.push("/dashboard");
-        setLoading(false);
-      }, 800);
-    } else {
-      setTimeout(() => {
-        setError("Invalid email address or passcode. Please try again.");
-        setLoading(false);
-      }, 600);
+      } else {
+        setError(data.message || "Invalid email address or passcode. Please try again.");
+      }
+    } catch (err: any) {
+      setError("Authentication service temporarily unavailable");
+    } finally {
+      setLoading(false);
     }
   };
 
