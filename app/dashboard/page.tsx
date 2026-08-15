@@ -402,7 +402,7 @@ export default function MasterDashboardPage() {
             </div>
             <div>
               <h2 className="font-extrabold text-white text-sm tracking-wider uppercase">The Pods</h2>
-              <p className="text-[10px] text-[#C5A059] font-bold tracking-widest uppercase">Real Estate AI</p>
+              <p className="text-[11px] text-[#C5A059] font-bold tracking-widest uppercase">Real Estate AI</p>
             </div>
           </div>
 
@@ -415,10 +415,10 @@ export default function MasterDashboardPage() {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id as any)}
-                  className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl font-medium text-xs transition-all duration-150 ${
+                  className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl font-semibold text-sm transition-all duration-150 ${
                     isActive
-                      ? "bg-gradient-to-r from-[#C5A059]/20 to-[#C5A059]/5 text-[#C5A059] border border-[#C5A059]/40 shadow-md font-semibold"
-                      : "text-slate-400 hover:text-slate-200 hover:bg-[#151824]"
+                      ? "bg-gradient-to-r from-[#C5A059]/20 to-[#C5A059]/5 text-[#C5A059] border border-[#C5A059]/40 shadow-md font-bold"
+                      : "text-slate-300 hover:text-white hover:bg-[#151824]"
                   }`}
                 >
                   <div className="flex items-center space-x-3">
@@ -1083,22 +1083,22 @@ export default function MasterDashboardPage() {
               </div>
 
               {/* Notification Alert Settings Card */}
-              <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-6 shadow-xl space-y-5">
+              <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-6 md:p-8 shadow-xl space-y-6">
                 <div>
-                  <h3 className="text-base font-bold text-white">Booking Alert & Notification Recipients</h3>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <h3 className="text-lg font-bold text-white">Booking Alert & Notification Recipients</h3>
+                  <p className="text-sm text-slate-300 mt-1">
                     Set the target phone number and email where Minesh Patel will receive instant booking alerts
                   </p>
                 </div>
 
                 {settingsSaveMsg && (
-                  <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-xs font-semibold">
+                  <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-xs font-semibold">
                     {settingsSaveMsg}
                   </div>
                 )}
 
                 {testEmailMsg && (
-                  <div className={`p-3.5 rounded-xl text-xs font-semibold ${
+                  <div className={`p-4 rounded-xl text-xs font-semibold ${
                     testEmailMsg.includes("successfully") || testEmailMsg.includes("dispatched")
                       ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-400"
                       : "bg-amber-500/10 border border-amber-500/30 text-amber-400"
@@ -1108,14 +1108,14 @@ export default function MasterDashboardPage() {
                 )}
 
                 {testWaMsg && (
-                  <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-xs font-semibold">
+                  <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-xs font-semibold">
                     {testWaMsg}
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                    <label className="text-xs font-extrabold text-slate-200 uppercase tracking-wider">
                       Notification Phone Number (WhatsApp / SMS)
                     </label>
                     <input
@@ -1123,13 +1123,13 @@ export default function MasterDashboardPage() {
                       value={adminPhone}
                       onChange={(e) => setAdminPhone(e.target.value)}
                       placeholder="+971 50 123 4567"
-                      className="w-full bg-[#151824] border border-[#1E2230] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#C5A059] font-mono transition-colors"
+                      className="w-full bg-[#151824] border border-[#1E2230] rounded-xl px-4 py-3 text-sm font-semibold text-white focus:outline-none focus:border-[#C5A059] font-mono transition-colors"
                     />
-                    <p className="text-[11px] text-slate-500">Receives direct WhatsApp alert pings for new meeting bookings.</p>
+                    <p className="text-xs text-slate-400 font-medium">Receives direct WhatsApp alert pings for new meeting bookings.</p>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                    <label className="text-xs font-extrabold text-slate-200 uppercase tracking-wider">
                       Notification Email Address
                     </label>
                     <input
@@ -1137,15 +1137,15 @@ export default function MasterDashboardPage() {
                       value={adminEmail}
                       onChange={(e) => setAdminEmail(e.target.value)}
                       placeholder="info@thepodsrealestate.ae"
-                      className="w-full bg-[#151824] border border-[#1E2230] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#C5A059] transition-colors"
+                      className="w-full bg-[#151824] border border-[#1E2230] rounded-xl px-4 py-3 text-sm font-semibold text-white focus:outline-none focus:border-[#C5A059] transition-colors"
                     />
-                    <p className="text-[11px] text-slate-500">Receives Google Calendar event invitations and booking confirmations.</p>
+                    <p className="text-xs text-slate-400 font-medium">Receives Google Calendar event invitations and booking confirmations.</p>
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
+                    <label className="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center justify-between">
                       <span>Resend Email Dispatch API Key (Optional)</span>
-                      <span className={`text-[10px] font-mono font-normal px-2 py-0.5 rounded ${resendApiKey ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30" : "bg-slate-800 text-slate-400"}`}>
+                      <span className={`text-[11px] font-mono font-semibold px-2.5 py-1 rounded ${resendApiKey ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30" : "bg-slate-800 text-slate-400"}`}>
                         {resendApiKey ? "Live Resend Engine Active" : "Database Alert Logging Active"}
                       </span>
                     </label>
@@ -1154,19 +1154,19 @@ export default function MasterDashboardPage() {
                       value={resendApiKey}
                       onChange={(e) => setResendApiKey(e.target.value)}
                       placeholder="re_123456789... (Leave blank to use Vercel RESEND_API_KEY)"
-                      className="w-full bg-[#151824] border border-[#1E2230] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#C5A059] font-mono transition-colors"
+                      className="w-full bg-[#151824] border border-[#1E2230] rounded-xl px-4 py-3 text-sm font-semibold text-white focus:outline-none focus:border-[#C5A059] font-mono transition-colors"
                     />
-                    <p className="text-[11px] text-slate-500">Enter your Resend API Key to deliver live booking alert emails directly to your inbox.</p>
+                    <p className="text-xs text-slate-400 font-medium">Enter your Resend API Key to deliver live booking alert emails directly to your inbox.</p>
                   </div>
                 </div>
 
-                <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
                     <button
                       type="button"
                       onClick={handleSendTestEmail}
                       disabled={sendingTestEmail}
-                      className="w-full sm:w-auto px-5 py-2.5 bg-[#151824] border border-[#C5A059]/40 text-[#C5A059] font-bold text-xs rounded-xl shadow hover:bg-[#1E2230] transition-all disabled:opacity-50"
+                      className="w-full sm:w-auto px-5 py-3 bg-[#151824] border border-[#C5A059]/40 text-[#C5A059] font-bold text-xs rounded-xl shadow hover:bg-[#1E2230] transition-all disabled:opacity-50"
                     >
                       {sendingTestEmail ? "Sending Email..." : "Send Test Email"}
                     </button>
@@ -1175,7 +1175,7 @@ export default function MasterDashboardPage() {
                       type="button"
                       onClick={handleSendTestWa}
                       disabled={sendingTestWa}
-                      className="w-full sm:w-auto px-5 py-2.5 bg-[#151824] border border-emerald-500/40 text-emerald-400 font-bold text-xs rounded-xl shadow hover:bg-[#1E2230] transition-all disabled:opacity-50"
+                      className="w-full sm:w-auto px-5 py-3 bg-[#151824] border border-emerald-500/40 text-emerald-400 font-bold text-xs rounded-xl shadow hover:bg-[#1E2230] transition-all disabled:opacity-50"
                     >
                       {sendingTestWa ? "Sending WhatsApp..." : "Send Test WhatsApp Ping"}
                     </button>
@@ -1184,7 +1184,7 @@ export default function MasterDashboardPage() {
                   <button
                     onClick={handleSaveSettings}
                     disabled={savingSettings}
-                    className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-lg hover:brightness-110 transition-all disabled:opacity-50"
+                    className="w-full sm:w-auto px-7 py-3 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-extrabold text-xs rounded-xl shadow-lg hover:brightness-110 transition-all disabled:opacity-50"
                   >
                     {savingSettings ? "Saving..." : "Save Notification Settings"}
                   </button>
