@@ -319,6 +319,33 @@ export default function MasterDashboardPage() {
     }
   };
 
+  const handleSendManualReply = () => {
+    if (!chatReplyInput.trim() || !data?.conversations || data.conversations.length === 0) return;
+
+    const newMsg = {
+      id: `msg_manual_${Date.now()}`,
+      senderType: "AI",
+      content: chatReplyInput.trim(),
+      createdAt: new Date().toISOString(),
+    };
+
+    // Update local data state to append message to active conversation
+    setData((prev: any) => {
+      if (!prev || !prev.conversations) return prev;
+      const updatedConvs = [...prev.conversations];
+      if (updatedConvs[selectedConvIndex]) {
+        updatedConvs[selectedConvIndex] = {
+          ...updatedConvs[selectedConvIndex],
+          messages: [...updatedConvs[selectedConvIndex].messages, newMsg],
+        };
+      }
+      return { ...prev, conversations: updatedConvs };
+    });
+
+    setChatReplyInput("");
+  };
+
+
   const handleTriggerTestBooking = async () => {
     setTestingBooking(true);
     setTestBookingMsg(null);
@@ -1161,7 +1188,13 @@ export default function MasterDashboardPage() {
                         </div>
                       )}
 
-                      <div className="flex items-center space-x-2">
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          handleSendManualReply();
+                        }}
+                        className="flex items-center space-x-2"
+                      >
                         <input
                           type="text"
                           value={chatReplyInput}
@@ -1170,18 +1203,14 @@ export default function MasterDashboardPage() {
                           className="flex-1 bg-[#0D0F17] border border-[#1E2230] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#C5A059]"
                         />
                         <button
-                          type="button"
-                          onClick={() => {
-                            if (chatReplyInput.trim()) {
-                              alert(`Message prepared for dispatch: "${chatReplyInput}"`);
-                              setChatReplyInput("");
-                            }
-                          }}
-                          className="px-4 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow hover:brightness-110"
+                          type="submit"
+                          disabled={!chatReplyInput.trim()}
+                          className="px-4 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow hover:brightness-110 disabled:opacity-50"
                         >
                           Send
                         </button>
-                      </div>
+                      </form>
+
                     </div>
                   </div>
                 )}
