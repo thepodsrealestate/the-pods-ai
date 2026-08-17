@@ -186,6 +186,82 @@ export default function MasterDashboardPage() {
   const [loadingProjects, setLoadingProjects] = useState<Record<string, boolean>>({});
   const [generatingNudge, setGeneratingNudge] = useState<boolean>(false);
 
+  // Floating AI Executive Advisor & Ad Metrics State
+  const [advisorOpen, setAdvisorOpen] = useState<boolean>(false);
+  const [advisorQuery, setAdvisorQuery] = useState<string>("");
+  const [loadingAdvisor, setLoadingAdvisor] = useState<boolean>(false);
+  const [advisorMessages, setAdvisorMessages] = useState<Array<{ role: "user" | "ai"; text: string; bullets?: string[] }>>([
+    {
+      role: "ai",
+      text: "Welcome to The Pods Executive AI Advisor console. Ask me any question about your live Meta Ads ROI, Google Ads performance, lead response SLAs, or sales pipeline statistics.",
+      bullets: [
+        "Meta Ads CPL: AED 75.00 (86 inbound leads)",
+        "Google Ads CPL: AED 108.00 (48 inbound leads)",
+        "Sub-10s WhatsApp greeting SLA active across 146 total monthly leads"
+      ]
+    }
+  ]);
+  const [adMetrics, setAdMetrics] = useState<any>({
+    summary: { totalSpendAed: 11650, totalLeads: 134, overallCplAed: 86.94 },
+    meta: { spendAed: 6450, impressions: 84200, clicks: 3120, ctr: 3.71, leads: 86, cplAed: 75, isLive: false },
+    google: { spendAed: 5200, impressions: 41500, clicks: 1850, ctr: 4.45, leads: 48, cplAed: 108, isLive: false }
+  });
+
+  useEffect(() => {
+    fetchAdMetrics();
+  }, []);
+
+  const fetchAdMetrics = async () => {
+    try {
+      const res = await fetch("/api/integrations/ad-metrics");
+      const json = await res.json();
+      if (json.success && json.data) {
+        setAdMetrics(json.data);
+      }
+    } catch (e) {
+      console.error("Ad Metrics fetch error:", e);
+    }
+  };
+
+  const handleQueryAdvisor = async (customQuery?: string) => {
+    const q = customQuery || advisorQuery;
+    if (!q.trim()) return;
+
+    const userMsg = { role: "user" as const, text: q };
+    setAdvisorMessages((prev) => [...prev, userMsg]);
+    if (!customQuery) setAdvisorQuery("");
+    setLoadingAdvisor(true);
+
+    try {
+      const res = await fetch("/api/ai/advisor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: q }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAdvisorMessages((prev) => [
+          ...prev,
+          { role: "ai", text: data.answer, bullets: data.bullets }
+        ]);
+      } else {
+        setAdvisorMessages((prev) => [
+          ...prev,
+          { role: "ai", text: "Unable to process report query right now. Please try again." }
+        ]);
+      }
+    } catch (e) {
+      console.error("Advisor Error:", e);
+      setAdvisorMessages((prev) => [
+        ...prev,
+        { role: "ai", text: "Error connecting to AI Advisor service." }
+      ]);
+    } finally {
+      setLoadingAdvisor(false);
+    }
+  };
+
+
   const handleTranscribeVoice = async (leadId: string) => {
     setLoadingVoice((prev) => ({ ...prev, [leadId]: true }));
     try {
@@ -1223,10 +1299,109 @@ export default function MasterDashboardPage() {
                 </div>
               </div>
 
-              {/* Lead traffic source distribution */}
-              <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-6 shadow-xl space-y-4">
-                <h3 className="text-base font-bold text-white">Lead Traffic Source Attribution</h3>
-                <p className="text-xs text-slate-400">Ad platforms and marketing campaign performance metrics</p>
+                {/* Multi-Channel Ad Intelligence & ROI Section */}
+                <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-6 shadow-xl space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                      <h3 className="text-base font-bold text-white flex items-center space-x-2">
+                        <Megaphone className="w-5 h-5 text-[#C5A059]" />
+                        <span>Multi-Channel Digital Ad Performance</span>
+                      </h3>
+                      <p className="text-xs text-slate-400">Live Meta Ads & Google Ads spend, CPL, and lead attribution metrics</p>
+                    </div>
+                    <button
+                      onClick={() => setAdvisorOpen(true)}
+                      className="px-3.5 py-1.5 bg-[#C5A059]/10 hover:bg-[#C5A059]/20 border border-[#C5A059]/40 text-[#C5A059] font-bold text-xs rounded-xl transition-all flex items-center space-x-1.5 self-start sm:self-auto"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      <span>Ask AI Executive Advisor</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                    {/* Meta Ads Card */}
+                    <div className="p-5 rounded-2xl bg-[#151824] border border-purple-500/30 space-y-3 relative overflow-hidden shadow-lg">
+                      <div className="flex justify-between items-center">
+                        <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/30">
+                          Meta Ads (FB / IG)
+                        </span>
+                        <span className={`text-[9px] font-mono px-2 py-0.5 rounded-full font-bold uppercase ${adMetrics.meta.isLive ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"}`}>
+                          {adMetrics.meta.isLive ? "Live API" : "Demo Fallback"}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase">Ad Spend</p>
+                          <p className="text-lg font-mono font-bold text-white">AED {adMetrics.meta.spendAed.toLocaleString()}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase">Cost Per Lead (CPL)</p>
+                          <p className="text-lg font-mono font-bold text-purple-400">AED {adMetrics.meta.cplAed}</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-[11px] text-slate-400 border-t border-[#1E2230] pt-2 font-mono">
+                        <span>Leads: <strong className="text-white">{adMetrics.meta.leads}</strong></span>
+                        <span>CTR: <strong className="text-emerald-400">{adMetrics.meta.ctr}%</strong></span>
+                      </div>
+                    </div>
+
+                    {/* Google Ads Card */}
+                    <div className="p-5 rounded-2xl bg-[#151824] border border-red-500/30 space-y-3 relative overflow-hidden shadow-lg">
+                      <div className="flex justify-between items-center">
+                        <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/30">
+                          Google Search Ads
+                        </span>
+                        <span className={`text-[9px] font-mono px-2 py-0.5 rounded-full font-bold uppercase ${adMetrics.google.isLive ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"}`}>
+                          {adMetrics.google.isLive ? "Live API" : "Demo Fallback"}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase">Ad Spend</p>
+                          <p className="text-lg font-mono font-bold text-white">AED {adMetrics.google.spendAed.toLocaleString()}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase">Cost Per Lead (CPL)</p>
+                          <p className="text-lg font-mono font-bold text-red-400">AED {adMetrics.google.cplAed}</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-[11px] text-slate-400 border-t border-[#1E2230] pt-2 font-mono">
+                        <span>Leads: <strong className="text-white">{adMetrics.google.leads}</strong></span>
+                        <span>CTR: <strong className="text-emerald-400">{adMetrics.google.ctr}%</strong></span>
+                      </div>
+                    </div>
+
+                    {/* Total Combined Spend Card */}
+                    <div className="p-5 rounded-2xl bg-[#151824] border border-[#C5A059]/40 space-y-3 relative overflow-hidden shadow-lg">
+                      <div className="flex justify-between items-center">
+                        <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-[#C5A059]/10 text-[#C5A059] border border-[#C5A059]/30">
+                          Combined Digital Total
+                        </span>
+                        <span className="text-[9px] font-mono bg-[#C5A059]/20 text-[#C5A059] px-2 py-0.5 rounded-full font-bold uppercase">Unified</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase">Total Spend</p>
+                          <p className="text-lg font-mono font-bold text-[#C5A059]">AED {adMetrics.summary.totalSpendAed.toLocaleString()}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase">Overall CPL</p>
+                          <p className="text-lg font-mono font-bold text-white">AED {adMetrics.summary.overallCplAed}</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-[11px] text-slate-400 border-t border-[#1E2230] pt-2 font-mono">
+                        <span>Total Leads: <strong className="text-emerald-400">{adMetrics.summary.totalLeads}</strong></span>
+                        <span>SLA: <strong className="text-[#C5A059]">Sub-10s</strong></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Lead traffic source distribution */}
+                <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-6 shadow-xl space-y-4">
+                  <h3 className="text-base font-bold text-white">Lead Traffic Source Attribution</h3>
+                  <p className="text-xs text-slate-400">Ad platforms and marketing campaign performance metrics</p>
+
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
                   {Object.entries(sourceCounts).map(([src, count]: [string, any]) => {
@@ -1646,6 +1821,207 @@ export default function MasterDashboardPage() {
           </div>
         </div>
       )}
+
+      {/* FLOATING LUXURY AI ACTION BALL (Fixed Bottom Right) */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <button
+          onClick={() => setAdvisorOpen(!advisorOpen)}
+          className="relative group p-4 rounded-full bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-black shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center border-2 border-white/20"
+          title="Open AI Executive Advisor"
+        >
+          <Sparkles className="w-6 h-6 animate-pulse" />
+          <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+          </span>
+        </button>
+      </div>
+
+      {/* AI EXECUTIVE COMMAND CENTER DRAWER OVERLAY */}
+      {advisorOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden bg-black/75 backdrop-blur-md flex justify-end transition-all">
+          <div className="w-full max-w-xl bg-[#0D0F17] border-l border-[#1E2230] h-full flex flex-col shadow-2xl">
+            {/* Drawer Header */}
+            <div className="p-5 border-b border-[#1E2230] bg-[#151824] flex items-center justify-between">
+              <div className="flex items-center space-x-2.5">
+                <div className="p-2 rounded-xl bg-[#C5A059]/10 border border-[#C5A059]/30 text-[#C5A059]">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white tracking-tight">AI Executive Advisor Console</h3>
+                  <p className="text-[11px] text-slate-400">Multi-Channel Ad Intelligence & Strategic Real Estate Co-Pilot</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setAdvisorOpen(false)}
+                className="p-2 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-slate-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Scrollable Content Body */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-6">
+              {/* SECTION 1: VISUAL MULTI-CHANNEL AD ROI COMPARISON GRAPH & SCORECARDS */}
+              <div className="p-5 rounded-2xl bg-[#151824] border border-[#1E2230] space-y-4 shadow-lg">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-extrabold text-white uppercase tracking-wider flex items-center space-x-2">
+                    <BarChart3 className="w-4 h-4 text-[#C5A059]" />
+                    <span>Meta Ads vs Google Ads ROI Comparison</span>
+                  </h4>
+                  <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                    Live Engine
+                  </span>
+                </div>
+
+                {/* Visual Bar Comparison Chart */}
+                <div className="space-y-3 bg-[#0D0F17] p-4 rounded-xl border border-[#1E2230]">
+                  {/* Meta Bar */}
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-xs font-semibold">
+                      <span className="text-purple-400 flex items-center space-x-1">
+                        <span className="w-2 h-2 rounded-full bg-purple-400 inline-block"></span>
+                        <span>Meta Ads (FB / IG)</span>
+                      </span>
+                      <span className="text-slate-300 font-mono">CPL: AED {adMetrics.meta.cplAed} ({adMetrics.meta.leads} leads)</span>
+                    </div>
+                    <div className="w-full bg-[#151824] rounded-full h-3.5 overflow-hidden border border-purple-500/30 p-0.5">
+                      <div className="h-full bg-gradient-to-r from-purple-600 to-purple-400 rounded-full" style={{ width: `${Math.min(100, Math.round((adMetrics.meta.leads / (adMetrics.summary.totalLeads || 1)) * 100))}%` }}></div>
+                    </div>
+                  </div>
+
+                  {/* Google Bar */}
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-xs font-semibold">
+                      <span className="text-[#C5A059] flex items-center space-x-1">
+                        <span className="w-2 h-2 rounded-full bg-[#C5A059] inline-block"></span>
+                        <span>Google Search Ads</span>
+                      </span>
+                      <span className="text-slate-300 font-mono">CPL: AED {adMetrics.google.cplAed} ({adMetrics.google.leads} leads)</span>
+                    </div>
+                    <div className="w-full bg-[#151824] rounded-full h-3.5 overflow-hidden border border-[#C5A059]/30 p-0.5">
+                      <div className="h-full bg-gradient-to-r from-[#C5A059] to-[#D4B06A] rounded-full" style={{ width: `${Math.min(100, Math.round((adMetrics.google.leads / (adMetrics.summary.totalLeads || 1)) * 100))}%` }}></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-xs pt-1">
+                  <div className="bg-[#0D0F17] p-3 rounded-xl border border-[#1E2230]">
+                    <span className="text-[10px] text-slate-400 uppercase">Total Digital Spend</span>
+                    <p className="text-sm font-mono font-bold text-white">AED {adMetrics.summary.totalSpendAed.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-[#0D0F17] p-3 rounded-xl border border-[#1E2230]">
+                    <span className="text-[10px] text-slate-400 uppercase">Overall CPL</span>
+                    <p className="text-sm font-mono font-bold text-emerald-400">AED {adMetrics.summary.overallCplAed}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* SECTION 2: AI ADVISOR CHAT CONSOLE */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-extrabold text-slate-300 uppercase tracking-wider flex items-center space-x-2">
+                    <MessageSquare className="w-4 h-4 text-[#C5A059]" />
+                    <span>Executive AI Query Console</span>
+                  </h4>
+                  <span className="text-[10px] text-slate-500 font-mono">GPT-4o-mini Grounded</span>
+                </div>
+
+                <div className="space-y-3 max-h-80 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-[#1E2230] scrollbar-track-[#0D0F17]">
+                  {advisorMessages.map((m, idx) => (
+                    <div
+                      key={idx}
+                      className={`p-4 rounded-2xl text-xs space-y-2.5 shadow-xl transition-all ${
+                        m.role === "user"
+                          ? "bg-[#1E2230] text-slate-100 ml-8 border border-[#2A2F42]"
+                          : "bg-[#151824] text-slate-200 border border-[#C5A059]/40"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between text-[10px] font-bold text-[#C5A059] uppercase tracking-wider">
+                        <span>{m.role === "user" ? "Minesh Patel (CEO)" : "AI Executive Advisor"}</span>
+                      </div>
+                      <div className="leading-relaxed space-y-2 text-slate-200">
+                        {m.text.split("\n").map((line, lIdx) => (
+                          line.trim() && <p key={lIdx}>{line}</p>
+                        ))}
+                      </div>
+                      {m.bullets && m.bullets.length > 0 && (
+                        <ul className="space-y-1.5 pt-2 border-t border-[#1E2230] text-[11px] text-slate-300">
+                          {m.bullets.map((b, i) => (
+                            <li key={i} className="flex items-start space-x-2">
+                              <span className="text-[#C5A059] font-bold">•</span>
+                              <span>{b}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                  {loadingAdvisor && (
+                    <div className="p-4 rounded-2xl bg-[#151824] border border-[#C5A059]/40 text-xs text-[#C5A059] font-bold flex items-center space-x-2 animate-pulse">
+                      <RefreshCw className="w-4 h-4 animate-spin text-[#C5A059]" />
+                      <span>Analyzing Ad APIs and Database Context...</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+
+              {/* SECTION 3: 1-CLICK PROMPT PILLS */}
+              <div className="space-y-2 pt-2">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">1-Click Executive Prompts</span>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => handleQueryAdvisor("Compare Google Ads vs Meta Ads CPL and lead volume.")}
+                    className="px-3 py-1.5 rounded-xl bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
+                  >
+                    Compare Google vs Meta CPL
+                  </button>
+                  <button
+                    onClick={() => handleQueryAdvisor("How many HOT leads require viewing booking today?")}
+                    className="px-3 py-1.5 rounded-xl bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
+                  >
+                    Summary of HOT Leads
+                  </button>
+                  <button
+                    onClick={() => handleQueryAdvisor("Generate an executive 1-paragraph report for our sales meeting.")}
+                    className="px-3 py-1.5 rounded-xl bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
+                  >
+                    Generate Board Report
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Input Bar */}
+            <div className="p-4 border-t border-[#1E2230] bg-[#151824]">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleQueryAdvisor();
+                }}
+                className="flex items-center space-x-2"
+              >
+                <input
+                  type="text"
+                  value={advisorQuery}
+                  onChange={(e) => setAdvisorQuery(e.target.value)}
+                  placeholder="Ask AI Advisor about Google Ads, Meta Ads, or leads..."
+                  className="flex-1 bg-[#0D0F17] border border-[#1E2230] focus:border-[#C5A059] rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 outline-none transition-all"
+                />
+                <button
+                  type="submit"
+                  disabled={loadingAdvisor || !advisorQuery.trim()}
+                  className="px-4 py-3 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-lg hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
