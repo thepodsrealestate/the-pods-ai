@@ -7,8 +7,8 @@ A high-performance luxury real estate AI Concierge system and Command Center das
 ## 🔐 1. COMMAND CENTER LOGIN DETAILS
 The dashboard is secured by a premium dark-themed passcode screen. 
 
-* **Authorized Email:** `info@thepodsrealestate.ae`
-* **Secure Passcode:** `MineshPods0070`
+* **Authorized Email:** ``
+* **Secure Passcode:** ``
 
 ---
 
