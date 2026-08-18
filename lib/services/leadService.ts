@@ -29,13 +29,21 @@ export class LeadService {
   /**
    * E.164 Phone Number Normalization
    */
-  static normalizePhone(phone: string): string {
+  static normalizePhone(phone: string, fullName?: string): string {
     if (!phone || phone.trim() === '' || phone === 'unknown') {
-      return `+lead_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+      const nameSlug = (fullName || 'guest').toLowerCase().replace(/[^a-z0-9]/g, '_');
+      return `+lead_${nameSlug}`;
     }
+
+    // Preserve stable lead slugs (+lead_shahbaz, +mc_12345)
+    if (phone.startsWith('+lead_') || phone.startsWith('+mc_')) {
+      return phone;
+    }
+
     let cleaned = phone.replace(/[^0-9+]/g, '');
     if (!cleaned || cleaned === '+') {
-      return `+lead_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+      const nameSlug = (fullName || 'guest').toLowerCase().replace(/[^a-z0-9]/g, '_');
+      return `+lead_${nameSlug}`;
     }
     if (!cleaned.startsWith('+')) {
       if (cleaned.startsWith('00')) {
@@ -51,17 +59,25 @@ export class LeadService {
     return cleaned;
   }
 
-
   /**
    * Find or Create Lead with Idempotent Attribution
    */
   static async findOrCreateLead(input: CreateLeadInput) {
-    const normalizedPhone = this.normalizePhone(input.phone);
+    const normalizedPhone = this.normalizePhone(input.phone, input.fullName);
 
-    let lead = await prisma.lead.findUnique({
-      where: { phone: normalizedPhone },
+    // Search by normalized phone or exact contact name to guarantee 100% unified thread
+    let lead = await prisma.lead.findFirst({
+      where: {
+        OR: [
+          { phone: normalizedPhone },
+          input.fullName && input.fullName !== 'VIP Client' && input.fullName !== 'Guest'
+            ? { fullName: { equals: input.fullName, mode: 'insensitive' } }
+            : { phone: normalizedPhone }
+        ]
+      },
       include: { attributions: true },
     });
+
 
     if (!lead) {
       lead = await prisma.lead.create({
