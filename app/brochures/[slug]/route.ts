@@ -86,7 +86,7 @@ export async function GET(
   const staticPdfPath = path.join(process.cwd(), 'public', 'brochures', `${cleanSlug}.pdf`);
   if (fs.existsSync(staticPdfPath)) {
     const fileBuffer = fs.readFileSync(staticPdfPath);
-    return new NextResponse(fileBuffer, {
+    return new NextResponse(new Uint8Array(fileBuffer), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `inline; filename="${cleanSlug}.pdf"`,
@@ -143,7 +143,7 @@ export async function GET(
     project.overview
   );
 
-  return new NextResponse(pdfBuffer, {
+  return new NextResponse(new Uint8Array(pdfBuffer), {
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `inline; filename="${cleanSlug}.pdf"`,
@@ -151,3 +151,4 @@ export async function GET(
     },
   });
 }
+
