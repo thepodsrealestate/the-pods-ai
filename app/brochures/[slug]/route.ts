@@ -88,7 +88,7 @@ export async function GET(
     </div>
 
     <div style="text-align: center;">
-      <a href="https://the-pods-ai.vercel.app/dashboard" class="btn">View Live Off-Plan Matrix</a>
+      <a href="https://wa.me/447404097586?text=Hi%20Minesh,%20I%20am%20viewing%20the%20${encodeURIComponent(project.title)}%20prospectus%20and%20would%20like%20to%20schedule%20a%20private%20consultation" class="btn">Connect with Minesh Patel on WhatsApp →</a>
     </div>
 
     <div class="footer">
@@ -97,6 +97,7 @@ export async function GET(
   </div>
 </body>
 </html>`;
+
 
   return new NextResponse(html, {
     headers: {
