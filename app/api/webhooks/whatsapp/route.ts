@@ -32,10 +32,17 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
+    let rawPhone = body.whatsapp_phone || body.phone || body.phone_number || body.user_phone || body.contact_phone || body.from || body.custom_fields?.phone || body.custom_fields?.whatsapp_phone;
+    if (typeof rawPhone === 'string' && (rawPhone.includes('{{') || rawPhone.trim() === '' || rawPhone === 'unknown')) {
+      rawPhone = undefined;
+    }
+
     const subscriberId = body.id || body.subscriber_id || body.user_id || body.contact_id;
-    const phone = body.whatsapp_phone || body.phone || body.phone_number || body.user_phone || body.contact_phone || body.from || body.custom_fields?.phone || body.custom_fields?.whatsapp_phone || (subscriberId ? `+mc_${subscriberId}` : `+lead_guest`);
-    let userText = body.last_input_text || body.payload?.text || body.text || body.message || "";
     const senderName = body.first_name ? `${body.first_name} ${body.last_name || ''}`.trim() : (body.name || body.full_name || body.sender_name || body.user_name || body.custom_fields?.name || "VIP Client");
+    const nameSlug = senderName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const phone = rawPhone || (subscriberId ? `+mc_${subscriberId}` : (nameSlug && nameSlug !== 'vipclient' ? `+lead_${nameSlug}` : `+lead_guest`));
+    let userText = body.last_input_text || body.payload?.text || body.text || body.message || "";
+
 
 
 
