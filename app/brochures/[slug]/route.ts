@@ -87,10 +87,20 @@ export async function GET(
   if (fs.existsSync(dir)) {
     const files = fs.readdirSync(dir);
     const cleanNormalized = cleanSlug.replace(/[^a-z0-9]/g, '');
-    const matchedFile = files.find((f) => {
+    
+    // 1. Exact match first
+    let matchedFile = files.find((f) => {
       const fNorm = f.toLowerCase().replace('.pdf', '').replace(/[^a-z0-9]/g, '');
-      return fNorm === cleanNormalized || f.toLowerCase() === `${cleanSlug}.pdf` || fNorm.includes(cleanNormalized) || cleanNormalized.includes(fNorm);
+      return fNorm === cleanNormalized || f.toLowerCase() === `${cleanSlug}.pdf`;
     });
+
+    // 2. Substring match fallback
+    if (!matchedFile) {
+      matchedFile = files.find((f) => {
+        const fNorm = f.toLowerCase().replace('.pdf', '').replace(/[^a-z0-9]/g, '');
+        return fNorm.includes(cleanNormalized) || cleanNormalized.includes(fNorm);
+      });
+    }
 
     if (matchedFile) {
       const fileBuffer = fs.readFileSync(path.join(dir, matchedFile));

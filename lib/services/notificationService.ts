@@ -14,6 +14,7 @@ export class NotificationService {
    */
   static async notifyMineshBooking(payload: NotificationPayload) {
     const timeFormatted = new Date(payload.meetingTime).toLocaleString('en-US', {
+      timeZone: 'Asia/Dubai',
       weekday: 'short',
       month: 'short',
       day: 'numeric',
@@ -23,7 +24,7 @@ export class NotificationService {
 
     const alertMessage = `🚨 NEW VIP MEETING BOOKED: ${payload.leadName} (${payload.phone}) scheduled for ${timeFormatted} at ${payload.location || 'The Pods, Bluewaters Island'}.${payload.voucherCode ? ` VIP Voucher: ${payload.voucherCode}` : ''}`;
 
-    console.log(`[NOTIFICATION -> MINESH PATEL]: ${alertMessage}`);
+    console.log(`[NOTIFICATION -> MINESH PATEL (+971523666495) & RESHMA (+971523999502)]: ${alertMessage}`);
 
     // 1. Log System Event in Database for Audit & Dashboard Alert Feed
     try {
@@ -37,7 +38,7 @@ export class NotificationService {
       console.error('Failed to log system notification event:', e.message);
     }
 
-    // 2. WhatsApp / Email Webhook dispatch to Minesh
+    // 2. Automated Dispatch to Minesh (+971523666495) & Reshma (+971523999502)
     const mineshNotifyWebhook = process.env.MINESH_NOTIFY_WEBHOOK_URL;
     if (mineshNotifyWebhook) {
       try {
@@ -45,17 +46,21 @@ export class NotificationService {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            recipient: 'Minesh Patel',
+            recipients: [
+              { name: 'Minesh Patel', phone: '+971523666495', email: 'minesh@thepods.ae' },
+              { name: 'Reshma Patel', phone: '+971523999502', email: 'reshma@thepods.ae' }
+            ],
             phone: payload.phone,
             lead_name: payload.leadName,
             meeting_time: timeFormatted,
             location: payload.location || 'The Pods Bluewaters',
+            calendar_link: 'https://calendar.app.google/xGRVwZCTkrnZCypUA',
             dashboard_url: 'https://the-pods-ai.vercel.app/dashboard',
             alert_text: alertMessage,
           }),
         });
       } catch (err: any) {
-        console.error('Failed to trigger Minesh notification webhook:', err.message);
+        console.error('Failed to trigger Minesh/Reshma notification webhook:', err.message);
       }
     }
 
@@ -63,12 +68,12 @@ export class NotificationService {
   }
 
   /**
-   * Send Human Handoff Alert to Minesh Patel
+   * Send Human Handoff Alert to Minesh Patel & Reshma Patel
    */
   static async notifyMineshHandoff(leadName: string, phone: string, reason: string) {
-    const alertMessage = `⚠️ HUMAN TAKEOVER REQUIRED: Lead ${leadName} (${phone}) requested human agent. Reason: ${reason}. AI has paused.`;
+    const alertMessage = `⚠️ HUMAN TAKEOVER REQUIRED: Lead ${leadName} (${phone}) requested human agent. Reason: ${reason}. Live Dashboard: https://the-pods-ai.vercel.app/dashboard`;
 
-    console.log(`[HANDOFF -> MINESH PATEL]: ${alertMessage}`);
+    console.log(`[HANDOFF -> MINESH (+971523666495) & RESHMA (+971523999502)]: ${alertMessage}`);
 
     try {
       await prisma.systemEvent.create({
@@ -81,6 +86,30 @@ export class NotificationService {
       console.error('Failed to log handoff event:', e.message);
     }
 
+    const mineshNotifyWebhook = process.env.MINESH_NOTIFY_WEBHOOK_URL;
+    if (mineshNotifyWebhook) {
+      try {
+        await fetch(mineshNotifyWebhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            recipients: [
+              { name: 'Minesh Patel', phone: '+971523666495', email: 'minesh@thepods.ae' },
+              { name: 'Reshma Patel', phone: '+971523999502', email: 'reshma@thepods.ae' }
+            ],
+            phone,
+            lead_name: leadName,
+            reason,
+            dashboard_url: 'https://the-pods-ai.vercel.app/dashboard',
+            alert_text: alertMessage,
+          }),
+        });
+      } catch (err: any) {
+        console.error('Failed to trigger handoff webhook:', err.message);
+      }
+    }
+
     return { success: true, alertMessage };
   }
+
 }

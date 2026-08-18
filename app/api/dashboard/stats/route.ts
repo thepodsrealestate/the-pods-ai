@@ -17,7 +17,7 @@ export async function GET() {
     ] = await Promise.all([
       prisma.lead.count(),
       prisma.lead.count({ where: { status: "QUALIFIED" } }),
-      prisma.handoff.count({ where: { resolved: false } }),
+      prisma.lead.count({ where: { handoffStatus: true, aiEnabled: false } }),
       prisma.booking.count(),
       prisma.voucher.count(),
       prisma.lead.findMany({

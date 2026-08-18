@@ -83,23 +83,53 @@ export async function POST(req: NextRequest) {
       }, { status: 429 });
     }
 
-    // 3. Fetch past conversation history from database for 100% memory retention
+    // 3. Normalize phone for consistent database lookups
+    let normalizedPhone = phone;
+    try {
+      const { LeadService } = await import('@/lib/services/leadService');
+      normalizedPhone = LeadService.normalizePhone(phone, senderName);
+    } catch (_) { /* fallback to raw phone */ }
+
+    // 4. Fetch past conversation history from database for 100% unlimited memory retention
     let conversationHistory: { sender: string; text: string }[] = [];
     try {
       const { prisma } = await import('@/lib/prisma');
-      const existingLead = await prisma.lead.findUnique({
-        where: { phone },
+      const existingLead = await prisma.lead.findFirst({
+        where: {
+          OR: [
+            { phone: normalizedPhone },
+            { phone },
+            senderName && senderName !== 'VIP Client' && senderName !== 'Guest'
+              ? { fullName: { equals: senderName, mode: 'insensitive' } }
+              : { phone: normalizedPhone },
+          ],
+        },
         include: {
           conversations: {
+            orderBy: { updatedAt: 'desc' },
+            take: 1,
             include: {
               messages: {
-                take: 10,
+                take: 100,
                 orderBy: { createdAt: 'desc' },
               },
             },
           },
         },
       });
+
+      // Check if AI is disabled for this lead (human handoff active)
+      if (existingLead && existingLead.aiEnabled === false) {
+        console.log(`[HANDOFF ACTIVE] AI paused for ${senderName} (${normalizedPhone}) — skipping AI response`);
+        // Still log the message to database
+        logToDatabase(body, userText, senderName, normalizedPhone, { reply: '', action: 'NONE' }).catch(() => {});
+        return NextResponse.json({
+          status: 'handoff_active',
+          reply: '',
+          language: 'en',
+          latency_ms: Date.now() - startTime,
+        });
+      }
 
       if (existingLead && existingLead.conversations.length > 0) {
         const rawMsgs = [...existingLead.conversations[0].messages].reverse();
@@ -112,6 +142,7 @@ export async function POST(req: NextRequest) {
       console.warn('[CONTEXT] History lookup warning:', histErr);
     }
 
+
     // Generate AI Response with full conversation memory
     const aiResult = await AIService.generateResponse({
       leadName: senderName || undefined,
@@ -123,7 +154,7 @@ export async function POST(req: NextRequest) {
     console.log(`[FAST] AI replied in ${latency}ms: "${aiResult.reply.substring(0, 80)}..."`);
 
     // Fire-and-forget: log to DB in background (doesn't block response)
-    logToDatabase(body, userText, senderName, phone, aiResult).catch(err =>
+    logToDatabase(body, userText, senderName, normalizedPhone, aiResult).catch(err =>
       console.error('[BG-LOG] DB logging error:', err.message)
     );
 
@@ -191,15 +222,46 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
 
     const conversation = await LeadService.getOrCreateConversation(lead.id);
 
-    await Promise.all([
-      MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.LEAD, content: userText, externalId: undefined }),
-      MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.AI, content: aiResult.reply }),
-    ]);
+    // Only store messages if there's actual content
+    if (userText && userText.trim()) {
+      await MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.LEAD, content: userText, externalId: undefined });
+    }
+    if (aiResult.reply && aiResult.reply.trim()) {
+      await MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.AI, content: aiResult.reply });
+    }
 
-    if (aiResult.action === 'BOOK_MEETING' || aiResult.action === 'CHECK_CALENDAR') {
+    // Save lead_updates from AI (budget, purpose, timeline, location)
+    if (aiResult.lead_updates) {
+      const updates: any = {};
+      if (aiResult.lead_updates.buyer_location) updates.buyerLocation = aiResult.lead_updates.buyer_location;
+      if (aiResult.lead_updates.purchase_purpose) updates.purchasePurpose = aiResult.lead_updates.purchase_purpose;
+      if (aiResult.lead_updates.budget_min) updates.budgetMin = aiResult.lead_updates.budget_min;
+      if (aiResult.lead_updates.budget_max) updates.budgetMax = aiResult.lead_updates.budget_max;
+      if (aiResult.lead_updates.timeline) updates.timeline = aiResult.lead_updates.timeline;
+      if (Object.keys(updates).length > 0) {
+        await prisma.lead.update({ where: { id: lead.id }, data: updates });
+      }
+    }
+
+    // BUG FIX: Only create booking on confirmed BOOK_MEETING (NOT CHECK_CALENDAR)
+    if (aiResult.action === 'BOOK_MEETING') {
       const { CalendarService } = await import('@/lib/services/calendarService');
-      const meetingTime = new Date(Date.now() + 86400000 * 2);
+      // Parse actual booking time from AI response instead of hardcoding
+      let meetingTime = new Date(Date.now() + 86400000 * 2);
       meetingTime.setHours(14, 0, 0, 0);
+      if (aiResult.booking_details?.time) {
+        try {
+          const timeMatch = aiResult.booking_details.time.match(/(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i);
+          if (timeMatch) {
+            let hours = parseInt(timeMatch[1]);
+            const mins = parseInt(timeMatch[2] || '0');
+            const ampm = timeMatch[3]?.toUpperCase();
+            if (ampm === 'PM' && hours < 12) hours += 12;
+            if (ampm === 'AM' && hours === 12) hours = 0;
+            meetingTime.setHours(hours, mins, 0, 0);
+          }
+        } catch (_) { /* fallback to default */ }
+      }
       await CalendarService.createBooking({
         leadId: lead.id,
         meetingTime,
@@ -207,9 +269,22 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       });
       console.log('[BG-LOG] ✅ Meeting Booking created & notification sent!');
     } else if (aiResult.action === 'HANDOFF') {
+      // BUG FIX: Persist handoff state — disable AI and create Handoff record
+      await prisma.lead.update({
+        where: { id: lead.id },
+        data: { aiEnabled: false, handoffStatus: true },
+      });
+      try {
+        await prisma.handoff.create({
+          data: {
+            leadId: lead.id,
+            reason: aiResult.handoff_reason || 'Human takeover requested',
+          },
+        });
+      } catch (_) { /* handoff record may already exist */ }
       const { NotificationService } = await import('@/lib/services/notificationService');
       await NotificationService.notifyMineshHandoff(senderName, phone, aiResult.handoff_reason || 'Human takeover requested');
-      console.log('[BG-LOG] ✅ Handoff alert sent!');
+      console.log('[BG-LOG] ✅ Handoff alert sent & AI paused for this lead!');
     }
 
     console.log('[BG-LOG] ✅ Messages and attribution saved to DB');
@@ -217,6 +292,7 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
     console.error('[BG-LOG] Error:', err.message);
   }
 }
+
 
 export async function GET() {
   return NextResponse.json({
