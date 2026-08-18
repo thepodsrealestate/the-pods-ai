@@ -322,6 +322,32 @@
           ]
         },
         {
+          "id": "binghatti-wraith",
+          "projectName": "Binghatti Wraith",
+          "location": "Al Jaddaf / Healthcare City, Dubai",
+          "startingPriceAed": 850000,
+          "paymentPlan": "70/30 flexible payment plan (20% down payment)",
+          "handover": "Q4 2026",
+          "unitsAvailable": ["1-Bed", "2-Bed", "3-Bed"],
+          "keyFacts": [
+            "Ultra-modern luxury residences inspired by Rolls-Royce automotive craftsmanship",
+            "Prime Al Jaddaf waterfront location minutes from Downtown Dubai"
+          ]
+        },
+        {
+          "id": "binghatti-skyterraces",
+          "projectName": "Binghatti Sky Terraces",
+          "location": "Dubai Silicon Oasis, Dubai",
+          "startingPriceAed": 680000,
+          "paymentPlan": "70/30 flexible payment plan",
+          "handover": "Q3 2026",
+          "unitsAvailable": ["Studio", "1-Bed", "2-Bed"],
+          "keyFacts": [
+            "Iconic stepped terrace architecture with panoramic Dubai skyline vistas",
+            "High rental yield investment corridor"
+          ]
+        },
+        {
           "id": "binghatti-bugatti",
           "projectName": "Bugatti Residences by Binghatti",
           "location": "Business Bay, Dubai",
