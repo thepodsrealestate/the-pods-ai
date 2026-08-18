@@ -1,46 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const cleanSlug = slug.replace('.pdf', '').toLowerCase();
+  const cleanSlug = slug.replace('.pdf', '').toLowerCase().trim();
 
-  const brochures: Record<string, { title: string; developer: string; location: string; startingPrice: string; plan: string; overview: string }> = {
-    'danube-bayz101': {
-      title: 'BAYZ 101 by Danube Properties',
-      developer: 'Danube Properties',
-      location: 'Business Bay, Dubai',
-      startingPrice: 'AED 650,000',
-      plan: '20% Down Payment + 1% Monthly Construction Plan + 40% Post-Handover',
-      overview: 'Ultra-luxury 101-level skyscraper offering panoramic views of Burj Khalifa & Dubai Canal. Fully furnished luxury suites with world-class amenities.',
-    },
-    'danube-diamondz': {
-      title: 'DIAMONDZ by Danube Properties',
-      developer: 'Danube Properties',
-      location: 'Jumeirah Lake Towers (JLT), Dubai',
-      startingPrice: 'AED 1,100,000',
-      plan: '20% Down Payment + 1% Monthly Terms',
-      overview: 'Resort-style luxury living with over 40 exclusive lifestyle amenities, infinity pools, bowling alleys, and private sky decks.',
-    },
-    'sobha-hartland2': {
-      title: 'Sobha Hartland II Waterfront Villas & Apartments',
-      developer: 'Sobha Realty',
-      location: 'Sobha Hartland II, Ras Al Khor, Dubai',
-      startingPrice: 'AED 1,400,000',
-      plan: '10% Down Payment + 50/50 Payment Plan',
-      overview: 'Luxury waterfront community with crystal lagoons, 50% green open spaces, and world-class international schools.',
-    },
-  };
+  // Load knowledge catalog dynamically
+  let projectInfo: any = null;
+  try {
+    const catalogPath = path.join(process.cwd(), 'knowledge', 'published', 'offplan_catalog.json');
+    if (fs.existsSync(catalogPath)) {
+      const catalogData = JSON.parse(fs.readFileSync(catalogPath, 'utf-8'));
+      for (const dev of catalogData.developers || []) {
+        for (const proj of dev.projects || []) {
+          const pId = proj.id ? proj.id.toLowerCase() : '';
+          const pName = proj.projectName ? proj.projectName.toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+          if (pId.includes(cleanSlug) || cleanSlug.includes(pId) || pName.includes(cleanSlug.replace(/[^a-z0-9]/g, ''))) {
+            projectInfo = {
+              title: `${proj.projectName} by ${dev.name}`,
+              developer: dev.name,
+              location: proj.location,
+              startingPrice: proj.startingPriceAed ? `AED ${proj.startingPriceAed.toLocaleString()}` : 'AED 650,000',
+              plan: proj.paymentPlan || 'Flexible Developer Payment Plan Available',
+              overview: Array.isArray(proj.keyFacts) ? proj.keyFacts.join('. ') : 'Luxury off-plan development in prime Dubai location.',
+            };
+            break;
+          }
+        }
+        if (projectInfo) break;
+      }
+    }
+  } catch (e) {
+    console.error('Error reading catalog for brochure:', e);
+  }
 
-  const project = brochures[cleanSlug] || {
-    title: 'The Pods Luxury Off-Plan Collection',
-    developer: 'The Pods Real Estate',
+  const project = projectInfo || {
+    title: `${cleanSlug.toUpperCase().replace(/-/g, ' ')} — Luxury Off-Plan Collection`,
+    developer: 'The Pods Real Estate Preferred Developer',
     location: 'Dubai, UAE',
     startingPrice: 'AED 650,000',
-    plan: 'Flexible Developer Terms Available',
-    overview: 'Exclusive off-plan luxury real estate inventory in Dubai curated by Minesh Patel.',
+    plan: 'Flexible Developer Payment Plan Available',
+    overview: 'Exclusive luxury off-plan real estate prospectus curated by Minesh Patel at The Pods Real Estate.',
   };
 
   const html = `<!DOCTYPE html>
@@ -97,6 +101,7 @@ export async function GET(
   </div>
 </body>
 </html>`;
+
 
 
   return new NextResponse(html, {
