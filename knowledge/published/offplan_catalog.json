@@ -134,9 +134,69 @@
             "1% monthly payment plan over 80 months",
             "Official Danube Structure: 20% down payment + 4% DLD, 1% (or 0.5%) monthly until handover, and 40% post-handover balance"
           ]
+        },
+        {
+          "id": "danube-bayz-102",
+          "projectName": "BAYZ 102 by Danube",
+          "location": "Business Bay, Dubai",
+          "startingPriceAed": 680000,
+          "paymentPlan": "20% Down Payment + 4% DLD fee, 1% per month during construction, 40% Post-Handover (80 Months Total)",
+          "handover": "Q4 2028",
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed",
+            "3-Bed",
+            "4-Bed",
+            "Sky Villa with Private Pool"
+          ],
+          "keyFacts": [
+            "102-level mega-skyscraper in Business Bay featuring dedicated Helipad and Sky Garden",
+            "Private designer swimming pools in presidential suites and sky villas",
+            "Studios from AED 680K, 1-Beds from AED 1.2M with guaranteed 1% monthly Danube plan",
+            "Official Danube Structure: 20% down payment + 4% DLD, 1% monthly for 80 months"
+          ]
+        },
+        {
+          "id": "danube-sparklz",
+          "projectName": "SPARKLZ by Danube",
+          "location": "Al Furjan, Dubai",
+          "startingPriceAed": 620000,
+          "paymentPlan": "20% Down Payment + 4% DLD fee, 1% per month during construction, 40% Post-Handover (80 Months Total)",
+          "handover": "Q3 2027",
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed",
+            "3-Bed"
+          ],
+          "keyFacts": [
+            "Modern luxury residences in prime Al Furjan (near Discovery Gardens metro and Expo City)",
+            "40+ lifestyle amenities including private cinema, infinity pool, and sports decks",
+            "Studios from AED 620K, 1-Beds from AED 950K on Danube's signature 1% monthly plan"
+          ]
+        },
+        {
+          "id": "danube-aspirz",
+          "projectName": "ASPIRZ by Danube",
+          "location": "Dubai Sports City / Silicon Oasis, Dubai",
+          "startingPriceAed": 590000,
+          "paymentPlan": "20% Down Payment + 4% DLD fee, 1% per month during construction, 40% Post-Handover (80 Months Total)",
+          "handover": "Q2 2027",
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed"
+          ],
+          "keyFacts": [
+            "Contemporary lifestyle development featuring fully furnished designer apartments",
+            "Comprehensive wellness facilities, running tracks, and landscaped leisure decks",
+            "Affordable luxury entry starting from AED 590K with 1% monthly payment plan"
+          ]
         }
       ]
     },
+
     {
       "name": "Sobha Realty",
       "projects": [
