@@ -30,7 +30,13 @@ export class LeadService {
    * E.164 Phone Number Normalization
    */
   static normalizePhone(phone: string): string {
+    if (!phone || phone.trim() === '' || phone === 'unknown') {
+      return `+lead_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+    }
     let cleaned = phone.replace(/[^0-9+]/g, '');
+    if (!cleaned || cleaned === '+') {
+      return `+lead_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+    }
     if (!cleaned.startsWith('+')) {
       if (cleaned.startsWith('00')) {
         cleaned = '+' + cleaned.substring(2);
@@ -44,6 +50,7 @@ export class LeadService {
     }
     return cleaned;
   }
+
 
   /**
    * Find or Create Lead with Idempotent Attribution

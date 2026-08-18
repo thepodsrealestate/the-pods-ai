@@ -32,9 +32,10 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    const phone = body.whatsapp_phone || body.phone || body.phone_number || "unknown";
+    const phone = body.whatsapp_phone || body.phone || body.phone_number || body.user_phone || body.contact_phone || body.from || body.custom_fields?.phone || body.custom_fields?.whatsapp_phone || body.user_id || body.contact_id || `lead_${Date.now()}`;
     let userText = body.last_input_text || body.payload?.text || body.text || body.message || "";
-    const senderName = body.first_name || body.name || body.sender_name || "Guest";
+    const senderName = body.first_name || body.name || body.full_name || body.sender_name || body.user_name || body.custom_fields?.name || "VIP Guest";
+
 
     // Audio / Voice Note Detection & Automatic OpenAI Whisper Transcription
     const audioUrl = body.voice_url || body.audio_url || body.media_url || body.file_url || body.payload?.url;
