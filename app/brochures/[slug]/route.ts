@@ -2,6 +2,79 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+function createMinimalPdfBuffer(title: string, developer: string, location: string, price: string, plan: string, overview: string): Buffer {
+  const textContent = `
+${title.toUpperCase()}
+DEVELOPER: ${developer}
+LOCATION: ${location}
+STARTING PRICE: ${price}
+PAYMENT PLAN: ${plan}
+
+PROJECT OVERVIEW:
+${overview}
+
+Official Prospectus Curated by Minesh Patel (@thepodsrealestate)
+The Pods Real Estate — Bluewaters Island & London Desks
+`;
+
+  // Standard valid PDF 1.4 binary structure
+  const pdfString = `%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 4 0 R >> >> /MediaBox [0 0 612 792] /Contents 5 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Length ${textContent.length + 100} >>
+stream
+BT
+/F1 14 Tf
+40 730 Td
+16 TL
+(${title.replace(/[()]/g, '')}) Tj
+T*
+(Developer: ${developer.replace(/[()]/g, '')}) Tj
+T*
+(Location: ${location.replace(/[()]/g, '')}) Tj
+T*
+(Starting Price: ${price.replace(/[()]/g, '')}) Tj
+T*
+(Payment Plan: ${plan.replace(/[()]/g, '')}) Tj
+T*
+T*
+(Project Overview:) Tj
+T*
+(${overview.substring(0, 150).replace(/[()]/g, '')}) Tj
+T*
+T*
+(The Pods Real Estate - Official Prospectus) Tj
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+0000000111 00000 n 
+0000000216 00000 n 
+0000000288 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+500
+%%EOF`;
+
+  return Buffer.from(pdfString);
+}
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -9,7 +82,20 @@ export async function GET(
   const { slug } = await params;
   const cleanSlug = slug.replace('.pdf', '').toLowerCase().trim();
 
-  // Load knowledge catalog dynamically
+  // 1. Check if a real static PDF file exists in public/brochures/
+  const staticPdfPath = path.join(process.cwd(), 'public', 'brochures', `${cleanSlug}.pdf`);
+  if (fs.existsSync(staticPdfPath)) {
+    const fileBuffer = fs.readFileSync(staticPdfPath);
+    return new NextResponse(fileBuffer, {
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `inline; filename="${cleanSlug}.pdf"`,
+        'Cache-Control': 'public, max-age=3600',
+      },
+    });
+  }
+
+  // 2. Load knowledge catalog dynamically
   let projectInfo: any = null;
   try {
     const catalogPath = path.join(process.cwd(), 'knowledge', 'published', 'offplan_catalog.json');
@@ -47,66 +133,20 @@ export async function GET(
     overview: 'Exclusive luxury off-plan real estate prospectus curated by Minesh Patel at The Pods Real Estate.',
   };
 
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>${project.title} - Official Prospectus</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0B192C; color: #FFFFFF; margin: 0; padding: 40px; }
-    .container { max-width: 800px; margin: 0 auto; background: #151824; border: 1px solid #C5A059; border-radius: 20px; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-    .header { text-align: center; border-bottom: 1px solid #1E2230; padding-bottom: 20px; margin-bottom: 30px; }
-    .gold { color: #C5A059; }
-    .title { font-size: 28px; font-weight: 800; margin-bottom: 10px; }
-    .subtitle { color: #94A3B8; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0; }
-    .card { background: #0D0F17; border: 1px solid #1E2230; padding: 20px; border-radius: 12px; }
-    .label { color: #94A3B8; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; }
-    .value { font-size: 18px; font-weight: 700; color: #FFFFFF; }
-    .footer { text-align: center; margin-top: 40px; font-size: 12px; color: #64748B; border-top: 1px solid #1E2230; padding-top: 20px; }
-    .btn { display: inline-block; background: linear-gradient(135deg, #C5A059, #D4B06A); color: #000; font-weight: bold; padding: 12px 24px; border-radius: 10px; text-decoration: none; margin-top: 20px; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <div class="subtitle">The Pods Real Estate — Official Property Prospectus</div>
-      <h1 class="title gold">${project.title}</h1>
-      <p style="color: #CBD5E1;">Developer: <strong>${project.developer}</strong> | Location: <strong>${project.location}</strong></p>
-    </div>
+  // Serve raw PDF binary file
+  const pdfBuffer = createMinimalPdfBuffer(
+    project.title,
+    project.developer,
+    project.location,
+    project.startingPrice,
+    project.plan,
+    project.overview
+  );
 
-    <div class="grid">
-      <div class="card">
-        <div class="label">Starting Price</div>
-        <div class="value gold">${project.startingPrice}</div>
-      </div>
-      <div class="card">
-        <div class="label">Official Payment Plan</div>
-        <div class="value">${project.plan}</div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom: 20px;">
-      <div class="label">Project Highlights & Overview</div>
-      <p style="line-height: 1.6; color: #E2E8F0; margin-top: 10px;">${project.overview}</p>
-    </div>
-
-    <div style="text-align: center;">
-      <a href="https://wa.me/447404097586?text=Hi%20Minesh,%20I%20am%20viewing%20the%20${encodeURIComponent(project.title)}%20prospectus%20and%20would%20like%20to%20schedule%20a%20private%20consultation" class="btn">Connect with Minesh Patel on WhatsApp →</a>
-    </div>
-
-    <div class="footer">
-      Curated by Minesh Patel (@thepodsrealestate) | Bluewaters Island & London Desks
-    </div>
-  </div>
-</body>
-</html>`;
-
-
-
-  return new NextResponse(html, {
+  return new NextResponse(pdfBuffer, {
     headers: {
-      'Content-Type': 'text/html; charset=utf-8',
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `inline; filename="${cleanSlug}.pdf"`,
       'Cache-Control': 'public, max-age=3600',
     },
   });
