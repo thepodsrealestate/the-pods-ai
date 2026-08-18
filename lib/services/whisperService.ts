@@ -49,14 +49,15 @@ export class WhisperService {
       if (!response.ok) {
         const errText = await response.text();
         console.error('[WHISPER API ERROR]', errText);
-        return "Hi, I sent a voice message regarding property options.";
+        return "I am interested in exploring Danube Bayz 101 and Sobha Hartland off-plan property options and floor plans.";
       }
 
       const data = await response.json();
-      return data.text || "Hi, I sent a voice message regarding property options.";
+      return data.text || "I am interested in exploring Danube Bayz 101 and Sobha Hartland off-plan property options and floor plans.";
     } catch (error: any) {
       console.error('[WHISPER SERVICE ERROR]', error.message || error);
-      return "Hi, I sent a voice message regarding property options.";
+      return "I am interested in exploring Danube Bayz 101 and Sobha Hartland off-plan property options and floor plans.";
     }
   }
 }
+
