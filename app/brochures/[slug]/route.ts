@@ -82,18 +82,28 @@ export async function GET(
   const { slug } = await params;
   const cleanSlug = slug.replace('.pdf', '').toLowerCase().trim();
 
-  // 1. Check if a real static PDF file exists in public/brochures/
-  const staticPdfPath = path.join(process.cwd(), 'public', 'brochures', `${cleanSlug}.pdf`);
-  if (fs.existsSync(staticPdfPath)) {
-    const fileBuffer = fs.readFileSync(staticPdfPath);
-    return new NextResponse(new Uint8Array(fileBuffer), {
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `inline; filename="${cleanSlug}.pdf"`,
-        'Cache-Control': 'public, max-age=3600',
-      },
+  // 1. Check if a real static PDF file exists in public/brochures/ (Case-Insensitive & Alias matching)
+  const dir = path.join(process.cwd(), 'public', 'brochures');
+  if (fs.existsSync(dir)) {
+    const files = fs.readdirSync(dir);
+    const cleanNormalized = cleanSlug.replace(/[^a-z0-9]/g, '');
+    const matchedFile = files.find((f) => {
+      const fNorm = f.toLowerCase().replace('.pdf', '').replace(/[^a-z0-9]/g, '');
+      return fNorm === cleanNormalized || f.toLowerCase() === `${cleanSlug}.pdf` || fNorm.includes(cleanNormalized) || cleanNormalized.includes(fNorm);
     });
+
+    if (matchedFile) {
+      const fileBuffer = fs.readFileSync(path.join(dir, matchedFile));
+      return new NextResponse(new Uint8Array(fileBuffer), {
+        headers: {
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': `inline; filename="${matchedFile}"`,
+          'Cache-Control': 'public, max-age=3600',
+        },
+      });
+    }
   }
+
 
   // 2. Load knowledge catalog dynamically
   let projectInfo: any = null;
