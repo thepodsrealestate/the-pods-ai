@@ -53,10 +53,39 @@ export async function POST(req: NextRequest) {
       }, { status: 429 });
     }
 
-    // Generate AI Response (the only slow call — typically 2-5 seconds)
+    // 3. Fetch past conversation history from database for 100% memory retention
+    let conversationHistory: { sender: string; text: string }[] = [];
+    try {
+      const { prisma } = await import('@/lib/prisma');
+      const existingLead = await prisma.lead.findUnique({
+        where: { phone },
+        include: {
+          conversations: {
+            include: {
+              messages: {
+                take: 10,
+                orderBy: { createdAt: 'desc' },
+              },
+            },
+          },
+        },
+      });
+
+      if (existingLead && existingLead.conversations.length > 0) {
+        const rawMsgs = [...existingLead.conversations[0].messages].reverse();
+        conversationHistory = rawMsgs.map((m: any) => ({
+          sender: m.senderType === 'LEAD' ? 'LEAD' : 'AI',
+          text: m.content,
+        }));
+      }
+    } catch (histErr) {
+      console.warn('[CONTEXT] History lookup warning:', histErr);
+    }
+
+    // Generate AI Response with full conversation memory
     const aiResult = await AIService.generateResponse({
       leadName: senderName || undefined,
-      conversationHistory: [],
+      conversationHistory,
       userMessage: userText,
     });
 
