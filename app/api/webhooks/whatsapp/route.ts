@@ -118,19 +118,6 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Check if AI is disabled for this lead (human handoff active)
-      if (existingLead && existingLead.aiEnabled === false) {
-        console.log(`[HANDOFF ACTIVE] AI paused for ${senderName} (${normalizedPhone}) — skipping AI response`);
-        // Still log the message to database
-        logToDatabase(body, userText, senderName, normalizedPhone, { reply: '', action: 'NONE' }).catch(() => {});
-        return NextResponse.json({
-          status: 'handoff_active',
-          reply: '',
-          language: 'en',
-          latency_ms: Date.now() - startTime,
-        });
-      }
-
       if (existingLead && existingLead.conversations.length > 0) {
         const rawMsgs = [...existingLead.conversations[0].messages].reverse();
         conversationHistory = rawMsgs.map((m: any) => ({
