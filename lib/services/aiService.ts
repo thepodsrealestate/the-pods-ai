@@ -197,9 +197,11 @@ SOBHA REALTY:
 BINGHATTI DEVELOPERS:
 - Etherea (Business Bay): https://the-pods-ai.vercel.app/brochures/binghatti-etherea-brochure.pdf
 - Skyflame (Majan): https://the-pods-ai.vercel.app/brochures/binghatti-skyflame-brochure.pdf
+- Sky Terraces (Silicon Oasis): https://the-pods-ai.vercel.app/brochures/binghatti-skyterraces.pdf
 - Wraith (Al Jaddaf): https://the-pods-ai.vercel.app/brochures/binghatti-wraith-brochure.pdf
-- Mercedes-Benz Places: https://the-pods-ai.vercel.app/brochures/mbp-bc-brochure.pdf
-- Bugatti Residences: https://the-pods-ai.vercel.app/brochures/mbp-bc-brochure.pdf
+- Mercedes-Benz Places / City by Mercedes: https://the-pods-ai.vercel.app/brochures/binghatti-mercedes-benz.pdf
+- Binghatti Luxuria: https://the-pods-ai.vercel.app/brochures/binghatti-luxuria.pdf
+- Burj Binghatti Jacob & Co: https://the-pods-ai.vercel.app/brochures/burj-binghatti-jacob-co.pdf
 
 BROCHURE RULE: When a client asks for a brochure, ALWAYS send the exact matching PDF link from above. NEVER make up a URL!
 
