@@ -535,9 +535,16 @@ export default function MasterDashboardPage() {
     return () => clearInterval(interval);
   }, []);
 
+  // Auto-scroll ONLY when switching contact or when new message is added
+  const prevMsgCountRef = useRef<number>(0);
+  const currentMsgsLength = conversations[selectedConvIndex]?.messages?.length || 0;
+
   useEffect(() => {
-    chatScrollEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [data, selectedConvIndex]);
+    if (currentMsgsLength !== prevMsgCountRef.current) {
+      chatScrollEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      prevMsgCountRef.current = currentMsgsLength;
+    }
+  }, [selectedConvIndex, currentMsgsLength]);
 
   const stats = data?.stats || { totalLeads: 0, aiQualified: 0, handoffsRequired: 0, totalBookings: 0, totalVouchers: 0 };
   const leads = data?.recentLeads || [];
