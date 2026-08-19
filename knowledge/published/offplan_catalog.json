@@ -10,7 +10,12 @@
           "startingPriceAed": 650000,
           "paymentPlan": "20% Down Payment + 4% DLD fee, 1% per month during construction, 40% Post-Handover",
           "handover": "Q2 2028",
-          "unitsAvailable": ["Studio", "1-Bed", "2-Bed", "3-Bed"],
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed",
+            "3-Bed"
+          ],
           "keyFacts": [
             "101 levels ultra-luxury tower with private swimming pools in select units",
             "Prime Business Bay location 2 minutes from Burj Khalifa and Dubai Mall",
@@ -25,7 +30,14 @@
           "startingPriceAed": 680000,
           "paymentPlan": "20% Down Payment + 4% DLD fee, 1% per month during construction, 40% Post-Handover (80 Months)",
           "handover": "Q4 2028",
-          "unitsAvailable": ["Studio", "1-Bed", "2-Bed", "3-Bed", "4-Bed", "Sky Villa with Private Pool"],
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed",
+            "3-Bed",
+            "4-Bed",
+            "Sky Villa with Private Pool"
+          ],
           "keyFacts": [
             "102-level mega-skyscraper in Business Bay featuring dedicated Helipad and Sky Garden",
             "Private designer swimming pools in presidential suites and sky villas",
@@ -39,7 +51,11 @@
           "startingPriceAed": 1100000,
           "paymentPlan": "20% Down Payment + 4% DLD fee, 1% per month during construction, 40% Post-Handover",
           "handover": "Q4 2027",
-          "unitsAvailable": ["Studio", "1-Bed", "2-Bed"],
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed"
+          ],
           "keyFacts": [
             "Fully furnished luxury residences with Turkish brand interior design",
             "40+ resort-style amenities including bowling alley and sky golf"
@@ -52,7 +68,12 @@
           "startingPriceAed": 620000,
           "paymentPlan": "20% Down Payment + 4% DLD fee, 1% per month during construction, 40% Post-Handover (80 Months)",
           "handover": "Q3 2027",
-          "unitsAvailable": ["Studio", "1-Bed", "2-Bed", "3-Bed"],
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed",
+            "3-Bed"
+          ],
           "keyFacts": [
             "Modern luxury residences in prime Al Furjan near Discovery Gardens metro and Expo City",
             "40+ lifestyle amenities including private cinema, infinity pool, and sports decks",
@@ -66,7 +87,11 @@
           "startingPriceAed": 590000,
           "paymentPlan": "20% Down Payment + 4% DLD fee, 1% per month during construction, 40% Post-Handover (80 Months)",
           "handover": "Q2 2027",
-          "unitsAvailable": ["Studio", "1-Bed", "2-Bed"],
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed"
+          ],
           "keyFacts": [
             "Contemporary lifestyle development featuring fully furnished designer apartments",
             "Comprehensive wellness facilities, running tracks, and landscaped leisure decks",
@@ -80,7 +105,12 @@
           "startingPriceAed": 590000,
           "paymentPlan": "20% Down Payment + 4% DLD fee, 1% per month during construction, 40% Post-Handover",
           "handover": "Q2 2027",
-          "unitsAvailable": ["Studio", "1-Bed", "2-Bed", "3-Bed"],
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed",
+            "3-Bed"
+          ],
           "keyFacts": [
             "First-of-its-kind sports-infused residential twin towers",
             "40+ sports & leisure amenities including Olympic pool, padel tennis, and cricket pitch",
@@ -94,7 +124,12 @@
           "startingPriceAed": 1100000,
           "paymentPlan": "20% Down Payment + 4% DLD fee, 1% per month during construction, 40% Post-Handover",
           "handover": "Q1 2027",
-          "unitsAvailable": ["Studio", "1-Bed", "2-Bed", "3-Bed"],
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed",
+            "3-Bed"
+          ],
           "keyFacts": [
             "Luxury waterfront tower with interior design by Tonino Lamborghini Casa",
             "Unobstructed Arabian Gulf sea views",
@@ -108,8 +143,15 @@
           "startingPriceAed": 1200000,
           "paymentPlan": "20% Down Payment + 4% DLD fee, 1% per month during construction, 40% Post-Handover",
           "handover": "Q4 2027",
-          "unitsAvailable": ["Studio", "1-Bed", "2-Bed"],
-          "keyFacts": ["Waterfront luxury tower in Dubai Maritime City", "1% monthly payment plan over 80 months"]
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed"
+          ],
+          "keyFacts": [
+            "Waterfront luxury tower in Dubai Maritime City",
+            "1% monthly payment plan over 80 months"
+          ]
         },
         {
           "id": "danube-serenz",
@@ -118,8 +160,15 @@
           "startingPriceAed": 720000,
           "paymentPlan": "20% Down Payment + 4% DLD fee, 1% per month during construction, 40% Post-Handover",
           "handover": "Q2 2027",
-          "unitsAvailable": ["Studio", "1-Bed", "2-Bed"],
-          "keyFacts": ["Serene residential living in high-demand JVC corridor", "1% monthly payment plan over 80 months"]
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed"
+          ],
+          "keyFacts": [
+            "Serene residential living in high-demand JVC corridor",
+            "1% monthly payment plan over 80 months"
+          ]
         },
         {
           "id": "danube-shahrukhz",
@@ -128,8 +177,15 @@
           "startingPriceAed": 690000,
           "paymentPlan": "20% Down Payment + 4% DLD fee, 1% per month during construction, 40% Post-Handover",
           "handover": "Q3 2027",
-          "unitsAvailable": ["Studio", "1-Bed", "2-Bed"],
-          "keyFacts": ["Celebrity-branded residential luxury tower by Danube", "1% monthly payment plan over 80 months"]
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed"
+          ],
+          "keyFacts": [
+            "Celebrity-branded residential luxury tower by Danube",
+            "1% monthly payment plan over 80 months"
+          ]
         }
       ]
     },
@@ -144,7 +200,11 @@
           "startingPriceAed": 1200000,
           "paymentPlan": "40/60 flexible payment plan (10% down payment, 30% during construction, 60% on handover)",
           "handover": "Q4 2027",
-          "unitsAvailable": ["1-Bed", "2-Bed", "3-Bed"],
+          "unitsAvailable": [
+            "1-Bed",
+            "2-Bed",
+            "3-Bed"
+          ],
           "keyFacts": [
             "Premium riverfront apartments within Sobha City Abu Dhabi master community",
             "Lush landscaped gardens, waterfront promenades, and world-class amenities",
@@ -159,7 +219,10 @@
           "startingPriceAed": 1800000,
           "paymentPlan": "40/60 flexible payment plan",
           "handover": "Q3 2027",
-          "unitsAvailable": ["3-Bed Townhouse", "4-Bed Townhouse"],
+          "unitsAvailable": [
+            "3-Bed Townhouse",
+            "4-Bed Townhouse"
+          ],
           "keyFacts": [
             "Ultra-luxury terrace townhouses with private gardens and waterfront views",
             "Premium community within Sobha City Abu Dhabi master development"
@@ -173,7 +236,10 @@
           "startingPriceAed": 3500000,
           "paymentPlan": "40/60 flexible payment plan",
           "handover": "Q4 2027",
-          "unitsAvailable": ["4-Bed Villa", "5-Bed Villa"],
+          "unitsAvailable": [
+            "4-Bed Villa",
+            "5-Bed Villa"
+          ],
           "keyFacts": [
             "Exclusive luxury villas with private gardens and premium finishes within Sobha City Abu Dhabi",
             "Surrounded by lush orchards and green landscapes"
@@ -187,7 +253,12 @@
           "startingPriceAed": 1400000,
           "paymentPlan": "40/60 flexible payment plan",
           "handover": "Q2 2028",
-          "unitsAvailable": ["1-Bed", "2-Bed", "3-Bed", "Penthouse"],
+          "unitsAvailable": [
+            "1-Bed",
+            "2-Bed",
+            "3-Bed",
+            "Penthouse"
+          ],
           "keyFacts": [
             "Ultra-premium tower at the heart of Sobha Central master community in Dubai",
             "Iconic skyline views and world-class lifestyle amenities"
@@ -201,7 +272,11 @@
           "startingPriceAed": 1300000,
           "paymentPlan": "40/60 flexible payment plan",
           "handover": "Q3 2028",
-          "unitsAvailable": ["1-Bed", "2-Bed", "3-Bed"],
+          "unitsAvailable": [
+            "1-Bed",
+            "2-Bed",
+            "3-Bed"
+          ],
           "keyFacts": [
             "Garden-inspired luxury living within Sobha Central master development",
             "Serene green landscapes with premium interior finishes"
@@ -215,7 +290,11 @@
           "startingPriceAed": 1100000,
           "paymentPlan": "40/60 flexible payment plan",
           "handover": "Q2 2027",
-          "unitsAvailable": ["1-Bed", "2-Bed", "3-Bed"],
+          "unitsAvailable": [
+            "1-Bed",
+            "2-Bed",
+            "3-Bed"
+          ],
           "keyFacts": [
             "Nature-immersed luxury apartments within Sobha Sanctuary master community",
             "Forest-themed landscaping with premium wellness and leisure amenities"
@@ -229,7 +308,10 @@
           "startingPriceAed": 2200000,
           "paymentPlan": "40/60 flexible payment plan",
           "handover": "Q3 2027",
-          "unitsAvailable": ["3-Bed Townhouse", "4-Bed Townhouse"],
+          "unitsAvailable": [
+            "3-Bed Townhouse",
+            "4-Bed Townhouse"
+          ],
           "keyFacts": [
             "Premium townhouses within Sobha Sanctuary with private gardens",
             "Nature-inspired community with lush green landscapes"
@@ -243,7 +325,11 @@
           "startingPriceAed": 4000000,
           "paymentPlan": "40/60 flexible payment plan",
           "handover": "Q4 2027",
-          "unitsAvailable": ["4-Bed Villa", "5-Bed Villa", "6-Bed Villa"],
+          "unitsAvailable": [
+            "4-Bed Villa",
+            "5-Bed Villa",
+            "6-Bed Villa"
+          ],
           "keyFacts": [
             "Exclusive luxury villas within Sobha Sanctuary with private pools and gardens",
             "Ultra-premium finishes with expansive living spaces"
@@ -257,7 +343,11 @@
           "startingPriceAed": 1500000,
           "paymentPlan": "40/60 flexible payment plan",
           "handover": "Q4 2028",
-          "unitsAvailable": ["1-Bed", "2-Bed", "3-Bed"],
+          "unitsAvailable": [
+            "1-Bed",
+            "2-Bed",
+            "3-Bed"
+          ],
           "keyFacts": [
             "Exclusive island waterfront apartments with yacht marina views on Siniya Island",
             "Private island living with premium Sobha quality finishes"
@@ -271,7 +361,11 @@
           "startingPriceAed": 5000000,
           "paymentPlan": "40/60 flexible payment plan",
           "handover": "Q4 2028",
-          "unitsAvailable": ["4-Bed Villa", "5-Bed Villa", "Beach Villa"],
+          "unitsAvailable": [
+            "4-Bed Villa",
+            "5-Bed Villa",
+            "Beach Villa"
+          ],
           "keyFacts": [
             "Ultra-exclusive beachfront and palm grove villas on private Siniya Island",
             "Direct beach access with premium Sobha luxury finishes"
@@ -289,62 +383,14 @@
           "startingPriceAed": 1200000,
           "paymentPlan": "70/30 or 60/40 flexible payment plan (20% down payment)",
           "handover": "Q2 2027",
-          "unitsAvailable": ["Studio", "1-Bed", "2-Bed"],
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed"
+          ],
           "keyFacts": [
             "Iconic architectural design with ethereal light-inspired facades",
             "Prime Business Bay location with Burj Khalifa and Canal views"
-          ]
-        },
-        {
-          "id": "binghatti-skyflame",
-          "projectName": "Binghatti Skyflame",
-          "location": "Majan, Dubai",
-          "startingPriceAed": 750000,
-          "paymentPlan": "70/30 or 60/40 flexible payment plan (20% down payment)",
-          "handover": "Q4 2026",
-          "unitsAvailable": ["Studio", "1-Bed", "2-Bed"],
-          "keyFacts": [
-            "Iconic architectural design with panoramic skyline and park views",
-            "High ROI investment corridor in Majan"
-          ]
-        },
-        {
-          "id": "binghatti-mercedes-benz",
-          "projectName": "Mercedes-Benz Places by Binghatti",
-          "location": "Nad Al Sheba / Downtown Dubai",
-          "startingPriceAed": 8800000,
-          "paymentPlan": "70/30 payment plan",
-          "handover": "Q4 2026",
-          "unitsAvailable": ["2-Bed Suite", "3-Bed Penthouse", "Sky Mansion"],
-          "keyFacts": [
-            "World's first Mercedes-Benz branded luxury residential tower",
-            "Unobstructed views of Burj Khalifa with smart home integration"
-          ]
-        },
-        {
-          "id": "binghatti-wraith",
-          "projectName": "Binghatti Wraith",
-          "location": "Al Jaddaf / Healthcare City, Dubai",
-          "startingPriceAed": 850000,
-          "paymentPlan": "70/30 flexible payment plan (20% down payment)",
-          "handover": "Q4 2026",
-          "unitsAvailable": ["1-Bed", "2-Bed", "3-Bed"],
-          "keyFacts": [
-            "Ultra-modern luxury residences inspired by Rolls-Royce automotive craftsmanship",
-            "Prime Al Jaddaf waterfront location minutes from Downtown Dubai"
-          ]
-        },
-        {
-          "id": "binghatti-skyterraces",
-          "projectName": "Binghatti Sky Terraces",
-          "location": "Dubai Silicon Oasis, Dubai",
-          "startingPriceAed": 680000,
-          "paymentPlan": "70/30 flexible payment plan",
-          "handover": "Q3 2026",
-          "unitsAvailable": ["Studio", "1-Bed", "2-Bed"],
-          "keyFacts": [
-            "Iconic stepped terrace architecture with panoramic Dubai skyline vistas",
-            "High rental yield investment corridor"
           ]
         },
         {
@@ -354,10 +400,124 @@
           "startingPriceAed": 19000000,
           "paymentPlan": "70/30 payment plan",
           "handover": "Q4 2026",
-          "unitsAvailable": ["2-Bed Mansions", "3-Bed Mansions", "Penthouse"],
+          "unitsAvailable": [
+            "2-Bed Mansions",
+            "3-Bed Mansions",
+            "Penthouse"
+          ],
           "keyFacts": [
             "World's first Bugatti Residences featuring Riviera-inspired private beach lagoon",
             "Car lift direct to sky mansion penthouses"
+          ]
+        },
+        {
+          "id": "binghatti-skyterraces",
+          "projectName": "Binghatti Sky Terraces",
+          "location": "Dubai Silicon Oasis, Dubai",
+          "startingPriceAed": 680000,
+          "paymentPlan": "20% Down Payment, flexible 70/30 or 50/50 payment options during construction, handover April 2028",
+          "handover": "Q2 2028 (30/04/2028)",
+          "unitsAvailable": [
+            "1-Bed (from AED 1.21M, 665-713 sqft)",
+            "2-Bed (from AED 1.88M, 1055-1098 sqft)"
+          ],
+          "keyFacts": [
+            "Iconic stepped terrace architecture with panoramic Dubai skyline vistas in Silicon Oasis",
+            "1-Bed units from AED 1.21M (665 to 713 sq.ft.)",
+            "2-Bed units from AED 1.88M (1055 to 1098 sq.ft.)",
+            "Completion Date: 30 April 2028"
+          ]
+        },
+        {
+          "id": "binghatti-skyflame",
+          "projectName": "Binghatti Skyflame 1",
+          "location": "Majan, Dubai",
+          "startingPriceAed": 1149999,
+          "paymentPlan": "20% Down Payment, flexible options during construction, completion Q4 2027",
+          "handover": "Q4 2027 (31/12/2027)",
+          "unitsAvailable": [
+            "1-Bed (from AED 1.15M, 722 sqft)",
+            "2-Bed (from AED 1.69M, 1256 sqft)",
+            "2-Bed Royal Suite (from AED 2.34M, 2113 sqft)"
+          ],
+          "keyFacts": [
+            "High-rise luxury tower with sweeping skyline views in Majan",
+            "1-Bed units starting from AED 1.15M (722 sq.ft.)",
+            "2-Bed units from AED 1.69M (1256 sq.ft.) and Royal Suites from AED 2.34M (2113 sq.ft.)",
+            "Completion Date: 31 December 2027"
+          ]
+        },
+        {
+          "id": "binghatti-wraith",
+          "projectName": "Binghatti Wraith",
+          "location": "Al Jaddaf / Healthcare City, Dubai",
+          "startingPriceAed": 2195999,
+          "paymentPlan": "20% Down Payment, flexible 70/30 or 50/50 payment plan, completion Q4 2027",
+          "handover": "Q4 2027 (30/12/2027)",
+          "unitsAvailable": [
+            "2-Bed Luxury (from AED 2.19M, 1165-1737 sqft)"
+          ],
+          "keyFacts": [
+            "Ultra-modern luxury residences inspired by Rolls-Royce automotive craftsmanship",
+            "Prime Al Jaddaf waterfront location minutes from Downtown Dubai and Dubai Creek",
+            "2-Bed units from AED 2.19M (1165 to 1737 sq.ft.)",
+            "Completion Date: 30 December 2027"
+          ]
+        },
+        {
+          "id": "binghatti-jacob-co",
+          "projectName": "Burj Binghatti Jacob & Co Residences",
+          "location": "Business Bay, Dubai",
+          "startingPriceAed": 8000000,
+          "paymentPlan": "70/30 payment plan (20% Down Payment)",
+          "handover": "Q2 2026",
+          "unitsAvailable": [
+            "2-Bed Sapphire Villa",
+            "3-Bed Emerald Villa",
+            "Billionaire Penthouse"
+          ],
+          "keyFacts": [
+            "Hyper-tower set to be the tallest residential skyscraper in the world",
+            "Co-designed with high-jewelry and horology brand Jacob & Co",
+            "Crown features diamond-shaped spires resembling Jacob & Co cut gems"
+          ]
+        },
+        {
+          "id": "binghatti-mercedes-benz",
+          "projectName": "Mercedes-Benz Places | Binghatti",
+          "location": "Downtown Dubai / Nad Al Sheba, Dubai",
+          "startingPriceAed": 10299999,
+          "paymentPlan": "70/30 payment plan (20% Down Payment)",
+          "handover": "Q1 2027 (28/02/2027)",
+          "unitsAvailable": [
+            "2-Bed Type 1 (from AED 10.3M, 1836 sqft)",
+            "3-Bed Penthouse",
+            "Sky Mansion"
+          ],
+          "keyFacts": [
+            "World first Mercedes-Benz branded residential hyper-tower in Downtown Dubai",
+            "Unobstructed views of Burj Khalifa with integrated automotive design philosophy",
+            "2-Bed Luxury Suites from AED 10.3M (1836 sq.ft.)",
+            "Completion Date: 28 February 2027"
+          ]
+        },
+        {
+          "id": "binghatti-luxuria",
+          "projectName": "Binghatti Luxuria",
+          "location": "Jumeirah Village Triangle (JVT), Dubai",
+          "startingPriceAed": 1306779,
+          "paymentPlan": "20% Down Payment, 50% during construction, full payment options, completion Q3 2027",
+          "handover": "Q3 2027 (30/09/2027)",
+          "unitsAvailable": [
+            "1-Bed (from AED 1.30M, 631-754 sqft)",
+            "2-Bed (from AED 1.84M, 963 sqft)",
+            "2-Bed Royal Suite (from AED 1.94M, 1356 sqft)"
+          ],
+          "keyFacts": [
+            "Luxury residential tower in prime JVT community park vicinity",
+            "1-Bed units from AED 1.30M (631 to 754 sq.ft.)",
+            "2-Bed units from AED 1.84M (963 sq.ft.) and Royal Suites from AED 1.94M (1356 sq.ft.)",
+            "Completion Date: 30 September 2027"
           ]
         }
       ]
