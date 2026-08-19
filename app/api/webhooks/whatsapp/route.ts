@@ -148,6 +148,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       status: 'success',
       reply: aiResult.reply,
+      ai_reply: aiResult.reply,
+      text: aiResult.reply,
       language: aiResult.language || 'en',
       latency_ms: latency,
     });
