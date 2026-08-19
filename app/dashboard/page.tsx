@@ -319,30 +319,49 @@ export default function MasterDashboardPage() {
     }
   };
 
-  const handleSendManualReply = () => {
+  const handleSendManualReply = async () => {
     if (!chatReplyInput.trim() || !data?.conversations || data.conversations.length === 0) return;
 
-    const newMsg = {
+    const currentConv = data.conversations[selectedConvIndex];
+    if (!currentConv) return;
+
+    const messageText = chatReplyInput.trim();
+    setChatReplyInput("");
+
+    const tempMsg = {
       id: `msg_manual_${Date.now()}`,
       senderType: "AI",
-      content: chatReplyInput.trim(),
+      content: messageText,
       createdAt: new Date().toISOString(),
     };
 
-    // Update local data state to append message to active conversation
+    // Optimistically update UI
     setData((prev: any) => {
       if (!prev || !prev.conversations) return prev;
       const updatedConvs = [...prev.conversations];
       if (updatedConvs[selectedConvIndex]) {
         updatedConvs[selectedConvIndex] = {
           ...updatedConvs[selectedConvIndex],
-          messages: [...updatedConvs[selectedConvIndex].messages, newMsg],
+          messages: [...updatedConvs[selectedConvIndex].messages, tempMsg],
         };
       }
       return { ...prev, conversations: updatedConvs };
     });
 
-    setChatReplyInput("");
+    // Send to live WhatsApp API
+    try {
+      await fetch("/api/conversations/reply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationId: currentConv.id,
+          text: messageText,
+        }),
+      });
+      fetchData();
+    } catch (e) {
+      console.error("Failed to send manual reply:", e);
+    }
   };
 
 
