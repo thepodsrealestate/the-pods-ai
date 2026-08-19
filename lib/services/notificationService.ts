@@ -45,7 +45,7 @@ export class NotificationService {
         orderBy: { createdAt: 'desc' },
       });
 
-      let targetEmail = 'maddyasif8@gmail.com';
+      let targetEmail = process.env.ADMIN_NOTIFY_EMAIL || 'maddyasif8@gmail.com';
       let resendApiKey = process.env.RESEND_API_KEY;
 
       if (settings) {
@@ -118,7 +118,7 @@ export class NotificationService {
         orderBy: { createdAt: 'desc' },
       });
 
-      let targetEmail = 'maddyasif8@gmail.com';
+      let targetEmail = process.env.ADMIN_NOTIFY_EMAIL || 'maddyasif8@gmail.com';
       let resendApiKey = process.env.RESEND_API_KEY;
 
       if (settings) {
