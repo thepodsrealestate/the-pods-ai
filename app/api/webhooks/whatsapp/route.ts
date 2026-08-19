@@ -118,34 +118,12 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      if (existingLead) {
-        // If human takeover is active, DO NOT let the bot reply and interrupt the human agent!
-        if (existingLead.handoffStatus === true || existingLead.aiEnabled === false) {
-          console.log(`[HANDOFF ACTIVE] Lead ${existingLead.phone} is under human control. Silencing AI.`);
-          logToDatabase(body, userText, senderName, normalizedPhone, {
-            reply: '[HUMAN_TAKEOVER]',
-            action: 'HANDOFF',
-          }).catch(err => console.error('[BG-LOG] DB logging error:', err.message));
-
-          // Return HUMAN_TAKEOVER as a non-empty marker. ManyChat ignores empty strings
-          // and preserves the old cached ai_reply if we return ''. By returning a marker,
-          // ManyChat overwrites the field, and the Condition step blocks the message from sending.
-          return NextResponse.json({
-            status: 'human_takeover',
-            reply: 'HUMAN_TAKEOVER',
-            ai_reply: 'HUMAN_TAKEOVER',
-            text: 'HUMAN_TAKEOVER',
-            action: 'HANDOFF',
-          });
-        }
-
-        if (existingLead.conversations.length > 0) {
-          const rawMsgs = [...existingLead.conversations[0].messages].reverse();
-          conversationHistory = rawMsgs.map((m: any) => ({
-            sender: m.senderType === 'LEAD' ? 'LEAD' : 'AI',
-            text: m.content,
-          }));
-        }
+      if (existingLead && existingLead.conversations.length > 0) {
+        const rawMsgs = [...existingLead.conversations[0].messages].reverse();
+        conversationHistory = rawMsgs.map((m: any) => ({
+          sender: m.senderType === 'LEAD' ? 'LEAD' : 'AI',
+          text: m.content,
+        }));
       }
     } catch (histErr) {
       console.warn('[CONTEXT] History lookup warning:', histErr);
