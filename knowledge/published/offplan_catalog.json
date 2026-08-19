@@ -4,65 +4,162 @@
       "name": "Danube Properties",
       "projects": [
         {
+          "id": "danube-breez",
+          "projectName": "BREEZ by Danube",
+          "location": "Dubai Maritime City, Dubai",
+          "startingPriceAed": 1250000,
+          "paymentPlan": "40/60 Payment Plan (Pay 0.5% Monthly)",
+          "handover": "2029",
+          "unitsAvailable": [
+            "Studio",
+            "1 Bedroom",
+            "2 Bedroom",
+            "3 Bedroom",
+            "4 Bedroom",
+            "Breez Villa"
+          ],
+          "keyFacts": [
+            "Premium 60-floor waterfront residential tower in Dubai Maritime City",
+            "Fully Furnished Oceanfront Homes with over 40+ resort-style amenities",
+            "Total 1200 Apartments",
+            "Completion: 2029 | Starting Price: AED 1.25 Million | Payment Plan: Pay 0.5% Monthly"
+          ]
+        },
+        {
+          "id": "danube-aspirz",
+          "projectName": "ASPIRZ by Danube",
+          "location": "Sports City, Dubai",
+          "startingPriceAed": 879000,
+          "paymentPlan": "40/60 Payment Plan (Pay 0.5% Monthly)",
+          "handover": "Q4-2028",
+          "unitsAvailable": [
+            "Studio",
+            "1 Bedroom",
+            "2 Bedroom",
+            "3 Bedroom",
+            "Offices"
+          ],
+          "keyFacts": [
+            "Seamlessly blends premium convertible hotel apartments with modern office spaces (432 Apartments & 266 Offices)",
+            "Over 30 lifestyle amenities with separate entrances for residences and offices",
+            "Completion: Q4-2028 | Starting Price: AED 879,000 | Payment Plan: Pay 0.5% Monthly"
+          ]
+        },
+        {
           "id": "danube-bayz-101",
           "projectName": "BAYZ 101 by Danube",
           "location": "Business Bay, Dubai",
-          "startingPriceAed": 650000,
-          "paymentPlan": "10% Down Payment, 1% monthly payment plan (70% during construction, 30% post-handover)",
-          "handover": "Q2 2028",
+          "startingPriceAed": 1175000,
+          "paymentPlan": "0% Downpayment, Pay 2% Monthly",
+          "handover": "June 2028",
           "unitsAvailable": [
             "Studio",
-            "1-Bed",
-            "2-Bed",
-            "3-Bed",
-            "4-Bed"
+            "1 Bedroom",
+            "2 Bedroom",
+            "3 Bedroom",
+            "4 Bedroom"
           ],
           "keyFacts": [
-            "101 levels ultra-luxury skyscraper with private swimming pools in select units",
-            "Prime Business Bay location 2 minutes from Burj Khalifa and Dubai Mall",
-            "Studios starting from AED 650K with guaranteed 1% monthly plan"
+            "Crown jewel of Danube Properties and one of the tallest towers in Dubai (1346 Apartments)",
+            "Panoramic views of Burj Khalifa and Downtown Dubai",
+            "Completion: June 2028 | Starting Price: AED 1.175 Million | Special Offer: 0% Downpayment, Pay 2% Monthly"
           ]
         },
         {
           "id": "danube-bayz-102",
           "projectName": "BAYZ 102 by Danube",
           "location": "Business Bay, Dubai",
-          "startingPriceAed": 680000,
-          "paymentPlan": "10% Down Payment, 1% monthly payment plan (70% during construction, 30% post-handover)",
-          "handover": "June 2029 (Q4 2029)",
+          "startingPriceAed": 2400000,
+          "paymentPlan": "0% Downpayment, Pay 2% Monthly",
+          "handover": "June 2029",
           "unitsAvailable": [
             "Studio",
-            "1-Bed",
-            "2-Bed",
-            "3-Bed",
-            "4-Bed",
-            "Sky Villa with Private Pool"
+            "1 Bedroom",
+            "2 Bedroom",
+            "3 Bedroom",
+            "4 Bedroom",
+            "Penthouse"
           ],
           "keyFacts": [
-            "102-level mega-skyscraper in Business Bay featuring dedicated Helipad and Sky Garden",
-            "Private designer swimming pools in presidential suites and sky villas",
-            "Official handover: June 2029",
-            "Studios from AED 680K with 1% monthly payment plan"
+            "956 luxury apartments with premium Italian DOLCE VITA furniture and exclusive helipad for Sky Taxis and Helicopters",
+            "Stunning views of the Burj Khalifa and serene Dubai Canal",
+            "Completion: June 2029 | Starting Price: AED 2.4 Million | Special Offer: 0% Downpayment, Pay 2% Monthly"
+          ]
+        },
+        {
+          "id": "danube-serenz",
+          "projectName": "SERENZ by Danube",
+          "location": "Jumeirah Village Circle (JVC), Dubai",
+          "startingPriceAed": 1100000,
+          "paymentPlan": "Pay 0.5% Monthly",
+          "handover": "2029",
+          "unitsAvailable": [
+            "Studio",
+            "1 Bedroom",
+            "2 Bedroom",
+            "3 Bedroom"
+          ],
+          "keyFacts": [
+            "50-storey residential landmark in JVC conceptualized as A World of Amenities with 1250 Apartments",
+            "Expansive collection of thoughtfully curated lifestyle experiences",
+            "Completion: 2029 | Starting Price: AED 1.1 Million | Payment Plan: Pay 0.5% Monthly"
+          ]
+        },
+        {
+          "id": "danube-oceanz",
+          "projectName": "OCEANZ by Danube",
+          "location": "Dubai Maritime City, Dubai",
+          "startingPriceAed": 1200000,
+          "paymentPlan": "Pay 1% Monthly",
+          "handover": "Q1 2027",
+          "unitsAvailable": [
+            "Studio",
+            "1 Bedroom",
+            "2 Bedroom",
+            "3 Bedroom",
+            "4 Bedroom Oceanic Villa"
+          ],
+          "keyFacts": [
+            "1705 Apartments inspired by the sea with architectural elegance and maritime charm",
+            "Completion: Q1 2027 | Starting Price: AED 1.2 Million | Payment Plan: Pay 1% Monthly"
+          ]
+        },
+        {
+          "id": "danube-sportz",
+          "projectName": "SPORTZ by Danube",
+          "location": "Sports City, Dubai",
+          "startingPriceAed": 0,
+          "paymentPlan": "30% during construction / 70% upon handover (Pay 1% Monthly)",
+          "handover": "May 2027",
+          "unitsAvailable": [
+            "Studio",
+            "1 Bedroom",
+            "2 Bedroom",
+            "3 Bedroom"
+          ],
+          "keyFacts": [
+            "1110 Apartments in Sports City - Where Aesthetics Meets Athletics",
+            "Status: SOLD OUT (Secondary/Resale market available)",
+            "Completion: May 2027 | Payment Plan: 30% construction / 70% handover (Pay 1% Monthly)"
           ]
         },
         {
           "id": "danube-diamondz",
           "projectName": "DIAMONDZ by Danube",
-          "location": "Jumeirah Lake Towers (JLT), Dubai",
+          "location": "Dubai Marina / JLT Uptown, Dubai",
           "startingPriceAed": 1100000,
-          "paymentPlan": "10% Down Payment, 1% monthly payment plan (70% during construction, 30% post-handover)",
-          "handover": "November 2027 (Q4 2027)",
+          "paymentPlan": "40/60 Payment Plan (Pay 0.5% Monthly)",
+          "handover": "November 2027",
           "unitsAvailable": [
             "Studio",
-            "1-Bed",
-            "2-Bed",
-            "3-Bed",
-            "4-Bed Penthouse"
+            "1 Bedroom",
+            "2 Bedroom",
+            "3 Bedroom",
+            "4 Bedroom"
           ],
           "keyFacts": [
-            "62-storey branded diamond-inspired luxury tower in Uptown JLT opposite Dubai Marina",
-            "Fully furnished luxury residences with Turkish brand interior design and 40+ resort amenities",
-            "Starting price AED 1.1M with 1% monthly plan"
+            "1210 Apartments in Uptown JLT crafted as the ultimate symbol of perfection with infinity pool",
+            "Completion: November 2027 | Starting Price: AED 1.1 Million | Payment Plan: Pay 0.5% Monthly"
           ]
         },
         {
@@ -70,199 +167,88 @@
           "projectName": "SPARKLZ by Danube",
           "location": "Al Furjan, Dubai",
           "startingPriceAed": 900000,
-          "paymentPlan": "10% Down Payment, 1% or 0.5% monthly payment plan (70/30 plan)",
-          "handover": "May 2028 (Q2 2028)",
+          "paymentPlan": "40/60 Payment Plan (Pay 0.5% Monthly)",
+          "handover": "Q2-2028",
           "unitsAvailable": [
             "Studio",
-            "1-Bed",
-            "2-Bed",
-            "3-Bed"
+            "1 Bedroom",
+            "2 Bedroom",
+            "3 Bedroom"
           ],
           "keyFacts": [
-            "Modern luxury residences in prime Al Furjan near Discovery Gardens metro and Expo City",
-            "40+ lifestyle amenities including private cinema, infinity pool, and sports decks",
-            "Handover: May 2028",
-            "Starting price AED 900K with signature monthly payment plan"
+            "356 Apartments in Al Furjan with over 30 lifestyle-enhancing amenities",
+            "Completion: Q2-2028 | Starting Price: AED 900,000 | Payment Plan: Pay 0.5% Monthly"
           ]
         },
         {
-          "id": "danube-aspirz",
-          "projectName": "ASPIRZ by Danube",
-          "location": "Dubai Sports City, Dubai",
-          "startingPriceAed": 879000,
-          "paymentPlan": "10% Down Payment, 1% or 0.5% monthly payment plan (70/30 plan)",
-          "handover": "Q4 2028",
+          "id": "danube-timez",
+          "projectName": "TIMEZ by Danube",
+          "location": "Dubai Silicon Oasis, Dubai",
+          "startingPriceAed": 871000,
+          "paymentPlan": "40/60 Payment Plan (Pay 0.5% Monthly)",
+          "handover": "Q2-2028",
           "unitsAvailable": [
             "Studio",
-            "1-Bed",
-            "2-Bed"
+            "1 Bedroom",
+            "2 Bedroom",
+            "3 Bedroom"
           ],
           "keyFacts": [
-            "Contemporary sports-inspired lifestyle development in Dubai Sports City",
-            "Fully furnished designer apartments with comprehensive wellness facilities and running tracks",
-            "Official handover: Q4 2028",
-            "Starting price AED 879K with 0.5% / 1% monthly plan"
-          ]
-        },
-        {
-          "id": "danube-sportz",
-          "projectName": "SPORTZ by Danube",
-          "location": "Dubai Sports City, Dubai",
-          "startingPriceAed": 690000,
-          "paymentPlan": "10% Down Payment, 1% monthly payment plan (70/30 plan)",
-          "handover": "April 2027 (Q2 2027)",
-          "unitsAvailable": [
-            "Studio",
-            "1-Bed",
-            "2-Bed",
-            "3-Bed with Private Pool"
-          ],
-          "keyFacts": [
-            "Twin-tower development featuring an Olympic-size swimming pool, cricket pitch, and padel tennis courts",
-            "Fully furnished apartments with convertible layouts",
-            "Handover: April 2027",
-            "Starting price AED 690K"
-          ]
-        },
-        {
-          "id": "danube-oceanz",
-          "projectName": "OCEANZ by Danube",
-          "location": "Dubai Maritime City, Dubai",
-          "startingPriceAed": 1100000,
-          "paymentPlan": "10% Down Payment, 1% monthly payment plan (70/30 plan)",
-          "handover": "March 2027 (Q1 2027)",
-          "unitsAvailable": [
-            "Studio",
-            "1-Bed",
-            "2-Bed",
-            "3-Bed",
-            "Ocean Villa"
-          ],
-          "keyFacts": [
-            "Italian interior luxury tower by Tonino Lamborghini Casa in Dubai Maritime City",
-            "Unobstructed Arabian Gulf sea views and infinity sky lounge",
-            "Handover: Q1 2027",
-            "Starting price AED 1.1M"
-          ]
-        },
-        {
-          "id": "danube-breez",
-          "projectName": "BREEZ by Danube",
-          "location": "Dubai Maritime City, Dubai",
-          "startingPriceAed": 1300000,
-          "paymentPlan": "10% Down Payment, 1% monthly payment plan (70/30 plan)",
-          "handover": "March 2029 (Q1 2029)",
-          "unitsAvailable": [
-            "Studio",
-            "1-Bed",
-            "2-Bed",
-            "3-Bed",
-            "Ocean Villa"
-          ],
-          "keyFacts": [
-            "60-floor premium waterfront residential tower in Dubai Maritime City",
-            "Direct maritime panoramic views with 40+ resort amenities",
-            "Official handover: March 2029",
-            "Starting price AED 1.3M with 1% monthly plan"
+            "1000 Apartments in Silicon Oasis featuring convertible units (Studios to 1 BHK, 1 BHK to 2 BHK)",
+            "Completion: Q2-2028 | Starting Price: AED 871,000 | Payment Plan: Pay 0.5% Monthly"
           ]
         },
         {
           "id": "danube-fashionz",
           "projectName": "FASHIONZ by Danube",
           "location": "Jumeirah Village Triangle (JVT), Dubai",
-          "startingPriceAed": 1399000,
-          "paymentPlan": "10% Down Payment, 1% monthly payment plan with post-handover options",
-          "handover": "January 2027 (Q1 2027)",
+          "startingPriceAed": 1513000,
+          "paymentPlan": "30% during construction / 70% upon handover (Pay 1% Monthly)",
+          "handover": "July 2027",
           "unitsAvailable": [
             "Studio",
-            "1-Bed",
-            "2-Bed",
-            "3-Bed"
+            "1 Bedroom",
+            "2 Bedroom",
+            "3 Bedroom"
           ],
           "keyFacts": [
-            "Fashion-inspired luxury residential tower branded in collaboration with FashionTV",
-            "Located in prime JVT District 4 near Sheikh Mohammed Bin Zayed Road",
-            "40+ resort amenities including FashionTV rooftop lounge and infinity pool",
-            "Handover: Q1 2027",
-            "Starting price AED 1.4M with 1% monthly payment plan"
-          ]
-        },
-        {
-          "id": "danube-timez",
-          "projectName": "TIMEZ by Danube",
-          "location": "Dubai Silicon Oasis (DSO), Dubai",
-          "startingPriceAed": 800000,
-          "paymentPlan": "10% Down Payment, 70/30 construction-linked payment plan with post-handover options",
-          "handover": "Q2 2028",
-          "unitsAvailable": [
-            "Studio",
-            "1-Bed",
-            "2-Bed",
-            "3-Bed"
-          ],
-          "keyFacts": [
-            "Innovative convertible space apartments with private pools in select units",
-            "Prime Silicon Oasis location with 40+ luxury amenities including aquatic gym and anti-current pool",
-            "Handover: Q2 2028",
-            "Starting price AED 800K with 1% monthly / flexible payment structure"
+            "788 Apartments in JVT - Dubais first-ever FashionTV-branded residences",
+            "Completion: July 2027 | Starting Price: AED 1.513 Million | Payment Plan: 30% construction / 70% handover (Pay 1% Monthly)"
           ]
         },
         {
           "id": "danube-greenz",
           "projectName": "GREENZ by Danube",
-          "location": "Dubai International Academic City (Al Rowaiyah First), Dubai",
+          "location": "Academic City, Dubai",
           "startingPriceAed": 3500000,
-          "paymentPlan": "10% Down Payment, 70/30 payment plan (70% during construction, 30% on handover/post-handover)",
-          "handover": "December 2029 (Q4 2029)",
+          "paymentPlan": "40/60 Payment Plan (Pay 0.5% Monthly - Summer Bonanza)",
+          "handover": "Q4-2029",
           "unitsAvailable": [
-            "3-Bed Townhouse",
-            "4-Bed Villa",
-            "5-Bed Semi-Detached & Twin Villa"
+            "3 Bedroom",
+            "4 Bedroom",
+            "5 Bedroom"
           ],
           "keyFacts": [
-            "Danubes FIRST large-scale master-planned luxury villa and townhouse community",
-            "Features fully furnished 3-Bed townhouses and 4/5-Bed luxury villas",
-            "Lush green wellness masterplan with beach clubhouse and musical Dancing Fountain",
-            "Handover: Q4 2029",
-            "Starting price AED 3.5M for luxury townhouses/villas"
-          ]
-        },
-        {
-          "id": "danube-serenz",
-          "projectName": "SERENZ by Danube",
-          "location": "Jumeirah Village Circle (JVC), Dubai",
-          "startingPriceAed": 720000,
-          "paymentPlan": "10% Down Payment, 1% monthly payment plan (70/30 plan)",
-          "handover": "Q2 2027",
-          "unitsAvailable": [
-            "Studio",
-            "1-Bed",
-            "2-Bed"
-          ],
-          "keyFacts": [
-            "Serene residential living in high-demand JVC corridor",
-            "Handover: Q2 2027",
-            "1% monthly payment plan with starting price AED 720K"
+            "768 Villas & Townhouses near Academic City with lavish open spaces and resort amenities",
+            "Completion: Q4-2029 | Starting Price: AED 3.5 Million | Payment Plan: Pay 0.5% Monthly"
           ]
         },
         {
           "id": "danube-shahrukhz",
-          "projectName": "SHAHRUKHZ by Danube (Sharukhz Commercial Tower)",
+          "projectName": "SHAHRUKHZ by Danube",
           "location": "Sheikh Zayed Road, Dubai",
           "startingPriceAed": 1900000,
-          "paymentPlan": "10% Down Payment, 70/30 flexible payment plan",
-          "handover": "June 2029 (Q2 2029)",
+          "paymentPlan": "Pay 1% Monthly",
+          "handover": "2029",
           "unitsAvailable": [
-            "Standard Office",
-            "Executive Office",
-            "Premium Office",
-            "Prestige Office Suite"
+            "Executive",
+            "Premium",
+            "Prestige",
+            "Standard"
           ],
           "keyFacts": [
-            "55-storey prime commercial office tower on Sheikh Zayed Road branded in association with Shah Rukh Khan",
-            "Grade-A luxury commercial suites with world-class corporate amenities and sky lounge",
-            "Official handover: June 2029",
-            "Starting price AED 1.9M for luxury commercial office suites"
+            "615 Commercial Units in 55-storey prime office tower on Sheikh Zayed Road inspired by Shah Rukh Khan",
+            "Completion: 2029 | Starting Price: AED 1.9 Million | Payment Plan: Pay 1% Monthly"
           ]
         }
       ]
