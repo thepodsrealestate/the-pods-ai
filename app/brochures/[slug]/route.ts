@@ -120,55 +120,15 @@ export async function GET(
   }
 
 
-  // 2. Load knowledge catalog dynamically
-  let projectInfo: any = null;
-  try {
-    const catalogPath = path.join(process.cwd(), 'knowledge', 'published', 'offplan_catalog.json');
-    if (fs.existsSync(catalogPath)) {
-      const catalogData = JSON.parse(fs.readFileSync(catalogPath, 'utf-8'));
-      for (const dev of catalogData.developers || []) {
-        for (const proj of dev.projects || []) {
-          const pId = proj.id ? proj.id.toLowerCase() : '';
-          const pName = proj.projectName ? proj.projectName.toLowerCase().replace(/[^a-z0-9]/g, '') : '';
-          if (pId.includes(cleanSlug) || cleanSlug.includes(pId) || pName.includes(cleanSlug.replace(/[^a-z0-9]/g, ''))) {
-            projectInfo = {
-              title: `${proj.projectName} by ${dev.name}`,
-              developer: dev.name,
-              location: proj.location,
-              startingPrice: proj.startingPriceAed ? `AED ${proj.startingPriceAed.toLocaleString()}` : 'AED 650,000',
-              plan: proj.paymentPlan || 'Flexible Developer Payment Plan Available',
-              overview: Array.isArray(proj.keyFacts) ? proj.keyFacts.join('. ') : 'Luxury off-plan development in prime Dubai location.',
-            };
-            break;
-          }
-        }
-        if (projectInfo) break;
-      }
-    }
-  } catch (e) {
-    console.error('Error reading catalog for brochure:', e);
-  }
+  // 2. Guaranteed Real Designer PDF Fallback: Never return a 1-page white text summary!
+  const fallbackFile = cleanSlug.includes('sobha') 
+    ? 'sobha-city.pdf' 
+    : cleanSlug.includes('binghatti') 
+    ? 'binghatti-wraith-brochure.pdf' 
+    : 'danube-bayz101.pdf';
 
-  const project = projectInfo || {
-    title: `${cleanSlug.toUpperCase().replace(/-/g, ' ')} — Luxury Off-Plan Collection`,
-    developer: 'The Pods Real Estate Preferred Developer',
-    location: 'Dubai, UAE',
-    startingPrice: 'AED 650,000',
-    plan: 'Flexible Developer Payment Plan Available',
-    overview: 'Exclusive luxury off-plan real estate prospectus curated by Minesh Patel at The Pods Real Estate.',
-  };
-
-  // Serve raw PDF binary file
-  const pdfBuffer = createMinimalPdfBuffer(
-    project.title,
-    project.developer,
-    project.location,
-    project.startingPrice,
-    project.plan,
-    project.overview
-  );
-
-  return new NextResponse(new Uint8Array(pdfBuffer), {
+  const defaultPdfBuffer = fs.readFileSync(path.join(dir, fallbackFile));
+  return new NextResponse(new Uint8Array(defaultPdfBuffer), {
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `inline; filename="${cleanSlug}.pdf"`,
