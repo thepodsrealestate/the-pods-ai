@@ -123,15 +123,18 @@ export async function POST(req: NextRequest) {
         if (existingLead.handoffStatus === true || existingLead.aiEnabled === false) {
           console.log(`[HANDOFF ACTIVE] Lead ${existingLead.phone} is under human control. Silencing AI.`);
           logToDatabase(body, userText, senderName, normalizedPhone, {
-            reply: '',
-            action: 'NONE',
+            reply: '[HUMAN_TAKEOVER]',
+            action: 'HANDOFF',
           }).catch(err => console.error('[BG-LOG] DB logging error:', err.message));
 
+          // Return HUMAN_TAKEOVER as a non-empty marker. ManyChat ignores empty strings
+          // and preserves the old cached ai_reply if we return ''. By returning a marker,
+          // ManyChat overwrites the field, and the Condition step blocks the message from sending.
           return NextResponse.json({
             status: 'human_takeover',
-            reply: '',
-            ai_reply: '',
-            text: '',
+            reply: 'HUMAN_TAKEOVER',
+            ai_reply: 'HUMAN_TAKEOVER',
+            text: 'HUMAN_TAKEOVER',
             action: 'HANDOFF',
           });
         }
