@@ -150,6 +150,7 @@ export async function POST(req: NextRequest) {
       reply: aiResult.reply,
       ai_reply: aiResult.reply,
       text: aiResult.reply,
+      action: aiResult.action || 'NONE',
       language: aiResult.language || 'en',
       latency_ms: latency,
     });
