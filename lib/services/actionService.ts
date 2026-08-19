@@ -51,11 +51,24 @@ export class ActionService {
         throw new Error('Invalid schema: missing reply or action fields');
       }
 
+      // Format sanitation: strip unwanted markdown asterisks so text appears clean on WhatsApp
+      parsed.reply = parsed.reply
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/\*([^*]+)\*/g, '$1')
+        .replace(/^•\s*/gm, '')
+        .replace(/^\*\s*/gm, '')
+        .trim();
+
       return parsed;
     } catch (e: any) {
       console.warn('Fallback: AI output was not valid JSON, creating clean text response wrapper');
+      const cleanReply = rawOutput
+        .replace(/```[a-z]*/g, '')
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/\*([^*]+)\*/g, '$1')
+        .trim();
       return {
-        reply: rawOutput.replace(/```[a-z]*/g, '').trim(),
+        reply: cleanReply,
         language: 'en',
         action: 'NONE',
       };
