@@ -139,9 +139,9 @@ export async function POST(req: NextRequest) {
     const latency = Date.now() - startTime;
     console.log(`[FAST] AI replied in ${latency}ms: "${aiResult.reply.substring(0, 80)}..."`);
 
-    // Fire-and-forget: log to DB in background (doesn't block response)
-    logToDatabase(body, userText, senderName, normalizedPhone, aiResult).catch(err =>
-      console.error('[BG-LOG] DB logging error:', err.message)
+    // Await DB logging and email dispatch to ensure background jobs never get killed by Vercel serverless freeze
+    await logToDatabase(body, userText, senderName, normalizedPhone, aiResult).catch(err =>
+      console.error('[LOG] DB logging error:', err.message)
     );
 
     return NextResponse.json({
