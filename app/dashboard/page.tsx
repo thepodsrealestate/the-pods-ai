@@ -1139,7 +1139,7 @@ export default function MasterDashboardPage() {
                     </div>
 
                     {/* Messages */}
-                    <div className="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 bg-[#07080C]/60 min-h-[400px] max-h-[600px]">
+                    <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-[#07080C]/60 h-0 min-h-0">
                       {conversations[selectedConvIndex]?.messages.map((msg: any) => (
                         <div
                           key={msg.id}
