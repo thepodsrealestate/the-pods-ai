@@ -118,17 +118,35 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      if (existingLead && existingLead.conversations.length > 0) {
-        const rawMsgs = [...existingLead.conversations[0].messages].reverse();
-        conversationHistory = rawMsgs.map((m: any) => ({
-          sender: m.senderType === 'LEAD' ? 'LEAD' : 'AI',
-          text: m.content,
-        }));
+      if (existingLead) {
+        // If human takeover is active, DO NOT let the bot reply and interrupt the human agent!
+        if (existingLead.handoffStatus === true || existingLead.aiEnabled === false) {
+          console.log(`[HANDOFF ACTIVE] Lead ${existingLead.phone} is under human control. Silencing AI.`);
+          logToDatabase(body, userText, senderName, normalizedPhone, {
+            reply: '',
+            action: 'NONE',
+          }).catch(err => console.error('[BG-LOG] DB logging error:', err.message));
+
+          return NextResponse.json({
+            status: 'human_takeover',
+            reply: '',
+            ai_reply: '',
+            text: '',
+            action: 'HANDOFF',
+          });
+        }
+
+        if (existingLead.conversations.length > 0) {
+          const rawMsgs = [...existingLead.conversations[0].messages].reverse();
+          conversationHistory = rawMsgs.map((m: any) => ({
+            sender: m.senderType === 'LEAD' ? 'LEAD' : 'AI',
+            text: m.content,
+          }));
+        }
       }
     } catch (histErr) {
       console.warn('[CONTEXT] History lookup warning:', histErr);
     }
-
 
     // Generate AI Response with full conversation memory
     const aiResult = await AIService.generateResponse({
