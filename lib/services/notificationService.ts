@@ -24,7 +24,7 @@ export class NotificationService {
 
     const alertMessage = `🚨 NEW VIP MEETING BOOKED: ${payload.leadName} (${payload.phone}) scheduled for ${timeFormatted} at ${payload.location || 'The Pods, Bluewaters Island'}.${payload.voucherCode ? ` VIP Voucher: ${payload.voucherCode}` : ''}`;
 
-    console.log(`[NOTIFICATION -> MINESH PATEL (+971523666495) & RESHMA (+971523999502)]: ${alertMessage}`);
+    console.log(`[NOTIFICATION -> ASIF KHAN (+971545866094)]: ${alertMessage}`);
 
     // 1. Log System Event in Database for Audit & Dashboard Alert Feed
     try {
@@ -38,7 +38,7 @@ export class NotificationService {
       console.error('Failed to log system notification event:', e.message);
     }
 
-    // 2. Automated Dispatch to Minesh (+971523666495) & Reshma (+971523999502)
+    // 2. Automated Dispatch to Asif Khan
     const mineshNotifyWebhook = process.env.MINESH_NOTIFY_WEBHOOK_URL;
     if (mineshNotifyWebhook) {
       try {
@@ -47,8 +47,7 @@ export class NotificationService {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             recipients: [
-              { name: 'Minesh Patel', phone: '+971523666495', email: 'minesh@thepods.ae' },
-              { name: 'Reshma Patel', phone: '+971523999502', email: 'reshma@thepods.ae' }
+              { name: 'Asif Khan', phone: '+971545866094', email: 'maddyasif8@gmail.com' }
             ],
             phone: payload.phone,
             lead_name: payload.leadName,
@@ -60,7 +59,7 @@ export class NotificationService {
           }),
         });
       } catch (err: any) {
-        console.error('Failed to trigger Minesh/Reshma notification webhook:', err.message);
+        console.error('Failed to trigger notification webhook:', err.message);
       }
     }
 
@@ -68,12 +67,12 @@ export class NotificationService {
   }
 
   /**
-   * Send Human Handoff Alert to Minesh Patel & Reshma Patel
+   * Send Human Handoff Alert to Asif Khan
    */
   static async notifyMineshHandoff(leadName: string, phone: string, reason: string) {
     const alertMessage = `⚠️ HUMAN TAKEOVER REQUIRED: Lead ${leadName} (${phone}) requested human agent. Reason: ${reason}. Live Dashboard: https://the-pods-ai.vercel.app/dashboard`;
 
-    console.log(`[HANDOFF -> MINESH (+971523666495) & RESHMA (+971523999502)]: ${alertMessage}`);
+    console.log(`[HANDOFF -> ASIF KHAN (+971545866094)]: ${alertMessage}`);
 
     try {
       await prisma.systemEvent.create({
@@ -94,8 +93,7 @@ export class NotificationService {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             recipients: [
-              { name: 'Minesh Patel', phone: '+971523666495', email: 'minesh@thepods.ae' },
-              { name: 'Reshma Patel', phone: '+971523999502', email: 'reshma@thepods.ae' }
+              { name: 'Asif Khan', phone: '+971545866094', email: 'maddyasif8@gmail.com' }
             ],
             phone,
             lead_name: leadName,
