@@ -535,6 +535,11 @@ export default function MasterDashboardPage() {
     return () => clearInterval(interval);
   }, []);
 
+  const stats = data?.stats || { totalLeads: 0, aiQualified: 0, handoffsRequired: 0, totalBookings: 0, totalVouchers: 0 };
+  const leads = data?.recentLeads || [];
+  const conversations = data?.conversations || [];
+  const bookings = data?.bookings || [];
+
   // Auto-scroll ONLY when switching contact or when new message is added
   const prevMsgCountRef = useRef<number>(0);
   const currentMsgsLength = conversations[selectedConvIndex]?.messages?.length || 0;
@@ -545,11 +550,6 @@ export default function MasterDashboardPage() {
       prevMsgCountRef.current = currentMsgsLength;
     }
   }, [selectedConvIndex, currentMsgsLength]);
-
-  const stats = data?.stats || { totalLeads: 0, aiQualified: 0, handoffsRequired: 0, totalBookings: 0, totalVouchers: 0 };
-  const leads = data?.recentLeads || [];
-  const conversations = data?.conversations || [];
-  const bookings = data?.bookings || [];
 
   // Calculate Lead Source Distribution dynamically from DB leads
   const sourceCounts = leads.reduce((acc: Record<string, number>, lead: any) => {
