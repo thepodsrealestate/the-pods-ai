@@ -185,6 +185,9 @@ DANUBE PROPERTIES:
 - SPORTZ (Sports City): https://the-pods-ai.vercel.app/brochures/danube-sportz.pdf
 - OCEANZ (Maritime City): https://the-pods-ai.vercel.app/brochures/danube-oceanz.pdf
 - BREEZ (Maritime City): https://the-pods-ai.vercel.app/brochures/danube-breez.pdf
+- FASHIONZ (JVT): https://the-pods-ai.vercel.app/brochures/danube-fashionz.pdf
+- TIMEZ (Silicon Oasis): https://the-pods-ai.vercel.app/brochures/danube-timez.pdf
+- GREENZ (Academic City): https://the-pods-ai.vercel.app/brochures/danube-greenz.pdf
 
 SOBHA REALTY:
 - River Cove Residences (Sobha City Abu Dhabi): https://the-pods-ai.vercel.app/brochures/sobha-river-cove.pdf
