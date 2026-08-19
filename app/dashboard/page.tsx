@@ -105,6 +105,8 @@ export default function MasterDashboardPage() {
   const [selectedConvIndex, setSelectedConvIndex] = useState<number>(0);
   const [mobileShowChat, setMobileShowChat] = useState<boolean>(false);
 
+  const chatScrollEndRef = useRef<HTMLDivElement>(null);
+
   // Lead Slide-Over Drawer States
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -529,9 +531,13 @@ export default function MasterDashboardPage() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 10000); // 10s auto-refresh
+    const interval = setInterval(fetchData, 3000); // 3s live auto-refresh
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    chatScrollEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [data, selectedConvIndex]);
 
   const stats = data?.stats || { totalLeads: 0, aiQualified: 0, handoffsRequired: 0, totalBookings: 0, totalVouchers: 0 };
   const leads = data?.recentLeads || [];
@@ -1133,7 +1139,7 @@ export default function MasterDashboardPage() {
                     </div>
 
                     {/* Messages */}
-                    <div className="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 bg-[#07080C]/60">
+                    <div className="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 bg-[#07080C]/60 min-h-[400px] max-h-[600px]">
                       {conversations[selectedConvIndex]?.messages.map((msg: any) => (
                         <div
                           key={msg.id}
@@ -1154,10 +1160,11 @@ export default function MasterDashboardPage() {
                                 {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                               </span>
                             </div>
-                            <p className="text-xs leading-relaxed">{msg.content}</p>
+                            <p className="text-xs leading-relaxed whitespace-pre-line">{msg.content}</p>
                           </div>
                         </div>
                       ))}
+                      <div ref={chatScrollEndRef} />
                     </div>
 
                     {/* AI Co-Pilot 1-Click Executive Reply Bar */}
