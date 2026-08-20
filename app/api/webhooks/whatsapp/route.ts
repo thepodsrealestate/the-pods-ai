@@ -221,7 +221,7 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       await MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.AI, content: aiResult.reply });
     }
 
-    // Save lead_updates from AI (budget, purpose, timeline, location)
+    // Save lead_updates from AI (budget, purpose, timeline, location, meeting preference)
     if (aiResult.lead_updates) {
       const updates: any = {};
       if (aiResult.lead_updates.buyer_location) updates.buyerLocation = aiResult.lead_updates.buyer_location;
@@ -229,6 +229,7 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       if (aiResult.lead_updates.budget_min) updates.budgetMin = aiResult.lead_updates.budget_min;
       if (aiResult.lead_updates.budget_max) updates.budgetMax = aiResult.lead_updates.budget_max;
       if (aiResult.lead_updates.timeline) updates.timeline = aiResult.lead_updates.timeline;
+      if (aiResult.lead_updates.meeting_preference) updates.meetingPreference = aiResult.lead_updates.meeting_preference;
       if (Object.keys(updates).length > 0) {
         await prisma.lead.update({ where: { id: lead.id }, data: updates });
       }

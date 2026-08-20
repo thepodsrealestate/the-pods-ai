@@ -1,0 +1,147 @@
+{
+  "bayz101": {
+    "url": "https://danubeproperties.com/portfolio/bayz101/",
+    "title": "BAYZ101 - Apartments for Sale in Business Bay - Danube Properties",
+    "starting_price": "AED 1.175 Million",
+    "completion": "June 2028",
+    "payment_plan": "Danube Map",
+    "units": "1346",
+    "bedrooms": "STUDIO, 1 BEDROOM, 2 BEDROOM, 3 BEDROOM, 4 BEDROOM",
+    "location": "BUSINESS BAY, DUBAI",
+    "banners": []
+  },
+  "bayz102": {
+    "url": "https://danubeproperties.com/portfolio/bayz102/",
+    "title": "BAYZ102 - Apartments for Sale in Business Bay - Danube Properties",
+    "starting_price": "AED 2.4 Million",
+    "completion": "June 2029",
+    "payment_plan": "Danube Map",
+    "units": "956",
+    "bedrooms": "STUDIO, 1 BEDROOM, 2 BEDROOM, 3 BEDROOM, 4 BEDROOM, PENTHOUSE",
+    "location": "BUSINESS BAY, DUBAI",
+    "banners": []
+  },
+  "aspirz": {
+    "url": "https://danubeproperties.com/portfolio/aspirz/",
+    "title": "Aspirz - Apartments for Sale in Dubai Sports City - Danube Properties",
+    "starting_price": "AED 879,000",
+    "completion": "Q4-2028",
+    "payment_plan": "Danube Map",
+    "units": "432 & 266 Offices",
+    "bedrooms": "STUDIO, 1 BEDROOM, 2 BEDROOM, 3 BEDROOM, Offices",
+    "location": "Sports City, Dubai",
+    "banners": []
+  },
+  "breez": {
+    "url": "https://danubeproperties.com/portfolio/breez/",
+    "title": "Breez - Apartments for Sale in Dubai Maritime City | Danube Properties",
+    "starting_price": "AED 1.25 Million",
+    "completion": "2029",
+    "payment_plan": "Danube Map",
+    "units": "1200",
+    "bedrooms": "STUDIO, 1 BEDROOM, 2 BEDROOM, 3 BEDROOM, 4 BEDROOM, BREEZ VILLA",
+    "location": "DUBAI MARITIME CITY",
+    "banners": []
+  },
+  "timez": {
+    "url": "https://danubeproperties.com/portfolio/timez/",
+    "title": "TIMEZ by Danube - Convertible Apartments For Sale in Dubai Silicon Oasis -Danube Properties",
+    "starting_price": "AED 871,000",
+    "completion": "Q2-2028",
+    "payment_plan": "Danube Map",
+    "units": "1000",
+    "bedrooms": "STUDIO, 1 BEDROOM, 2 BEDROOM, 3 BEDROOM",
+    "location": "Dubai Silicon Oasis, DUBAI",
+    "banners": []
+  },
+  "fashionz": {
+    "url": "https://danubeproperties.com/portfolio/fashionz/",
+    "title": "Fashionz - Apartments for Sale in Jumeirah Village Triangle (JVT) | Danube Properties",
+    "starting_price": "AED 1,513,000",
+    "completion": "July 2027",
+    "payment_plan": "Danube Map",
+    "units": "788",
+    "bedrooms": "STUDIO, 1 BEDROOM, 2 BEDROOM, 3 BEDROOM",
+    "location": "Jumeirah Village Triangle, DUBAI",
+    "banners": []
+  },
+  "greenz-by-danube": {
+    "url": "https://danubeproperties.com/portfolio/greenz-by-danube/",
+    "title": "Greenz by Danube - Luxury Townhouses & Villas in Academic City | Danube Properties",
+    "starting_price": "AED 3.5 Million",
+    "completion": "Q4-2029",
+    "payment_plan": "Danube Map",
+    "units": "768",
+    "bedrooms": "3 BEDROOM, 4 BEDROOM, 5 BEDROOM",
+    "location": "Academic City, DUBAI",
+    "banners": [
+      "Summer Bonanza"
+    ]
+  },
+  "serenz": {
+    "url": "https://danubeproperties.com/portfolio/serenz/",
+    "title": "Serenz - Apartments for Sale in Jumeirah Village Circle | Danube Properties",
+    "starting_price": "AED 1.1 Million",
+    "completion": "2029",
+    "payment_plan": "Danube Map",
+    "units": "1250",
+    "bedrooms": "STUDIO, 1 BEDROOM, 2 BEDROOM, 3 BEDROOM",
+    "location": "Jumeirah Village Circle",
+    "banners": []
+  },
+  "shahrukhz": {
+    "url": "https://danubeproperties.com/portfolio/shahrukhz/",
+    "title": "Shahrukhz - 55-Storey Office Tower | Danube Properties",
+    "starting_price": "AED 1.9 Million",
+    "completion": "2029",
+    "payment_plan": "Danube Map",
+    "units": "615",
+    "bedrooms": "N/A",
+    "location": "Sheikh Zayed Road",
+    "banners": []
+  },
+  "diamondz": {
+    "url": "https://danubeproperties.com/portfolio/diamondz/",
+    "title": "Diamondz - Apartments for Sale in Jumeirah Lake Towers (JLT) | Danube Properties",
+    "starting_price": "AED 1.1 Million",
+    "completion": "November, 2027",
+    "payment_plan": "Danube Map",
+    "units": "1219",
+    "bedrooms": "STUDIO, 1 BEDROOM, 2 BEDROOM, 3 BEDROOM, 4 BEDROOM",
+    "location": "Jumeirah Lake Towers, DUBAI",
+    "banners": []
+  },
+  "sportz": {
+    "url": "https://danubeproperties.com/portfolio/sportz/",
+    "title": "Sportz - Apartment For Sale in Dubai Sports City | Danube Properties",
+    "starting_price": "SOLD OUT",
+    "completion": "May, 2027",
+    "payment_plan": "Danube Map",
+    "units": "1110",
+    "bedrooms": "STUDIO, 1 BEDROOM, 2 BEDROOM, 3 BEDROOM",
+    "location": "SPORTS CITY, DUBAI",
+    "banners": []
+  },
+  "sparklz": {
+    "url": "https://danubeproperties.com/portfolio/sparklz/",
+    "title": "Sparklz - Apartments for Sale in Al Furjan - Danube Properties",
+    "starting_price": "AED 900,000",
+    "completion": "Q2-2028",
+    "payment_plan": "Danube Map",
+    "units": "356",
+    "bedrooms": "STUDIO, 1 BEDROOM, 2 BEDROOM, 3 BEDROOM",
+    "location": "Al Furjan, DUBAI",
+    "banners": []
+  },
+  "oceanz": {
+    "url": "https://danubeproperties.com/portfolio/oceanz/",
+    "title": "Oceanz - Apartments for Sale in Dubai Maritime City | Danube Properties",
+    "starting_price": "AED 1.2 Million",
+    "completion": "Q1 2027",
+    "payment_plan": "Danube Map",
+    "units": "1705",
+    "bedrooms": "STUDIO, 1 BEDROOM, 2 BEDROOM, 3 BEDROOM, 4 BEDROOM OCEANIC VILLA",
+    "location": "DUBAI MARITIME CITY, DUBAI",
+    "banners": []
+  }
+}

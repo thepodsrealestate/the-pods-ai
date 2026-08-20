@@ -70,15 +70,6 @@ export async function POST(req: NextRequest) {
       } catch (e) {}
     }
 
-    // 6. Explicitly trigger direct notification alert to user's saved phone & email
-    const alertResult = await NotificationService.notifyMineshBooking({
-      leadName,
-      phone: leadPhone,
-      meetingTime,
-      location,
-      voucherCode: 'PODS-VIP-9912',
-    });
-
     return NextResponse.json({
       status: 'success',
       message: `Test VIP Meeting Booked successfully for ${leadName}!`,
@@ -91,7 +82,6 @@ export async function POST(req: NextRequest) {
         meetingTime,
         location,
       },
-      alertDetails: alertResult.alertMessage,
     });
   } catch (error: any) {
     console.error('Test booking error:', error);

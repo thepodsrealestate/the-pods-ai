@@ -434,6 +434,115 @@
             "Ultra-exclusive beachfront and palm grove villas on private Siniya Island",
             "Direct beach access with premium Sobha luxury finishes"
           ]
+        },
+        {
+          "id": "sobha-310-riverside-crescent",
+          "projectName": "310 Riverside Crescent",
+          "location": "Sobha Hartland II, MBR City, Dubai",
+          "type": "Apartments",
+          "startingPriceAed": 3420000,
+          "paymentPlan": "60/40 or 70/30 flexible payment plan",
+          "handover": "Dec 2027",
+          "unitsAvailable": [
+            "1.5 Bedroom",
+            "2.5 Bedroom"
+          ],
+          "keyFacts": [
+            "Located in Sobha Hartland II alongside a serene blue crystal lagoon",
+            "Sizes from 1,424.9 Sq. Ft. to 1,467.6 Sq. Ft.",
+            "Completion: Dec 2027 | Starting Price: AED 3.42 Million"
+          ]
+        },
+        {
+          "id": "sobha-320-riverside-crescent",
+          "projectName": "320 Riverside Crescent",
+          "location": "Sobha Hartland II, MBR City, Dubai",
+          "type": "Apartments",
+          "startingPriceAed": 2260000,
+          "paymentPlan": "60/40 or 70/30 flexible payment plan",
+          "handover": "July 2027",
+          "unitsAvailable": [
+            "1 Bedroom",
+            "2 Bedroom",
+            "3 Bedroom"
+          ],
+          "keyFacts": [
+            "Stones throw away from Downtown Dubai, Burj Khalifa, and Dubai Creek Harbour",
+            "Sizes from 981.5 Sq. Ft. to 1,652.7 Sq. Ft.",
+            "Completion: July 2027 | Starting Price: AED 2.26 Million"
+          ]
+        },
+        {
+          "id": "sobha-330-riverside-crescent",
+          "projectName": "330 Riverside Crescent",
+          "location": "Sobha Hartland II, MBR City, Dubai",
+          "type": "Apartments",
+          "startingPriceAed": 1630000,
+          "paymentPlan": "60/40 or 70/30 flexible payment plan",
+          "handover": "June 2027",
+          "unitsAvailable": [
+            "1 Bedroom",
+            "1.5 Bedroom",
+            "2 Bedroom"
+          ],
+          "keyFacts": [
+            "Premium waterfront residences with sweeping crystal lagoon views in Hartland II",
+            "Completion: June 2027 | Starting Price: AED 1.63 Million"
+          ]
+        },
+        {
+          "id": "sobha-340-riverside-crescent",
+          "projectName": "340 Riverside Crescent",
+          "location": "Sobha Hartland II, MBR City, Dubai",
+          "type": "Apartments",
+          "startingPriceAed": 1980000,
+          "paymentPlan": "60/40 or 70/30 flexible payment plan",
+          "handover": "Dec 2027",
+          "unitsAvailable": [
+            "1 Bedroom",
+            "2 Bedroom"
+          ],
+          "keyFacts": [
+            "Spectacular tower in Sobha Hartland II with superlative community amenities",
+            "Sizes from 843.2 Sq. Ft. to 894.4 Sq. Ft.",
+            "Completion: Dec 2027 | Starting Price: AED 1.98 Million"
+          ]
+        },
+        {
+          "id": "sobha-350-riverside-crescent",
+          "projectName": "350 Riverside Crescent",
+          "location": "Sobha Hartland II, MBR City, Dubai",
+          "type": "Apartments",
+          "startingPriceAed": 2500000,
+          "paymentPlan": "60/40 or 70/30 flexible payment plan",
+          "handover": "Dec 2027",
+          "unitsAvailable": [
+            "1.5 Bedroom",
+            "2 Bedroom"
+          ],
+          "keyFacts": [
+            "Shining addition to the Riverside Crescent series in an 8 million sq. ft. development",
+            "Sizes from 1,145.3 Sq. Ft. to 1,193.0 Sq. Ft.",
+            "Completion: Dec 2027 | Starting Price: AED 2.50 Million"
+          ]
+        },
+        {
+          "id": "sobha-360-riverside-crescent",
+          "projectName": "360 Riverside Crescent",
+          "location": "Sobha Hartland II, MBR City, Dubai",
+          "type": "Apartments",
+          "startingPriceAed": 3460000,
+          "paymentPlan": "60/40 or 70/30 flexible payment plan",
+          "handover": "Dec 2027",
+          "unitsAvailable": [
+            "1 Bedroom",
+            "2.5 Bedroom"
+          ],
+          "keyFacts": [
+            "Waterfront haven with breathtaking Dubai Skyline and crystal lagoon vistas",
+            "Sizes from 1,425.3 Sq. Ft. to 1,460.6 Sq. Ft.",
+            "Completion: Dec 2027 | Starting Price: AED 3.46 Million"
+          ]
         }
       ]
     },

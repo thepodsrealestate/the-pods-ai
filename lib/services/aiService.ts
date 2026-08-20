@@ -230,6 +230,12 @@ DEVELOPER & PROJECT MATCHING RULES (CRITICAL):
   - "sobha central" / "sobha central area" / "sobha central location" -> Sobha Central (Sheikh Zayed Road, Jebel Ali First, Dubai | directly on SZR, walking distance to Jebel Ali Metro Station)
   - "the pinnacle" / "pinnacle" -> The Pinnacle by SOBHA (Sobha Central, Sheikh Zayed Road, Jebel Ali First | AED 1.4M | Handover: Q2 2028)
   - "the eden" / "eden" -> The Eden by SOBHA (Sobha Central, Sheikh Zayed Road, Jebel Ali First | AED 1.3M | Handover: Q3 2028)
+  - "310 riverside crescent" / "riverside crescent 310" -> 310 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 3.42M | Handover: Dec 2027)
+  - "320 riverside crescent" / "riverside crescent 320" -> 320 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 2.26M | Handover: July 2027)
+  - "330 riverside crescent" / "riverside crescent 330" -> 330 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 1.63M | Handover: June 2027)
+  - "340 riverside crescent" / "riverside crescent 340" -> 340 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 1.98M | Handover: Dec 2027)
+  - "350 riverside crescent" / "riverside crescent 350" -> 350 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 2.50M | Handover: Dec 2027)
+  - "360 riverside crescent" / "riverside crescent 360" -> 360 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 3.46M | Handover: Dec 2027)
   - "the woods" / "sobha woods" -> The Woods by SOBHA (Sobha Sanctuary | AED 3.2M | Handover: Q4 2027)
   - "the willows" / "willows" -> The Willows by SOBHA (Sobha Sanctuary | AED 3.5M | Handover: Q4 2027)
   - "the grove" / "grove" -> The Grove by SOBHA (Sobha Sanctuary | AED 3.8M | Handover: Q4 2027)
@@ -254,11 +260,17 @@ DANUBE PROPERTIES:
 - SHAHRUKHZ (Sheikh Zayed Road): https://the-pods-ai.vercel.app/brochures/danube-shahrukhz.pdf
 
 SOBHA REALTY:
+- 310 Riverside Crescent (Sobha Hartland II): https://the-pods-ai.vercel.app/brochures/sobha-310-riverside-crescent.pdf
+- 320 Riverside Crescent (Sobha Hartland II): https://the-pods-ai.vercel.app/brochures/sobha-320-riverside-crescent.pdf
+- 330 Riverside Crescent (Sobha Hartland II): https://the-pods-ai.vercel.app/brochures/sobha-330-riverside-crescent.pdf
+- 340 Riverside Crescent (Sobha Hartland II): https://the-pods-ai.vercel.app/brochures/sobha-340-riverside-crescent.pdf
+- 350 Riverside Crescent (Sobha Hartland II): https://the-pods-ai.vercel.app/brochures/sobha-350-riverside-crescent.pdf
+- 360 Riverside Crescent (Sobha Hartland II): https://the-pods-ai.vercel.app/brochures/sobha-360-riverside-crescent.pdf
 - River Cove Residences (Sobha City Abu Dhabi): https://the-pods-ai.vercel.app/brochures/sobha-river-cove.pdf
 - The Terraces (Sobha City Abu Dhabi): https://the-pods-ai.vercel.app/brochures/sobha-terraces.pdf
 - The Orchard (Sobha City Abu Dhabi): https://the-pods-ai.vercel.app/brochures/sobha-orchard.pdf
-- The Pinnacle (Sobha Central, Dubai): https://the-pods-ai.vercel.app/brochures/sobha-pinnacle.pdf
-- The Eden (Sobha Central, Dubai): https://the-pods-ai.vercel.app/brochures/sobha-eden.pdf
+- The Pinnacle (Sobha Central, Jebel Ali First): https://the-pods-ai.vercel.app/brochures/sobha-pinnacle.pdf
+- The Eden (Sobha Central, Jebel Ali First): https://the-pods-ai.vercel.app/brochures/sobha-eden.pdf
 - The Woods (Sobha Sanctuary): https://the-pods-ai.vercel.app/brochures/sobha-woods.pdf
 - The Willows (Sobha Sanctuary): https://the-pods-ai.vercel.app/brochures/sobha-willows.pdf
 - The Grove (Sobha Sanctuary): https://the-pods-ai.vercel.app/brochures/sobha-grove.pdf
@@ -389,9 +401,9 @@ You MUST return your response as a valid JSON object matching this exact schema:
       };
     }
 
-    if (text.includes('danube') || text.includes('bayz') || text.includes('1%')) {
+    if (text.includes('danube') || text.includes('bayz') || text.includes('1%') || text.includes('2%')) {
       return {
-        reply: "Bayz 101 in Business Bay starts from AED 650K on Danube's 1% monthly plan. Are you looking at this for investment or personal use?",
+        reply: "BAYZ 101 by Danube in Business Bay starts from AED 1.18M with a 0% downpayment, 2% monthly plan. Are you looking at this for investment or personal use?",
         language: 'en',
         action: 'UPDATE_LEAD',
         lead_updates: { purchase_purpose: 'Investment ROI' },
