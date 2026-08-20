@@ -14,8 +14,10 @@ export async function POST(req: NextRequest) {
     ) {
       const response = NextResponse.json({ success: true, message: 'Authenticated successfully' });
 
+      const sessionSecret = process.env.DASHBOARD_SESSION_SECRET || 'authenticated_minesh_pods_session_token_2026';
+
       // Set encrypted HttpOnly cookie
-      response.cookies.set('pods_session', 'authenticated_minesh_pods_session_token_2026', {
+      response.cookies.set('pods_session', sessionSecret, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',

@@ -20,7 +20,8 @@ export function middleware(req: NextRequest) {
 
   // 2. Check HttpOnly session cookie
   const sessionToken = req.cookies.get('pods_session')?.value;
-  const isAuthenticated = sessionToken === 'authenticated_minesh_pods_session_token_2026';
+  const sessionSecret = process.env.DASHBOARD_SESSION_SECRET || 'authenticated_minesh_pods_session_token_2026';
+  const isAuthenticated = sessionToken === sessionSecret;
 
   // 3. Protect API routes server-side
   if (pathname.startsWith('/api/')) {

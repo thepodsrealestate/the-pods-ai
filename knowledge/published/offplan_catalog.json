@@ -552,7 +552,7 @@
         {
           "id": "binghatti-etherea",
           "projectName": "Binghatti Etherea",
-          "location": "Business Bay, Dubai",
+          "location": "JVC (Jumeirah Village Circle), Dubai",
           "startingPriceAed": 1200000,
           "paymentPlan": "70/30 or 60/40 flexible payment plan (20% down payment)",
           "handover": "Q2 2027",
@@ -562,31 +562,14 @@
             "2-Bed"
           ],
           "keyFacts": [
-            "Iconic architectural design with ethereal light-inspired facades",
-            "Prime Business Bay location with Burj Khalifa and Canal views"
-          ]
-        },
-        {
-          "id": "binghatti-bugatti",
-          "projectName": "Bugatti Residences by Binghatti",
-          "location": "Business Bay, Dubai",
-          "startingPriceAed": 19000000,
-          "paymentPlan": "70/30 payment plan",
-          "handover": "Q4 2026",
-          "unitsAvailable": [
-            "2-Bed Mansions",
-            "3-Bed Mansions",
-            "Penthouse"
-          ],
-          "keyFacts": [
-            "World's first Bugatti Residences featuring Riviera-inspired private beach lagoon",
-            "Car lift direct to sky mansion penthouses"
+            "Iconic architectural design with ethereal light-inspired facades in Jumeirah Village Circle (JVC)",
+            "Prime JVC community location with easy access to Al Khail Road and Hessa Street"
           ]
         },
         {
           "id": "binghatti-skyterraces",
           "projectName": "Binghatti Sky Terraces",
-          "location": "Dubai Silicon Oasis, Dubai",
+          "location": "Motor City, Dubai",
           "startingPriceAed": 680000,
           "paymentPlan": "20% Down Payment, flexible 70/30 or 50/50 payment options during construction, handover April 2028",
           "handover": "Q2 2028 (30/04/2028)",
@@ -595,7 +578,7 @@
             "2-Bed (from AED 1.88M, 1055-1098 sqft)"
           ],
           "keyFacts": [
-            "Iconic stepped terrace architecture with panoramic Dubai skyline vistas in Silicon Oasis",
+            "Iconic stepped terrace architecture located in Dubai Motor City",
             "1-Bed units from AED 1.21M (665 to 713 sq.ft.)",
             "2-Bed units from AED 1.88M (1055 to 1098 sq.ft.)",
             "Completion Date: 30 April 2028"
@@ -604,7 +587,7 @@
         {
           "id": "binghatti-skyflame",
           "projectName": "Binghatti Skyflame 1",
-          "location": "Majan, Dubai",
+          "location": "Majan, Dubailand, Dubai",
           "startingPriceAed": 1149999,
           "paymentPlan": "20% Down Payment, flexible options during construction, completion Q4 2027",
           "handover": "Q4 2027 (31/12/2027)",
@@ -614,7 +597,7 @@
             "2-Bed Royal Suite (from AED 2.34M, 2113 sqft)"
           ],
           "keyFacts": [
-            "High-rise luxury tower with sweeping skyline views in Majan",
+            "High-rise luxury tower with sweeping skyline views in Majan, Dubailand",
             "1-Bed units starting from AED 1.15M (722 sq.ft.)",
             "2-Bed units from AED 1.69M (1256 sq.ft.) and Royal Suites from AED 2.34M (2113 sq.ft.)",
             "Completion Date: 31 December 2027"
@@ -623,7 +606,7 @@
         {
           "id": "binghatti-wraith",
           "projectName": "Binghatti Wraith",
-          "location": "Al Jaddaf / Healthcare City, Dubai",
+          "location": "Al Jaddaf, Dubai",
           "startingPriceAed": 2195999,
           "paymentPlan": "20% Down Payment, flexible 70/30 or 50/50 payment plan, completion Q4 2027",
           "handover": "Q4 2027 (30/12/2027)",
@@ -631,7 +614,7 @@
             "2-Bed Luxury (from AED 2.19M, 1165-1737 sqft)"
           ],
           "keyFacts": [
-            "Ultra-modern luxury residences inspired by Rolls-Royce automotive craftsmanship",
+            "Ultra-modern luxury residences inspired by Rolls-Royce automotive craftsmanship in Al Jaddaf",
             "Prime Al Jaddaf waterfront location minutes from Downtown Dubai and Dubai Creek",
             "2-Bed units from AED 2.19M (1165 to 1737 sq.ft.)",
             "Completion Date: 30 December 2027"
@@ -650,15 +633,15 @@
             "Billionaire Penthouse"
           ],
           "keyFacts": [
-            "Hyper-tower set to be the tallest residential skyscraper in the world",
+            "Hyper-tower in Business Bay set to be the tallest residential skyscraper in the world",
             "Co-designed with high-jewelry and horology brand Jacob & Co",
             "Crown features diamond-shaped spires resembling Jacob & Co cut gems"
           ]
         },
         {
-          "id": "binghatti-mercedes-benz",
-          "projectName": "Mercedes-Benz Places | Binghatti",
-          "location": "Downtown Dubai / Nad Al Sheba, Dubai",
+          "id": "binghatti-mercedes-benz-downtown",
+          "projectName": "Mercedes-Benz Places (Downtown)",
+          "location": "Downtown Dubai, Dubai",
           "startingPriceAed": 10299999,
           "paymentPlan": "70/30 payment plan (20% Down Payment)",
           "handover": "Q1 2027 (28/02/2027)",
@@ -668,10 +651,29 @@
             "Sky Mansion"
           ],
           "keyFacts": [
-            "World first Mercedes-Benz branded residential hyper-tower in Downtown Dubai",
+            "World's first Mercedes-Benz branded residential hyper-tower in Downtown Dubai",
             "Unobstructed views of Burj Khalifa with integrated automotive design philosophy",
-            "2-Bed Luxury Suites from AED 10.3M (1836 sq.ft.)",
             "Completion Date: 28 February 2027"
+          ]
+        },
+        {
+          "id": "binghatti-mercedes-benz-meydan",
+          "projectName": "Mercedes-Benz Places | Binghatti City (Meydan)",
+          "location": "Meydan / Nad Al Sheba, Dubai",
+          "startingPriceAed": 10299999,
+          "paymentPlan": "70/30 payment plan (20% Down Payment)",
+          "handover": "Q4 2027",
+          "unitsAvailable": [
+            "Studio",
+            "1-Bed",
+            "2-Bed",
+            "3-Bed",
+            "Project Maybach Suites"
+          ],
+          "keyFacts": [
+            "The world's first Mercedes-Benz Branded City master community in Meydan / Nad Al Sheba",
+            "Features Project Maybach residential suites, private lagoons, and luxury retail boulevard",
+            "Prime Meydan racecourse and Dubai skyline views"
           ]
         },
         {
@@ -687,7 +689,7 @@
             "2-Bed Royal Suite (from AED 1.94M, 1356 sqft)"
           ],
           "keyFacts": [
-            "Luxury residential tower in prime JVT community park vicinity",
+            "Luxury residential tower in prime Jumeirah Village Triangle (JVT) community",
             "1-Bed units from AED 1.30M (631 to 754 sq.ft.)",
             "2-Bed units from AED 1.84M (963 sq.ft.) and Royal Suites from AED 1.94M (1356 sq.ft.)",
             "Completion Date: 30 September 2027"

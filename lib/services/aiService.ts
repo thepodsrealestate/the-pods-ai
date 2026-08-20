@@ -202,13 +202,14 @@ DEVELOPER & PROJECT MATCHING RULES (CRITICAL):
   - BINGHATTI: Mercedes-Benz Places (Downtown), Burj Binghatti Jacob & Co (Business Bay), Wraith (Al Jaddaf), Sky Terraces (Silicon Oasis), Skyflame (Majan), Luxuria (JVC), Etherea (Business Bay).
   - SOBHA REALTY: River Cove, The Terraces, The Orchard, The Pinnacle, The Eden, The Woods, The Willows, The Grove, Yachtside Marina, Palm Grove.
 - COMPREHENSIVE PHONETIC & ALIAS DICTIONARY (100% Exact Matching):
-  - "mercedes" / "mercedes city" / "mercedes-benz" / "mercedes benz places" -> Mercedes-Benz Places by BINGHATTI (Downtown Dubai / Nad Al Sheba | AED 10.3M | Handover: Feb 2027)
+  - "mercedes downtown" / "mercedes benz places downtown" -> Mercedes-Benz Places (Downtown Dubai | AED 10.3M | Handover: Feb 2027)
+  - "mercedes meydan" / "binghatti city" / "mercedes city" / "project maybach" -> Mercedes-Benz Places at Binghatti City (Meydan / Nad Al Sheba | Handover: Q4 2027)
   - "jacob" / "jacob & co" / "jacob co" / "burj binghatti" -> Burj Binghatti Jacob & Co (Business Bay | AED 8.0M | Handover: Q2 2026)
-  - "wraith" / "binghatti wraith" -> Binghatti Wraith (Al Jaddaf / Healthcare City | AED 2.19M | Handover: Dec 2027)
-  - "skyflame" / "sky flame" -> Binghatti Skyflame (Majan | AED 1.15M | Handover: Dec 2027)
-  - "sky terraces" / "sky terrace" -> Binghatti Sky Terraces (Dubai Silicon Oasis | 1-Bed from AED 1.21M, 2-Bed from AED 1.88M | Handover: April 2028)
-  - "luxuria" / "binghatti luxuria" -> Binghatti Luxuria (Jumeirah Village Triangle - JVT | AED 1.30M | Handover: Sept 2027)
-  - "etherea" / "binghatti etherea" -> Binghatti Etherea (Business Bay | AED 1.2M | Handover: Q2 2027)
+  - "wraith" / "binghatti wraith" -> Binghatti Wraith (Al Jaddaf | AED 2.19M | Handover: Dec 2027)
+  - "skyflame" / "sky flame" -> Binghatti Skyflame (Majan, Dubailand | AED 1.15M | Handover: Dec 2027)
+  - "sky terraces" / "sky terrace" / "skyterraces" -> Binghatti Sky Terraces (Motor City | 1-Bed from AED 1.21M, 2-Bed from AED 1.88M | Handover: April 2028)
+  - "etherea" / "binghatti etherea" -> Binghatti Etherea (JVC - Jumeirah Village Circle | AED 1.2M | Handover: Q2 2027)
+  - "luxuria" / "binghatti luxuria" -> Binghatti Luxuria (JVT - Jumeirah Village Triangle | AED 1.30M | Handover: Sept 2027)
 
   - "breeze" / "breez" / "danube breeze" -> BREEZ by Danube (Dubai Maritime City | AED 1.25M | Handover: 2029 | 0.5% Monthly)
   - "greens" / "greenz" / "danube greenz" -> GREENZ by Danube (Academic City | AED 3.5M | Handover: Q4-2029 | 0.5% Monthly)
