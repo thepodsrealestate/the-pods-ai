@@ -199,9 +199,12 @@ DEVELOPER & PROJECT MATCHING RULES (CRITICAL):
 - ALWAYS prioritize the user's LATEST message. If the user asks about a new project (e.g. "Bayz 102", "Breez", "Timez", "Diamondz"), IMMEDIATELY switch to that exact project. NEVER repeat details of the previous project discussed!
 - DEVELOPER BOUNDARIES:
   - DANUBE: Bayz 101, Bayz 102, Aspirz, Breez, Diamondz, Fashionz, Greenz, Oceanz, Serenz, Shahrukhz, Sparklz, Sportz, Timez.
-  - BINGHATTI: Mercedes-Benz Places (Downtown), Burj Binghatti Jacob & Co (Business Bay), Wraith (Al Jaddaf), Sky Terraces (Silicon Oasis), Skyflame (Majan), Luxuria (JVC), Etherea (Business Bay).
-  - SOBHA REALTY: River Cove, The Terraces, The Orchard, The Pinnacle, The Eden, The Woods, The Willows, The Grove, Yachtside Marina, Palm Grove.
+  - BINGHATTI: Mercedes-Benz Places (Downtown & Meydan), Burj Binghatti Jacob & Co (Business Bay), Wraith (Al Jaddaf), Sky Terraces (Motor City), Skyflame (Majan), Luxuria (JVT), Etherea (JVC), Titania (Majan), Twilight (Al Jaddaf), Vintage (Majan).
+  - SOBHA REALTY: River Cove, The Terraces, The Orchard, The Pinnacle, The Eden, The Woods, The Willows, The Grove, Yachtside Marina, Palm Grove, Riverside Crescent (310, 320, 330, 340, 350, 360).
 - COMPREHENSIVE PHONETIC & ALIAS DICTIONARY (100% Exact Matching):
+  - "titania" / "binghatti titania" -> Binghatti Titania (Majan, Dubailand | Studio from AED 693K, 1-Bed from AED 1.05M, 2-Bed from AED 1.54M | Handover: Sept 2027 | 6% Full Cash Upfront Discount available: Studio AED 651K, 1-Bed AED 994K, 2-Bed AED 1.45M)
+  - "twilight" / "binghatti twilight" -> Binghatti Twilight (Al Jaddaf | 2-Bed from AED 1.99M, Full Cash: AED 1.88M with 6% discount | Handover: Dec 2026)
+  - "vintage" / "binghatti vintage" -> Binghatti Vintage (Majan, Dubailand | 1-Bed from AED 1.11M, Full Cash: AED 1.04M with 6% discount | Handover: Sept 2027)
   - "mercedes downtown" / "mercedes benz places downtown" -> Mercedes-Benz Places (Downtown Dubai | AED 10.3M | Handover: Feb 2027)
   - "mercedes meydan" / "binghatti city" / "mercedes city" / "project maybach" -> Mercedes-Benz Places at Binghatti City (Meydan / Nad Al Sheba | Handover: Q4 2027)
   - "jacob" / "jacob & co" / "jacob co" / "burj binghatti" -> Burj Binghatti Jacob & Co (Business Bay | AED 8.0M | Handover: Q2 2026)

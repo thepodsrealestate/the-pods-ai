@@ -694,6 +694,57 @@
             "2-Bed units from AED 1.84M (963 sq.ft.) and Royal Suites from AED 1.94M (1356 sq.ft.)",
             "Completion Date: 30 September 2027"
           ]
+        },
+        {
+          "id": "binghatti-titania",
+          "projectName": "Binghatti Titania",
+          "location": "Majan / Dubailand, Dubai",
+          "startingPriceAed": 692999,
+          "paymentPlan": "20% Down Payment, flexible installments during construction (6% Cash Discount for 100% full cash upfront)",
+          "handover": "Q3 2027 (30/09/2027)",
+          "unitsAvailable": [
+            "Studio (from AED 693K, Full Cash: AED 651K)",
+            "1-Bed (from AED 1.05M, Full Cash: AED 994K)",
+            "2-Bed (from AED 1.54M, Full Cash: AED 1.45M)"
+          ],
+          "keyFacts": [
+            "6% Full Cash Upfront Discount available across all units (e.g. Studio asking AED 693K discounted to AED 651K in full cash)",
+            "Prime Majan community facing IMG Worlds of Adventure and Sheikh Mohammed Bin Zayed Road",
+            "Completion Date: 30 September 2027"
+          ]
+        },
+        {
+          "id": "binghatti-twilight",
+          "projectName": "Binghatti Twilight",
+          "location": "Al Jaddaf, Dubai",
+          "startingPriceAed": 1999999,
+          "paymentPlan": "20% DP (AED 1.99M), 50% DP (AED 1.93M), Full Cash Payment (AED 1.88M with 6% cash discount)",
+          "handover": "Q4 2026 (31/12/2026)",
+          "unitsAvailable": [
+            "2-Bed Luxury (1,074 sq.ft., from AED 1.99M, Full Cash: AED 1.88M)"
+          ],
+          "keyFacts": [
+            "Luxury waterfront residences in Al Jaddaf with Downtown & Canal skyline views",
+            "6% upfront cash discount on full payment (AED 1,879,999 for 2-Bed)",
+            "Completion Date: 31 December 2026"
+          ]
+        },
+        {
+          "id": "binghatti-vintage",
+          "projectName": "Binghatti Vintage",
+          "location": "Majan / Dubailand, Dubai",
+          "startingPriceAed": 1112999,
+          "paymentPlan": "20% Down Payment, flexible installments (6% Cash Discount for 100% full cash)",
+          "handover": "Q3 2027 (30/09/2027)",
+          "unitsAvailable": [
+            "1-Bed (from AED 1.11M, Full Cash: AED 1.04M)",
+            "2-Bed Royal Suite (from AED 1.76M, Full Cash: AED 1.66M)"
+          ],
+          "keyFacts": [
+            "Sophisticated vintage architectural aesthetic in Majan overlooking IMG Worlds & SMBZ Road",
+            "6% Full Cash Upfront Discount available across all inventory",
+            "Completion Date: 30 September 2027"
+          ]
         }
       ]
     }
