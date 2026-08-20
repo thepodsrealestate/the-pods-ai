@@ -312,7 +312,7 @@
         {
           "id": "sobha-pinnacle",
           "projectName": "The Pinnacle at Sobha Central",
-          "location": "Sobha Central, MBR City, Dubai",
+          "location": "Sheikh Zayed Road, Jebel Ali First, Dubai",
           "type": "Apartments",
           "startingPriceAed": 1400000,
           "paymentPlan": "40/60 flexible payment plan",
@@ -324,14 +324,14 @@
             "Penthouse"
           ],
           "keyFacts": [
-            "Ultra-premium tower at the heart of Sobha Central master community in Dubai",
-            "Iconic skyline views and world-class lifestyle amenities"
+            "Ultra-premium tower located directly on Sheikh Zayed Road in Jebel Ali First, within walking distance to Jebel Ali Metro Station",
+            "Iconic skyline views, close to Dubai Marina, JBR, Expo City, and DWC Airport"
           ]
         },
         {
           "id": "sobha-eden",
           "projectName": "The Eden at Sobha Central",
-          "location": "Sobha Central, MBR City, Dubai",
+          "location": "Sheikh Zayed Road, Jebel Ali First, Dubai",
           "type": "Apartments",
           "startingPriceAed": 1300000,
           "paymentPlan": "40/60 flexible payment plan",
@@ -342,8 +342,8 @@
             "3-Bed"
           ],
           "keyFacts": [
-            "Garden-inspired luxury living within Sobha Central master development",
-            "Serene green landscapes with premium interior finishes"
+            "Garden-inspired luxury living directly on Sheikh Zayed Road in Jebel Ali First, walking distance to Jebel Ali Metro Station",
+            "Serene green landscapes with premium interior finishes and instant highway connectivity"
           ]
         },
         {
