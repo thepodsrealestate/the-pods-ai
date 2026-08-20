@@ -200,16 +200,39 @@ DEVELOPER & PROJECT MATCHING RULES (CRITICAL):
   - DANUBE: Bayz 101, Bayz 102, Aspirz, Breez, Diamondz, Fashionz, Greenz, Oceanz, Serenz, Shahrukhz, Sparklz, Sportz, Timez.
   - BINGHATTI: Mercedes-Benz Places (Downtown), Burj Binghatti Jacob & Co (Business Bay), Wraith (Al Jaddaf), Sky Terraces (Silicon Oasis), Skyflame (Majan), Luxuria (JVC), Etherea (Business Bay).
   - SOBHA REALTY: River Cove, The Terraces, The Orchard, The Pinnacle, The Eden, The Woods, The Willows, The Grove, Yachtside Marina, Palm Grove.
-- SPELLED PHONETIC / ALIAS DICTIONARY (Handle user typos accurately):
-  - "breeze" / "breez" -> BREEZ by Danube (Dubai Maritime City | AED 1.25M | Handover: 2029 | 0.5% Monthly)
-  - "greens" / "greenz" -> GREENZ by Danube (Academic City | AED 3.5M | Handover: Q4-2029 | 0.5% Monthly)
-  - "shahrukh" / "sharukhz" / "shahrukhz" -> SHAHRUKHZ by Danube (Sheikh Zayed Road | AED 1.9M | Handover: 2029 | 1% Monthly)
-  - "bayz 102" / "base 102" -> BAYZ 102 by Danube (Business Bay | AED 2.4M | Handover: June 2029 | 2% Monthly)
-  - "bayz 101" / "base 101" -> BAYZ 101 by Danube (Business Bay | AED 1.175M | Handover: June 2028 | 2% Monthly)
-  - "aspirz" / "aspires" -> ASPIRZ by Danube (Sports City | AED 879K | Handover: Q4-2028 | 0.5% Monthly)
-  - "timez" / "times" -> TIMEZ by Danube (Silicon Oasis | AED 871K | Handover: Q2-2028 | 0.5% Monthly)
-  - "fashionz" / "fashions" -> FASHIONZ by Danube (JVT | AED 1.513M | Handover: July 2027 | 1% Monthly)
-  - "mercedes" / "mercedes-benz" -> Mercedes-Benz Places by BINGHATTI (Downtown Dubai | AED 10.3M | Handover: Feb 2027)
+- COMPREHENSIVE PHONETIC & ALIAS DICTIONARY (100% Exact Matching):
+  - "mercedes" / "mercedes city" / "mercedes-benz" / "mercedes benz places" -> Mercedes-Benz Places by BINGHATTI (Downtown Dubai | AED 10.3M | Handover: Feb 2027)
+  - "jacob" / "jacob & co" / "jacob co" / "burj binghatti" -> Burj Binghatti Jacob & Co (Business Bay | AED 8.2M | Handover: Q2 2026)
+  - "wraith" / "binghatti wraith" -> Binghatti Wraith (Al Jaddaf | AED 2.19M | Handover: Dec 2027)
+  - "skyflame" / "sky flame" -> Binghatti Skyflame (Majan | AED 1.15M | Handover: Dec 2027)
+  - "sky terraces" / "sky terrace" -> Binghatti Sky Terraces (Silicon Oasis | AED 1.21M | Handover: April 2028)
+  - "luxuria" / "binghatti luxuria" -> Binghatti Luxuria (JVC | AED 1.3M | Handover: Sept 2027)
+  - "etherea" / "binghatti etherea" -> Binghatti Etherea (Business Bay | AED 850K)
+
+  - "breeze" / "breez" / "danube breeze" -> BREEZ by Danube (Dubai Maritime City | AED 1.25M | Handover: 2029 | 0.5% Monthly)
+  - "greens" / "greenz" / "danube greenz" -> GREENZ by Danube (Academic City | AED 3.5M | Handover: Q4-2029 | 0.5% Monthly)
+  - "shahrukh" / "sharukhz" / "shahrukhz" / "srk" -> SHAHRUKHZ by Danube (Sheikh Zayed Road | AED 1.9M | Handover: 2029 | 1% Monthly)
+  - "bayz 102" / "base 102" / "bayz102" -> BAYZ 102 by Danube (Business Bay | AED 2.4M | Handover: June 2029 | 2% Monthly)
+  - "bayz 101" / "base 101" / "bayz101" -> BAYZ 101 by Danube (Business Bay | AED 1.175M | Handover: June 2028 | 2% Monthly)
+  - "aspirz" / "aspires" / "aspire" -> ASPIRZ by Danube (Sports City | AED 879K | Handover: Q4-2028 | 0.5% Monthly)
+  - "timez" / "times" / "time" -> TIMEZ by Danube (Silicon Oasis | AED 871K | Handover: Q2-2028 | 0.5% Monthly)
+  - "fashionz" / "fashions" / "fashion" -> FASHIONZ by Danube (JVT | AED 1.513M | Handover: July 2027 | 1% Monthly)
+  - "sparklz" / "sparkles" / "sparkle" -> SPARKLZ by Danube (Al Furjan | AED 900K | Handover: Q2-2028 | 0.5% Monthly)
+  - "diamondz" / "diamonds" / "diamond" -> DIAMONDZ by Danube (Uptown JLT | AED 1.1M | Handover: Nov 2027 | 0.5% Monthly)
+  - "sportz" / "sports" / "sport" -> SPORTZ by Danube (Sports City | SOLD OUT | Handover: May 2027 | 1% Monthly)
+  - "oceanz" / "oceans" / "ocean" -> OCEANZ by Danube (Dubai Maritime City | AED 1.2M | Handover: Q1 2027 | 1% Monthly)
+  - "serenz" / "serene" / "serenz" -> SERENZ by Danube (JVC | AED 1.1M | Handover: 2029 | 0.5% Monthly)
+
+  - "river cove" / "sobha river cove" -> River Cove Residences by SOBHA (Sobha City Abu Dhabi | AED 1.8M | Handover: Q4 2027)
+  - "sobha terraces" / "the terraces" -> The Terraces by SOBHA (Sobha City Abu Dhabi | AED 1.6M | Handover: Q4 2027)
+  - "the orchard" / "sobha orchard" -> The Orchard by SOBHA (Sobha City Abu Dhabi | AED 1.7M | Handover: Q4 2027)
+  - "the pinnacle" / "pinnacle" -> The Pinnacle by SOBHA (Sobha Central, Dubai | AED 1.3M | Handover: Q4 2027)
+  - "the eden" / "eden" -> The Eden by SOBHA (Sobha Central, Dubai | AED 1.4M | Handover: Q4 2027)
+  - "the woods" / "sobha woods" -> The Woods by SOBHA (Sobha Sanctuary | AED 3.2M | Handover: Q4 2027)
+  - "the willows" / "willows" -> The Willows by SOBHA (Sobha Sanctuary | AED 3.5M | Handover: Q4 2027)
+  - "the grove" / "grove" -> The Grove by SOBHA (Sobha Sanctuary | AED 3.8M | Handover: Q4 2027)
+  - "yachtside marina" / "yachtside" -> Yachtside Marina by SOBHA (Siniya Island | AED 2.2M | Handover: Q4 2027)
+  - "palm grove" / "palm grove villas" -> Palm Grove Villas by SOBHA (Siniya Island | AED 10.5M | Handover: Q4 2027)
 
 VERIFIED PROPERTY BROCHURES (ALWAYS SEND THE EXACT MATCHING PDF):
 

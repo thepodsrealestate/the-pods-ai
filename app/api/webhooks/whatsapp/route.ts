@@ -119,7 +119,9 @@ export async function POST(req: NextRequest) {
       });
 
       if (existingLead && existingLead.conversations.length > 0) {
-        const rawMsgs = [...existingLead.conversations[0].messages].reverse();
+        // Use the last 10 recent messages for immediate conversational context so model does not anchor on previous topics
+        const recentMsgs = existingLead.conversations[0].messages.slice(0, 10);
+        const rawMsgs = [...recentMsgs].reverse();
         conversationHistory = rawMsgs.map((m: any) => ({
           sender: m.senderType === 'LEAD' ? 'LEAD' : 'AI',
           text: m.content,
