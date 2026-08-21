@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       orderBy: { createdAt: 'desc' },
     });
 
-    let targetEmail = body.email || 'maddyasif6@gmail.com';
+    let targetEmail = body.email || 'info@thepodsrealestate.ae';
     let resendApiKey = process.env.RESEND_API_KEY || body.resendApiKey;
 
     if (settings) {

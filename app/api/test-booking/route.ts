@@ -59,8 +59,8 @@ export async function POST(req: NextRequest) {
       orderBy: { createdAt: 'desc' },
     });
 
-    let adminPhone = '+971545866094';
-    let adminEmail = 'maddyasif6@gmail.com';
+    let adminPhone = '+971523666495';
+    let adminEmail = 'info@thepodsrealestate.ae';
 
     if (settings) {
       try {
