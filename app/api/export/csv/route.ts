@@ -4,10 +4,10 @@ import prisma from "@/lib/prisma";
 export async function GET(req: Request) {
   // Defense-in-depth: check session cookie inside route handler
   const cookieHeader = req.headers.get("cookie") || "";
-  const sessionSecret = process.env.DASHBOARD_SESSION_SECRET || 'authenticated_minesh_pods_session_token_2026';
-  const hasAuth = cookieHeader.includes(`pods_session=${sessionSecret}`);
+  const sessionSecret = process.env.DASHBOARD_SESSION_SECRET;
+  const hasAuth = Boolean(sessionSecret && cookieHeader.includes(`pods_session=${sessionSecret}`));
 
-  if (!hasAuth && process.env.NODE_ENV === "production") {
+  if (!hasAuth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

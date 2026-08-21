@@ -535,7 +535,7 @@ export default function MasterDashboardPage() {
       if (document.visibilityState === 'visible') {
         fetchData();
       }
-    }, 4000); // 4s smart background-aware live refresh
+    }, 10000); // 10s smart background-aware live refresh
     return () => clearInterval(interval);
   }, []);
 
