@@ -571,15 +571,17 @@
           "id": "binghatti-skyterraces",
           "projectName": "Binghatti Sky Terraces",
           "location": "Motor City, Dubai",
-          "startingPriceAed": 1210000,
+          "startingPriceAed": 680000,
           "paymentPlan": "20% Down Payment, flexible 70/30 or 50/50 payment options during construction, handover April 2028",
           "handover": "Q2 2028 (30/04/2028)",
           "unitsAvailable": [
+            "Studio (from AED 680K, 420-480 sqft)",
             "1-Bed (from AED 1.21M, 665-713 sqft)",
             "2-Bed (from AED 1.88M, 1055-1098 sqft)"
           ],
           "keyFacts": [
             "Iconic stepped terrace architecture located in Dubai Motor City",
+            "Studio units from AED 680K (420 to 480 sq.ft.)",
             "1-Bed units from AED 1.21M (665 to 713 sq.ft.)",
             "2-Bed units from AED 1.88M (1055 to 1098 sq.ft.)",
             "Completion Date: 30 April 2028"
