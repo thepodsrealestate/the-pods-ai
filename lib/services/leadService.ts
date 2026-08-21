@@ -114,10 +114,17 @@ export class LeadService {
         include: { attributions: true },
       });
     } else {
-      // Preserve existing data, update missing non-null fields
+      // Update existing lead if real phone number or fuller name arrives from ManyChat webhook
       const updateData: any = {};
-      if (!lead.fullName && input.fullName) updateData.fullName = input.fullName;
-      if (!lead.email && input.email) updateData.email = input.email;
+      if (input.fullName && input.fullName !== 'VIP Client' && lead.fullName !== input.fullName) {
+        updateData.fullName = input.fullName;
+      }
+      if (normalizedPhone && !normalizedPhone.startsWith('+lead_') && lead.phone !== normalizedPhone) {
+        updateData.phone = normalizedPhone;
+      }
+      if (input.email && !lead.email) {
+        updateData.email = input.email;
+      }
 
       if (Object.keys(updateData).length > 0) {
         lead = await prisma.lead.update({
