@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AIService } from '@/lib/services/aiService';
+import { prisma } from '@/lib/prisma';
+import { LeadService } from '@/lib/services/leadService';
+import { MessageService } from '@/lib/services/messageService';
+import { NotificationService } from '@/lib/services/notificationService';
+import { CalendarService } from '@/lib/services/calendarService';
+import { WhisperService } from '@/lib/services/whisperService';
+import { LeadStatus } from '@prisma/client';
 
 // Sliding Window Rate Limiter (tracks phone -> request timestamps)
 const requestTracker = new Map<string, number[]>();
@@ -44,13 +51,10 @@ export async function POST(req: NextRequest) {
     let userText = body.last_input_text || body.payload?.text || body.text || body.message || "";
 
 
-
-
     // Audio / Voice Note Detection & Automatic OpenAI Whisper Transcription
     const audioUrl = body.voice_url || body.audio_url || body.media_url || body.file_url || body.payload?.url;
     if (audioUrl && (!userText || userText === "Hi" || userText.toLowerCase().includes("voice") || userText.toLowerCase().includes("audio"))) {
       try {
-        const { WhisperService } = await import('@/lib/services/whisperService');
         const transcribed = await WhisperService.transcribeAudio(audioUrl);
         if (transcribed && transcribed.trim()) {
           userText = transcribed.trim();
@@ -73,10 +77,8 @@ export async function POST(req: NextRequest) {
 
 
     // 2. Rate Limiting (max 10 requests per minute per phone number)
-    const ip = req.headers.get('x-forwarded-for') || 'anon';
-    const rateLimitKey = `${phone}_${ip}`;
-    if (!checkRateLimit(rateLimitKey, 10, 60000)) {
-      console.warn(`[SECURITY RATE LIMIT] Exceeded for ${phone}`);
+    if (!checkRateLimit(phone, 10, 60000)) {
+      console.warn(`[RATE LIMIT] Throttled ${phone}`);
       return NextResponse.json({
         status: 'rate_limited',
         reply: 'Thank you for contacting The Pods Real Estate. Our team is preparing your details.',
@@ -86,14 +88,12 @@ export async function POST(req: NextRequest) {
     // 3. Normalize phone for consistent database lookups
     let normalizedPhone = phone;
     try {
-      const { LeadService } = await import('@/lib/services/leadService');
       normalizedPhone = LeadService.normalizePhone(phone, senderName);
     } catch (_) { /* fallback to raw phone */ }
 
     // 4. Fetch past conversation history from database for 100% unlimited memory retention
     let conversationHistory: { sender: string; text: string }[] = [];
     try {
-      const { prisma } = await import('@/lib/prisma');
       const existingLead = await prisma.lead.findFirst({
         where: {
           OR: [
@@ -235,9 +235,8 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       }
     }
 
-    // BUG FIX: Only create booking on confirmed BOOK_MEETING (NOT CHECK_CALENDAR)
+    // 4. Handle Meeting Bookings or Handoffs asynchronously in DB
     if (aiResult.action === 'BOOK_MEETING') {
-      const { CalendarService } = await import('@/lib/services/calendarService');
       // Parse actual booking time from AI response instead of hardcoding
       let meetingTime = new Date(Date.now() + 86400000 * 2);
       meetingTime.setHours(14, 0, 0, 0);
@@ -274,7 +273,6 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
           },
         });
       } catch (_) { /* handoff record may already exist */ }
-      const { NotificationService } = await import('@/lib/services/notificationService');
       await NotificationService.notifyMineshHandoff(senderName, phone, aiResult.handoff_reason || 'Human takeover requested');
       console.log('[BG-LOG] ✅ Handoff alert sent & AI paused for this lead!');
     }

@@ -531,7 +531,11 @@ export default function MasterDashboardPage() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 3000); // 3s live auto-refresh
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchData();
+      }
+    }, 4000); // 4s smart background-aware live refresh
     return () => clearInterval(interval);
   }, []);
 
