@@ -12,9 +12,14 @@ export async function POST(req: NextRequest) {
       email?.toLowerCase().trim() === validEmail.toLowerCase().trim() &&
       password === validPassword
     ) {
-      const response = NextResponse.json({ success: true, message: 'Authenticated successfully' });
+      const sessionSecret = process.env.DASHBOARD_SESSION_SECRET;
 
-      const sessionSecret = process.env.DASHBOARD_SESSION_SECRET || 'authenticated_minesh_pods_session_token_2026';
+      if (!sessionSecret) {
+        console.error('[AUTH] DASHBOARD_SESSION_SECRET not configured');
+        return NextResponse.json({ success: false, message: 'Server misconfiguration' }, { status: 500 });
+      }
+
+      const response = NextResponse.json({ success: true, message: 'Authenticated successfully' });
 
       // Set encrypted HttpOnly cookie
       response.cookies.set('pods_session', sessionSecret, {

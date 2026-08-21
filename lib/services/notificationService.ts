@@ -24,7 +24,7 @@ export class NotificationService {
 
     const alertMessage = `🚨 NEW VIP MEETING BOOKED: ${payload.leadName} (${payload.phone}) scheduled for ${timeFormatted} at ${payload.location || 'The Pods, Bluewaters Island'}.${payload.voucherCode ? ` VIP Voucher: ${payload.voucherCode}` : ''}`;
 
-    console.log(`[NOTIFICATION -> ASIF KHAN (+971545866094)]: ${alertMessage}`);
+    console.log(`[NOTIFICATION -> MINESH PATEL (+971523666495)]: ${alertMessage}`);
 
     // 1. Log System Event in Database for Audit & Dashboard Alert Feed
     try {
@@ -45,7 +45,7 @@ export class NotificationService {
         orderBy: { createdAt: 'desc' },
       });
 
-      let targetEmail = process.env.ADMIN_NOTIFY_EMAIL || 'maddyasif8@gmail.com';
+      let targetEmail = process.env.ADMIN_NOTIFY_EMAIL || 'info@thepodsrealestate.ae';
       let resendApiKey = process.env.RESEND_API_KEY;
 
       if (settings) {
@@ -93,12 +93,12 @@ export class NotificationService {
   }
 
   /**
-   * Send Human Handoff Alert to Asif Khan
+   * Send Human Handoff Alert to Minesh Patel
    */
   static async notifyMineshHandoff(leadName: string, phone: string, reason: string) {
     const alertMessage = `⚠️ HUMAN TAKEOVER REQUIRED: Lead ${leadName} (${phone}) requested human agent. Reason: ${reason}. Live Dashboard: https://the-pods-ai.vercel.app/dashboard`;
 
-    console.log(`[HANDOFF -> ASIF KHAN (+971545866094)]: ${alertMessage}`);
+    console.log(`[HANDOFF -> MINESH PATEL (+971523666495)]: ${alertMessage}`);
 
     try {
       await prisma.systemEvent.create({
@@ -118,7 +118,7 @@ export class NotificationService {
         orderBy: { createdAt: 'desc' },
       });
 
-      let targetEmail = process.env.ADMIN_NOTIFY_EMAIL || 'maddyasif8@gmail.com';
+      let targetEmail = process.env.ADMIN_NOTIFY_EMAIL || 'info@thepodsrealestate.ae';
       let resendApiKey = process.env.RESEND_API_KEY;
 
       if (settings) {
