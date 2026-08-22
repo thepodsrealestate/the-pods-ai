@@ -44,8 +44,35 @@ export async function POST(req: NextRequest) {
       rawPhone = undefined;
     }
 
+    const cleanField = (val: any): string => {
+      if (typeof val !== 'string') return '';
+      const trimmed = val.trim();
+      if (
+        trimmed.includes('{{') || 
+        trimmed.includes('}}') || 
+        trimmed.toLowerCase() === 'undefined' || 
+        trimmed.toLowerCase() === 'null' ||
+        trimmed.toLowerCase() === 'unknown'
+      ) {
+        return '';
+      }
+      return trimmed;
+    };
+
+    const rawFirstName = cleanField(body.first_name);
+    const rawLastName = cleanField(body.last_name);
+    const rawFullName = cleanField(body.name || body.full_name || body.sender_name || body.user_name || body.custom_fields?.name);
+
+    let senderName = "VIP Client";
+    if (rawFirstName && rawLastName) {
+      senderName = `${rawFirstName} ${rawLastName}`;
+    } else if (rawFirstName) {
+      senderName = rawFirstName;
+    } else if (rawFullName) {
+      senderName = rawFullName;
+    }
+
     const subscriberId = body.id || body.subscriber_id || body.user_id || body.contact_id;
-    const senderName = body.first_name ? `${body.first_name} ${body.last_name || ''}`.trim() : (body.name || body.full_name || body.sender_name || body.user_name || body.custom_fields?.name || "VIP Client");
     const nameSlug = senderName.toLowerCase().replace(/[^a-z0-9]/g, '');
     const phone = rawPhone || (subscriberId ? `+mc_${subscriberId}` : (nameSlug && nameSlug !== 'vipclient' ? `+lead_${nameSlug}` : `+lead_guest`));
     let userText = body.last_input_text || body.payload?.text || body.text || body.message || "";
