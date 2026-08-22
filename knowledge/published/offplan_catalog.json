@@ -556,7 +556,7 @@
           "location": "JVC (Jumeirah Village Circle), Dubai",
           "startingPriceAed": 764999,
           "paymentPlan": "20% Down Payment, 50% during construction, 30% on handover (70/30 plan)",
-          "handover": "July 2027",
+          "handover": "31/12/2027 (December 2027)",
           "unitsAvailable": [
             "Studio (from AED 765K)",
             "1-Bed (from AED 960K - 1.25M)",
@@ -574,7 +574,7 @@
           "location": "Motor City, Dubai",
           "startingPriceAed": 680000,
           "paymentPlan": "20% Down Payment, 50% during construction, 30% on handover (70/30 plan)",
-          "handover": "April 2028",
+          "handover": "30/04/2028 (April 2028)",
           "unitsAvailable": [
             "Studio (from AED 680K - 775K, 420-480 sqft)",
             "1-Bed (from AED 1.21M, 665-713 sqft)",
@@ -594,7 +594,7 @@
           "location": "Majan, Dubailand, Dubai",
           "startingPriceAed": 585000,
           "paymentPlan": "20% Down Payment, 50% during construction, 30% on handover (70/30 plan)",
-          "handover": "Dec 2027",
+          "handover": "31/12/2027 (December 2027)",
           "unitsAvailable": [
             "Studio (from AED 585K - 699K)",
             "1-Bed (from AED 1.15M - 1.25M, 722 sqft)",
@@ -613,7 +613,7 @@
           "location": "Al Jaddaf, Dubai",
           "startingPriceAed": 799999,
           "paymentPlan": "20% Down Payment, 50% during construction, 30% on handover (70/30 plan)",
-          "handover": "Dec 2027",
+          "handover": "30/12/2027 (December 2027)",
           "unitsAvailable": [
             "Studio (from AED 799K)",
             "1-Bed (from AED 1.29M)",
@@ -632,7 +632,7 @@
           "location": "Business Bay, Dubai",
           "startingPriceAed": 8200000,
           "paymentPlan": "70/30 payment plan (20% Down Payment)",
-          "handover": "June 2027 (30/06/2027)",
+          "handover": "30/06/2027 (June 2027)",
           "unitsAvailable": [
             "2-Bed Sapphire Villa (from AED 8.2M)",
             "3-Bed Emerald Villa",
@@ -687,7 +687,7 @@
           "location": "Jumeirah Village Triangle (JVT), Dubai",
           "startingPriceAed": 675000,
           "paymentPlan": "20% Down Payment, 50% during construction, 30% on handover (70/30 plan)",
-          "handover": "Sept 2027",
+          "handover": "30/09/2027 (September 2027)",
           "unitsAvailable": [
             "Studio (from AED 675K - 766K)",
             "1-Bed (from AED 935K - 1.25M)",
@@ -705,7 +705,7 @@
           "location": "Majan / Dubailand, Dubai",
           "startingPriceAed": 679999,
           "paymentPlan": "20% Down Payment, 50% during construction, 30% on handover (6% Cash Discount for 100% full cash upfront)",
-          "handover": "Sept 2027",
+          "handover": "30/09/2027 (September 2027)",
           "unitsAvailable": [
             "Studio (from AED 679K - 693K, Full Cash: AED 651K)",
             "1-Bed (from AED 1.05M, Full Cash: AED 986K)",
@@ -723,7 +723,7 @@
           "location": "Al Jaddaf, Dubai",
           "startingPriceAed": 1199999,
           "paymentPlan": "20% DP, 50% DP (3% discount), Full Cash Payment (6% cash discount)",
-          "handover": "Dec 2026",
+          "handover": "31/12/2026 (December 2026)",
           "unitsAvailable": [
             "1-Bed (from AED 1.19M - 1.29M)",
             "2-Bed Luxury (from AED 1.99M, Full Cash: AED 1.88M)"
@@ -740,7 +740,7 @@
           "location": "Majan / Dubailand, Dubai",
           "startingPriceAed": 674999,
           "paymentPlan": "20% Down Payment, 50% during construction, 30% on handover (6% Cash Discount for 100% full cash)",
-          "handover": "Sept 2027",
+          "handover": "30/09/2027 (September 2027)",
           "unitsAvailable": [
             "Studio (from AED 674K - 711K)",
             "1-Bed (from AED 1.11M, Full Cash: AED 1.04M)",
