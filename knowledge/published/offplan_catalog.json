@@ -554,17 +554,18 @@
           "id": "binghatti-etherea",
           "projectName": "Binghatti Etherea",
           "location": "JVC (Jumeirah Village Circle), Dubai",
-          "startingPriceAed": 1200000,
-          "paymentPlan": "70/30 or 60/40 flexible payment plan (20% down payment)",
-          "handover": "Q2 2027",
+          "startingPriceAed": 764999,
+          "paymentPlan": "20% Down Payment, 50% during construction, 30% on handover (70/30 plan)",
+          "handover": "July 2027",
           "unitsAvailable": [
-            "Studio",
-            "1-Bed",
-            "2-Bed"
+            "Studio (from AED 765K)",
+            "1-Bed (from AED 960K - 1.25M)",
+            "2-Bed (from AED 1.80M)"
           ],
           "keyFacts": [
             "Iconic architectural design with ethereal light-inspired facades in Jumeirah Village Circle (JVC)",
-            "Prime JVC community location with easy access to Al Khail Road and Hessa Street"
+            "Studios starting from AED 765K, 1-Beds from AED 960K, 2-Beds from AED 1.80M",
+            "Handover: July 2027 | Payment Plan: 20/50/30"
           ]
         },
         {
@@ -572,66 +573,68 @@
           "projectName": "Binghatti Sky Terraces",
           "location": "Motor City, Dubai",
           "startingPriceAed": 680000,
-          "paymentPlan": "20% Down Payment, flexible 70/30 or 50/50 payment options during construction, handover April 2028",
-          "handover": "Q2 2028 (30/04/2028)",
+          "paymentPlan": "20% Down Payment, 50% during construction, 30% on handover (70/30 plan)",
+          "handover": "April 2028",
           "unitsAvailable": [
-            "Studio (from AED 680K, 420-480 sqft)",
+            "Studio (from AED 680K - 775K, 420-480 sqft)",
             "1-Bed (from AED 1.21M, 665-713 sqft)",
             "2-Bed (from AED 1.88M, 1055-1098 sqft)"
           ],
           "keyFacts": [
             "Iconic stepped terrace architecture located in Dubai Motor City",
-            "Studio units from AED 680K (420 to 480 sq.ft.)",
+            "Studio units from AED 680K - 775K (420 to 480 sq.ft.)",
             "1-Bed units from AED 1.21M (665 to 713 sq.ft.)",
             "2-Bed units from AED 1.88M (1055 to 1098 sq.ft.)",
-            "Completion Date: 30 April 2028"
+            "Completion Date: April 2028 | Payment Plan: 20/50/30"
           ]
         },
         {
           "id": "binghatti-skyflame",
           "projectName": "Binghatti Skyflame 1",
           "location": "Majan, Dubailand, Dubai",
-          "startingPriceAed": 1149999,
-          "paymentPlan": "20% Down Payment, flexible options during construction, completion Q4 2027",
-          "handover": "Q4 2027 (31/12/2027)",
+          "startingPriceAed": 585000,
+          "paymentPlan": "20% Down Payment, 50% during construction, 30% on handover (70/30 plan)",
+          "handover": "Dec 2027",
           "unitsAvailable": [
-            "1-Bed (from AED 1.15M, 722 sqft)",
+            "Studio (from AED 585K - 699K)",
+            "1-Bed (from AED 1.15M - 1.25M, 722 sqft)",
             "2-Bed (from AED 1.69M, 1256 sqft)",
             "2-Bed Royal Suite (from AED 2.34M, 2113 sqft)"
           ],
           "keyFacts": [
             "High-rise luxury tower with sweeping skyline views in Majan, Dubailand",
-            "1-Bed units starting from AED 1.15M (722 sq.ft.)",
-            "2-Bed units from AED 1.69M (1256 sq.ft.) and Royal Suites from AED 2.34M (2113 sq.ft.)",
-            "Completion Date: 31 December 2027"
+            "Studios from AED 585K - 699K | 1-Beds from AED 1.15M | 2-Beds from AED 1.69M",
+            "Completion Date: 31 December 2027 | Payment Plan: 20/50/30"
           ]
         },
         {
           "id": "binghatti-wraith",
           "projectName": "Binghatti Wraith",
           "location": "Al Jaddaf, Dubai",
-          "startingPriceAed": 2195999,
-          "paymentPlan": "20% Down Payment, flexible 70/30 or 50/50 payment plan, completion Q4 2027",
-          "handover": "Q4 2027 (30/12/2027)",
+          "startingPriceAed": 799999,
+          "paymentPlan": "20% Down Payment, 50% during construction, 30% on handover (70/30 plan)",
+          "handover": "Dec 2027",
           "unitsAvailable": [
-            "2-Bed Luxury (from AED 2.19M, 1165-1737 sqft)"
+            "Studio (from AED 799K)",
+            "1-Bed (from AED 1.29M)",
+            "2-Bed Luxury (from AED 2.09M - 2.19M, 1165-1737 sqft)",
+            "3-Bed & Royal Suites"
           ],
           "keyFacts": [
             "Ultra-modern luxury residences inspired by Rolls-Royce automotive craftsmanship in Al Jaddaf",
-            "Prime Al Jaddaf waterfront location minutes from Downtown Dubai and Dubai Creek",
-            "2-Bed units from AED 2.19M (1165 to 1737 sq.ft.)",
-            "Completion Date: 30 December 2027"
+            "Studios from AED 799K | 1-Beds from AED 1.29M | 2-Beds from AED 2.09M - 2.19M",
+            "Completion Date: December 2027 | Payment Plan: 20/50/30"
           ]
         },
         {
           "id": "binghatti-jacob-co",
           "projectName": "Burj Binghatti Jacob & Co Residences",
           "location": "Business Bay, Dubai",
-          "startingPriceAed": 8000000,
+          "startingPriceAed": 8200000,
           "paymentPlan": "70/30 payment plan (20% Down Payment)",
           "handover": "Q2 2026",
           "unitsAvailable": [
-            "2-Bed Sapphire Villa",
+            "2-Bed Sapphire Villa (from AED 8.2M)",
             "3-Bed Emerald Villa",
             "Billionaire Penthouse"
           ],
@@ -645,108 +648,109 @@
           "id": "binghatti-mercedes-benz-downtown",
           "projectName": "Mercedes-Benz Places (Downtown)",
           "location": "Downtown Dubai, Dubai",
-          "startingPriceAed": 10299999,
+          "startingPriceAed": 8880000,
           "paymentPlan": "70/30 payment plan (20% Down Payment)",
-          "handover": "Q1 2027 (28/02/2027)",
+          "handover": "Feb 2027",
           "unitsAvailable": [
-            "2-Bed Type 1 (from AED 10.3M, 1836 sqft)",
-            "3-Bed Penthouse",
+            "2-Bed Pagoda Suite (from AED 8.88M - 10.3M)",
+            "3-Bed Grand Mercedes Suite",
             "Sky Mansion"
           ],
           "keyFacts": [
             "World's first Mercedes-Benz branded residential hyper-tower in Downtown Dubai",
             "Unobstructed views of Burj Khalifa with integrated automotive design philosophy",
-            "Completion Date: 28 February 2027"
+            "Completion Date: February 2027"
           ]
         },
         {
           "id": "binghatti-mercedes-benz-meydan",
           "projectName": "Mercedes-Benz Places | Binghatti City (Meydan)",
           "location": "Meydan / Nad Al Sheba, Dubai",
-          "startingPriceAed": 10299999,
+          "startingPriceAed": 1350000,
           "paymentPlan": "70/30 payment plan (20% Down Payment)",
           "handover": "Q4 2027",
           "unitsAvailable": [
-            "Studio",
-            "1-Bed",
-            "2-Bed",
-            "3-Bed",
+            "Studio (from AED 1.35M)",
+            "1-Bed (from AED 1.9M)",
+            "2-Bed (from AED 2.8M)",
             "Project Maybach Suites"
           ],
           "keyFacts": [
             "The world's first Mercedes-Benz Branded City master community in Meydan / Nad Al Sheba",
             "Features Project Maybach residential suites, private lagoons, and luxury retail boulevard",
-            "Prime Meydan racecourse and Dubai skyline views"
+            "Handover: Q4 2027"
           ]
         },
         {
           "id": "binghatti-luxuria",
           "projectName": "Binghatti Luxuria",
           "location": "Jumeirah Village Triangle (JVT), Dubai",
-          "startingPriceAed": 1306779,
-          "paymentPlan": "20% Down Payment, 50% during construction, full payment options, completion Q3 2027",
-          "handover": "Q3 2027 (30/09/2027)",
+          "startingPriceAed": 675000,
+          "paymentPlan": "20% Down Payment, 50% during construction, 30% on handover (70/30 plan)",
+          "handover": "Sept 2027",
           "unitsAvailable": [
-            "1-Bed (from AED 1.30M, 631-754 sqft)",
-            "2-Bed (from AED 1.84M, 963 sqft)",
-            "2-Bed Royal Suite (from AED 1.94M, 1356 sqft)"
+            "Studio (from AED 675K - 766K)",
+            "1-Bed (from AED 935K - 1.25M)",
+            "2-Bed & Royal Suites (from AED 1.80M - 1.84M)"
           ],
           "keyFacts": [
             "Luxury residential tower in prime Jumeirah Village Triangle (JVT) community",
-            "1-Bed units from AED 1.30M (631 to 754 sq.ft.)",
-            "2-Bed units from AED 1.84M (963 sq.ft.) and Royal Suites from AED 1.94M (1356 sq.ft.)",
-            "Completion Date: 30 September 2027"
+            "Studios from AED 675K | 1-Beds from AED 935K | 2-Beds from AED 1.80M",
+            "Completion Date: September 2027 | Payment Plan: 20/50/30"
           ]
         },
         {
           "id": "binghatti-titania",
           "projectName": "Binghatti Titania",
           "location": "Majan / Dubailand, Dubai",
-          "startingPriceAed": 692999,
-          "paymentPlan": "20% Down Payment, flexible installments during construction (6% Cash Discount for 100% full cash upfront)",
-          "handover": "Q3 2027 (30/09/2027)",
+          "startingPriceAed": 679999,
+          "paymentPlan": "20% Down Payment, 50% during construction, 30% on handover (6% Cash Discount for 100% full cash upfront)",
+          "handover": "Sept 2027",
           "unitsAvailable": [
-            "Studio (from AED 693K, Full Cash: AED 651K)",
-            "1-Bed (from AED 1.05M, Full Cash: AED 994K)",
+            "Studio (from AED 679K - 693K, Full Cash: AED 651K)",
+            "1-Bed (from AED 1.05M, Full Cash: AED 986K)",
             "2-Bed (from AED 1.54M, Full Cash: AED 1.45M)"
           ],
           "keyFacts": [
             "6% Full Cash Upfront Discount available across all units (e.g. Studio asking AED 693K discounted to AED 651K in full cash)",
             "Prime Majan community facing IMG Worlds of Adventure and Sheikh Mohammed Bin Zayed Road",
-            "Completion Date: 30 September 2027"
+            "Completion Date: September 2027"
           ]
         },
         {
           "id": "binghatti-twilight",
           "projectName": "Binghatti Twilight",
           "location": "Al Jaddaf, Dubai",
-          "startingPriceAed": 1999999,
-          "paymentPlan": "20% DP (AED 1.99M), 50% DP (AED 1.93M), Full Cash Payment (AED 1.88M with 6% cash discount)",
-          "handover": "Q4 2026 (31/12/2026)",
+          "startingPriceAed": 1199999,
+          "paymentPlan": "20% DP, 50% DP (3% discount), Full Cash Payment (6% cash discount)",
+          "handover": "Dec 2026",
           "unitsAvailable": [
-            "2-Bed Luxury (1,074 sq.ft., from AED 1.99M, Full Cash: AED 1.88M)"
+            "1-Bed (from AED 1.19M - 1.29M)",
+            "2-Bed Luxury (from AED 1.99M, Full Cash: AED 1.88M)"
           ],
           "keyFacts": [
             "Luxury waterfront residences in Al Jaddaf with Downtown & Canal skyline views",
-            "6% upfront cash discount on full payment (AED 1,879,999 for 2-Bed)",
-            "Completion Date: 31 December 2026"
+            "1-Beds from AED 1.19M | 2-Beds from AED 1.99M (6% cash discount: AED 1.88M)",
+            "Completion Date: December 2026"
           ]
         },
         {
           "id": "binghatti-vintage",
           "projectName": "Binghatti Vintage",
           "location": "Majan / Dubailand, Dubai",
-          "startingPriceAed": 1112999,
-          "paymentPlan": "20% Down Payment, flexible installments (6% Cash Discount for 100% full cash)",
-          "handover": "Q3 2027 (30/09/2027)",
+          "startingPriceAed": 674999,
+          "paymentPlan": "20% Down Payment, 50% during construction, 30% on handover (6% Cash Discount for 100% full cash)",
+          "handover": "Sept 2027",
           "unitsAvailable": [
+            "Studio (from AED 674K - 711K)",
             "1-Bed (from AED 1.11M, Full Cash: AED 1.04M)",
-            "2-Bed Royal Suite (from AED 1.76M, Full Cash: AED 1.66M)"
+            "2-Bed Royal Suite (from AED 1.76M, Full Cash: AED 1.65M)"
           ],
           "keyFacts": [
             "Sophisticated vintage architectural aesthetic in Majan overlooking IMG Worlds & SMBZ Road",
+            "Studios from AED 674K | 1-Beds from AED 1.11M | 2-Bed Royal Suites from AED 1.76M",
             "6% Full Cash Upfront Discount available across all inventory",
-            "Completion Date: 30 September 2027"
+            "Completion Date: September 2027"
           ]
         }
       ]
