@@ -179,24 +179,23 @@ DEVELOPER & PROJECT MATCHING RULES (CRITICAL):
   - DANUBE: Bayz 101, Bayz 102, Aspirz, Breez, Diamondz, Fashionz, Greenz, Oceanz, Serenz, Shahrukhz, Sparklz, Sportz, Timez.
   - BINGHATTI: Mercedes-Benz Places (Downtown & Meydan), Burj Binghatti Jacob & Co (Business Bay), Wraith (Al Jaddaf), Sky Terraces (Motor City), Skyflame (Majan), Luxuria (JVT), Etherea (JVC), Titania (Majan), Twilight (Al Jaddaf), Vintage (Majan).
   - SOBHA REALTY: River Cove, The Terraces, The Orchard, The Pinnacle, The Eden, The Woods, The Willows, The Grove, Yachtside Marina, Palm Grove, Riverside Crescent (310, 320, 330, 340, 350, 360).
+  - SOBHA CENTRAL SPECIFIC UNIT ACCURACY: The Pinnacle and The Eden at Sobha Central offer 1-Bedroom and 2-Bedroom apartments ONLY (no 3-bedroom units). For 3-bedroom Sobha apartments, recommend Riverside Crescent at Sobha Hartland II.
+  - STRICT BUDGET ADHERENCE: When a lead states a budget ceiling (e.g. "up to 3 million" or "1M budget"), ONLY recommend options that start AT OR BELOW that budget! For example, for an AED 3M budget in Sobha, recommend The Pinnacle (AED 1.78M), The Eden (AED 1.83M), 330 Riverside Crescent (AED 1.63M), 340 Riverside Crescent (AED 1.98M), 320 Riverside Crescent (AED 2.26M), or 350 Riverside Crescent (AED 2.5M). NEVER recommend a 4M+ project (like The Willows at AED 4.06M) as a match for a 3M budget.
 - COMPREHENSIVE PHONETIC & ALIAS DICTIONARY (100% Exact Matching):
   - "titania" / "binghatti titania" -> Binghatti Titania (Majan, Dubailand | Studio from AED 693K, 1-Bed from AED 1.05M, 2-Bed from AED 1.54M | Handover: Sept 2027 | 6% Full Cash Upfront Discount available: Studio AED 651K, 1-Bed AED 994K, 2-Bed AED 1.45M)
   - "twilight" / "binghatti twilight" -> Binghatti Twilight (Al Jaddaf | 2-Bed from AED 1.99M, Full Cash: AED 1.88M with 6% discount | Handover: Dec 2026)
-  - "vintage" / "binghatti vintage" -> Binghatti Vintage (Majan, Dubailand | 1-Bed from AED 1.11M, Full Cash: AED 1.04M with 6% discount | Handover: Sept 2027)
-  - "mercedes downtown" / "mercedes benz places downtown" -> Mercedes-Benz Places (Downtown Dubai | AED 10.3M | Handover: Feb 2027)
-  - "mercedes meydan" / "binghatti city" / "mercedes city" / "project maybach" -> Mercedes-Benz Places at Binghatti City (Meydan / Nad Al Sheba | Handover: Q4 2027)
-  - "jacob" / "jacob & co" / "jacob co" / "burj binghatti" -> Burj Binghatti Jacob & Co (Business Bay | AED 8.0M | Handover: Q2 2026)
-  - "wraith" / "binghatti wraith" -> Binghatti Wraith (Al Jaddaf | AED 2.19M | Handover: Dec 2027)
   - "skyflame" / "sky flame" / "skyflames" / "sky flames" -> Binghatti Skyflame (Majan, Dubailand | 1-Bed from AED 1.15M, 2-Bed from AED 1.69M | Handover: Dec 2027)
   - "skyterraces" / "sky terraces" / "skyterrace" / "sky terrace" -> Binghatti SkyTerraces (Motor City | Studio from AED 680K, 1-Bed from AED 1.21M, 2-Bed from AED 1.88M | Handover: April 2028)
-  - "etherea" / "binghatti etherea" -> Binghatti Etherea (JVC - Jumeirah Village Circle | AED 1.2M | Handover: Q2 2027)
-  - "luxuria" / "binghatti luxuria" -> Binghatti Luxuria (JVT - Jumeirah Village Triangle | AED 1.30M | Handover: Sept 2027)
-  - "aquarise" / "binghatti aquarise" -> Binghatti Aquarise (Business Bay | AED 2.0M | Handover: 2027)
-  - "cullinan" / "binghatti cullinan" -> Binghatti Cullinan (Al Jaddaf | AED 1.40M | Handover: 2027)
-  - "tilal" / "tilal binghatti" -> Tilal Binghatti (Tilal Island Sharjah | Luxury Mansions from AED 4.07M)
+  - "mercedes downtown" / "mercedes benz places downtown" -> Mercedes-Benz Places by Binghatti (Downtown Dubai | 2-Bed from AED 8.88M | Handover: Dec 2026)
+  - "mercedes meydan" / "binghatti city" / "mercedes benz places meydan" -> Mercedes-Benz Places / Binghatti City (Meydan / Nad Al Sheba | Handover: Q4 2027)
+  - "jacob" / "jacob & co" / "burj binghatti" -> Burj Binghatti Jacob & Co Residences (Business Bay | 2-Bed from AED 8.2M | Handover: Q2 2026)
+  - "wraith" / "binghatti wraith" -> Binghatti Wraith (Al Jaddaf | 2-Bed from AED 2.19M | Handover: Dec 2027)
+  - "etherea" / "binghatti etherea" -> Binghatti Etherea (JVC | 1-Bed from AED 960K | Handover: June 2027)
+  - "luxuria" / "binghatti luxuria" -> Binghatti Luxuria (JVT | 1-Bed from AED 935K | Handover: Q4 2026)
+  - "vintage" / "binghatti vintage" -> Binghatti Vintage (Majan | Handover: 2027)
 
-  - "breeze" / "breez" / "danube breeze" -> BREEZ by Danube (Dubai Maritime City | AED 1.23M - 1.25M | Handover: 2029 | Event Offer: 40/60 plan with 0.5% monthly)
-  - "greens" / "greenz" / "danube greenz" -> GREENZ by Danube (Academic City | 3-Bed Townhouses from AED 3.5M | Handover: Q4-2029 | Event Offer: 40/60 plan with 0.5% monthly)
+  - "breez" / "breeze" -> BREEZ by Danube (Dubai Maritime City | Studios from AED 1.05M, 1-Beds from AED 1.6M, 2-Beds from AED 2.2M | Handover: May 2029 | Event Offer: 40/60 plan with 0.5% monthly)
+  - "greenz" / "greens" -> GREENZ by Danube (Dubai Silicon Oasis | 1-Beds from AED 1.1M, 2-Beds from AED 1.5M | Handover: 2027 | Event Offer: 40/60 plan with 0.5% monthly)
   - "shahrukh" / "sharukhz" / "shahrukhz" / "srk" -> SHAHRUKHZ by Danube (Sheikh Zayed Road | Commercial Units from AED 1.9M - 2.0M | Handover: 2029 | Event Offer: 40/60 plan with 0.5% monthly)
   - "bayz 102" / "base 102" / "bayz102" -> BAYZ 102 by Danube (Business Bay | Starting AED 2.4M - 2.5M | Handover: June 2029 | Event Offer: 40/60 plan with 0.5% monthly)
   - "bayz 101" / "base 101" / "bayz101" -> BAYZ 101 by Danube (Business Bay | Studios from AED 1.18M, 2-Beds from AED 2.3M | Handover: June 2028 | Event Offer: 40/60 plan with 0.5% monthly)
@@ -213,8 +212,8 @@ DEVELOPER & PROJECT MATCHING RULES (CRITICAL):
   - "sobha terraces" / "the terraces" -> The Terraces by SOBHA (Sobha City Abu Dhabi | Townhouses from AED 5.09M | Handover: Q3 2027)
   - "the orchard" / "sobha orchard" -> The Orchard by SOBHA (Sobha City Abu Dhabi | Luxury Mansions from AED 9.05M | Handover: Q4 2027)
   - "sobha central" / "sobha central area" / "sobha central location" -> Sobha Central (Sheikh Zayed Road, Jebel Ali First, Dubai | directly on SZR, walking distance to Jebel Ali Metro Station)
-  - "the pinnacle" / "pinnacle" -> The Pinnacle by SOBHA (Sobha Central, Sheikh Zayed Road, Jebel Ali First | AED 1.78M | Handover: Dec 2030)
-  - "the eden" / "eden" -> The Eden by SOBHA (Sobha Central, Sheikh Zayed Road, Jebel Ali First | AED 1.83M | Handover: Dec 2030)
+  - "the pinnacle" / "pinnacle" -> The Pinnacle by SOBHA (Sobha Central, Sheikh Zayed Road, Jebel Ali First | 1-Bed from AED 1.78M, 2-Bed from AED 2.5M | Handover: Dec 2030 | 1 & 2-Bed apartments only, no 3-bed units)
+  - "the eden" / "eden" -> The Eden by SOBHA (Sobha Central, Sheikh Zayed Road, Jebel Ali First | 1-Bed from AED 1.83M, 2-Bed from AED 2.6M | Handover: Dec 2030 | 1 & 2-Bed apartments only, no 3-bed units)
   - "310 riverside crescent" / "riverside crescent 310" -> 310 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 3.42M | Handover: Dec 2027)
   - "320 riverside crescent" / "riverside crescent 320" -> 320 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 2.26M | Handover: July 2027)
   - "330 riverside crescent" / "riverside crescent 330" -> 330 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 1.63M | Handover: June 2027)
