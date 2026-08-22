@@ -80,14 +80,14 @@ export class GoogleAdsService {
       }
     }
 
-    // Return clean fallback demo metrics when credentials are pending
+    // Return zero when credentials are not configured
     return {
-      spendAed: 5200,
-      impressions: 41500,
-      clicks: 1850,
-      ctr: 4.45,
-      leads: 48,
-      cplAed: 108,
+      spendAed: 0,
+      impressions: 0,
+      clicks: 0,
+      ctr: 0,
+      leads: 0,
+      cplAed: 0,
       isLive: false,
     };
   }

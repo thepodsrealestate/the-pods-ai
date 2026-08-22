@@ -45,7 +45,7 @@ export class MetaAdsService {
           const spend = parseFloat(data.spend || '0');
           const impressions = parseInt(data.impressions || '0', 10);
           const clicks = parseInt(data.clicks || '0', 10);
-          const ctr = parseFloat(data.ctr || '0');
+          const ctr = parseFloat((parseFloat(data.ctr || '0')).toFixed(2));
           
           // Extract leads action if present
           let leads = 0;
@@ -59,15 +59,14 @@ export class MetaAdsService {
               leads = parseInt(leadAction.value || '0', 10);
             }
           }
-          if (leads === 0) leads = Math.max(14, Math.floor(clicks * 0.05));
 
-          const cplAed = leads > 0 ? parseFloat((spend / leads).toFixed(2)) : 0;
+          const cplAed = leads > 0 ? parseFloat((spend / leads).toFixed(2)) : (clicks > 0 ? parseFloat((spend / clicks).toFixed(2)) : 0);
 
           return {
-            spendAed: Math.round(spend),
+            spendAed: parseFloat(spend.toFixed(2)),
             impressions,
             clicks,
-            ctr: parseFloat(ctr.toFixed(2)),
+            ctr,
             leads,
             cplAed,
             isLive: true,
@@ -78,14 +77,14 @@ export class MetaAdsService {
       }
     }
 
-    // Return structured demo metrics when credentials are pending
+    // Return zero when credentials are not available
     return {
-      spendAed: 6450,
-      impressions: 84200,
-      clicks: 3120,
-      ctr: 3.71,
-      leads: 86,
-      cplAed: 75,
+      spendAed: 0,
+      impressions: 0,
+      clicks: 0,
+      ctr: 0,
+      leads: 0,
+      cplAed: 0,
       isLive: false,
     };
   }
