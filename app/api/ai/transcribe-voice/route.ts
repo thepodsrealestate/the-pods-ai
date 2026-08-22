@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       if (lead) {
         const leadMessages = lead.conversations?.[0]?.messages
           ?.filter((m) => m.senderType === 'LEAD')
-          ?.map((m) => m.text)
+          ?.map((m) => m.content)
           ?.join(' | ');
 
         if (leadMessages && leadMessages.trim()) {
