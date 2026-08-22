@@ -20,7 +20,7 @@ export class MetaAdsService {
     return MetaAdsService.instance;
   }
 
-  public async getMetrics(): Promise<MetaAdsMetrics> {
+  public async getMetrics(period: string = 'last_30d'): Promise<MetaAdsMetrics> {
     const accessToken = process.env.META_ADS_ACCESS_TOKEN;
     const adAccountId = process.env.META_AD_ACCOUNT_ID;
 
@@ -28,13 +28,13 @@ export class MetaAdsService {
     if (accessToken && adAccountId) {
       try {
         const cleanAccount = adAccountId.startsWith('act_') ? adAccountId : `act_${adAccountId}`;
-        let url = `https://graph.facebook.com/v19.0/${cleanAccount}/insights?fields=spend,impressions,clicks,ctr,actions&date_preset=last_30d&access_token=${accessToken}`;
+        let url = `https://graph.facebook.com/v19.0/${cleanAccount}/insights?fields=spend,impressions,clicks,ctr,actions&date_preset=${encodeURIComponent(period)}&access_token=${accessToken}`;
         
         let res = await fetch(url, { cache: 'no-store' });
         let json = res.ok ? await res.json() : null;
 
-        // Fallback to maximum date preset if last_30d is empty
-        if (!json || !json.data || json.data.length === 0) {
+        // Fallback to maximum date preset if specific preset is empty
+        if ((!json || !json.data || json.data.length === 0) && period !== 'maximum') {
           url = `https://graph.facebook.com/v19.0/${cleanAccount}/insights?fields=spend,impressions,clicks,ctr,actions&date_preset=maximum&access_token=${accessToken}`;
           res = await fetch(url, { cache: 'no-store' });
           if (res.ok) json = await res.json();

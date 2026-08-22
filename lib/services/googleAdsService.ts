@@ -20,7 +20,7 @@ export class GoogleAdsService {
     return GoogleAdsService.instance;
   }
 
-  public async getMetrics(): Promise<GoogleAdsMetrics> {
+  public async getMetrics(period: string = 'last_30d'): Promise<GoogleAdsMetrics> {
     const developerToken = process.env.GOOGLE_ADS_DEVELOPER_TOKEN;
     const customerId = process.env.GOOGLE_ADS_CUSTOMER_ID;
 

@@ -192,37 +192,48 @@ export default function MasterDashboardPage() {
   const [advisorOpen, setAdvisorOpen] = useState<boolean>(false);
   const [advisorQuery, setAdvisorQuery] = useState<string>("");
   const [loadingAdvisor, setLoadingAdvisor] = useState<boolean>(false);
+  const [adPeriod, setAdPeriod] = useState<string>("last_30d");
+  const [loadingAdMetrics, setLoadingAdMetrics] = useState<boolean>(false);
   const [advisorMessages, setAdvisorMessages] = useState<Array<{ role: "user" | "ai"; text: string; bullets?: string[] }>>([
     {
       role: "ai",
       text: "Welcome to The Pods Executive AI Advisor console. Ask me any question about your live Meta Ads ROI, Google Ads performance, lead response SLAs, or sales pipeline statistics.",
       bullets: [
-        "Meta Ads CPL: AED 75.00 (86 inbound leads)",
-        "Google Ads CPL: AED 108.00 (48 inbound leads)",
-        "Sub-10s WhatsApp greeting SLA active across 146 total monthly leads"
+        "Live Meta Ads API connected with real-time spend and reach sync",
+        "Configurable date range filters (Today, Last 7D, Last 30D, This Month, All Time)",
+        "Sub-10s WhatsApp greeting SLA active across all inbound leads"
       ]
     }
   ]);
   const [adMetrics, setAdMetrics] = useState<any>({
-    summary: { totalSpendAed: 11650, totalLeads: 134, overallCplAed: 86.94 },
-    meta: { spendAed: 6450, impressions: 84200, clicks: 3120, ctr: 3.71, leads: 86, cplAed: 75, isLive: false },
-    google: { spendAed: 5200, impressions: 41500, clicks: 1850, ctr: 4.45, leads: 48, cplAed: 108, isLive: false }
+    summary: { totalSpendAed: 0, totalLeads: 0, overallCplAed: 0 },
+    meta: { spendAed: 0, impressions: 0, clicks: 0, ctr: 0, leads: 0, cplAed: 0, isLive: false },
+    google: { spendAed: 0, impressions: 0, clicks: 0, ctr: 0, leads: 0, cplAed: 0, isLive: false }
   });
 
   useEffect(() => {
-    fetchAdMetrics();
+    fetchAdMetrics("last_30d");
   }, []);
 
-  const fetchAdMetrics = async () => {
+  const fetchAdMetrics = async (periodToFetch?: string) => {
+    const p = periodToFetch || adPeriod;
+    setLoadingAdMetrics(true);
     try {
-      const res = await fetch("/api/integrations/ad-metrics");
+      const res = await fetch(`/api/integrations/ad-metrics?period=${p}`);
       const json = await res.json();
       if (json.success && json.data) {
         setAdMetrics(json.data);
       }
     } catch (e) {
       console.error("Ad Metrics fetch error:", e);
+    } finally {
+      setLoadingAdMetrics(false);
     }
+  };
+
+  const handleSelectAdPeriod = (p: string) => {
+    setAdPeriod(p);
+    fetchAdMetrics(p);
   };
 
   const handleQueryAdvisor = async (customQuery?: string) => {
@@ -1367,7 +1378,7 @@ export default function MasterDashboardPage() {
 
                 {/* Multi-Channel Ad Intelligence & ROI Section */}
                 <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-6 shadow-xl space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div>
                       <h3 className="text-base font-bold text-white flex items-center space-x-2">
                         <Megaphone className="w-5 h-5 text-[#C5A059]" />
@@ -1375,13 +1386,40 @@ export default function MasterDashboardPage() {
                       </h3>
                       <p className="text-xs text-slate-400">Live Meta Ads & Google Ads spend, CPL, and lead attribution metrics</p>
                     </div>
-                    <button
-                      onClick={() => setAdvisorOpen(true)}
-                      className="px-3.5 py-1.5 bg-[#C5A059]/10 hover:bg-[#C5A059]/20 border border-[#C5A059]/40 text-[#C5A059] font-bold text-xs rounded-xl transition-all flex items-center space-x-1.5 self-start sm:self-auto"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      <span>Ask AI Executive Advisor</span>
-                    </button>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      {/* Date Filter Buttons */}
+                      <div className="flex items-center bg-[#151824] border border-[#1E2230] p-1 rounded-xl text-[11px] font-bold">
+                        {[
+                          { key: "today", label: "Today" },
+                          { key: "last_7d", label: "Last 7D" },
+                          { key: "last_30d", label: "Last 30D" },
+                          { key: "this_month", label: "This Month" },
+                          { key: "maximum", label: "All Time" },
+                        ].map((btn) => (
+                          <button
+                            key={btn.key}
+                            type="button"
+                            onClick={() => handleSelectAdPeriod(btn.key)}
+                            className={`px-2.5 py-1 rounded-lg transition-all ${
+                              adPeriod === btn.key
+                                ? "bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-extrabold shadow-sm"
+                                : "text-slate-400 hover:text-white"
+                            }`}
+                          >
+                            {btn.label}
+                          </button>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={() => setAdvisorOpen(true)}
+                        className="px-3.5 py-1.5 bg-[#C5A059]/10 hover:bg-[#C5A059]/20 border border-[#C5A059]/40 text-[#C5A059] font-bold text-xs rounded-xl transition-all flex items-center space-x-1.5"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        <span>Ask AI Advisor</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
@@ -1930,14 +1968,33 @@ export default function MasterDashboardPage() {
             <div className="flex-1 overflow-y-auto p-5 space-y-6">
               {/* SECTION 1: VISUAL MULTI-CHANNEL AD ROI COMPARISON GRAPH & SCORECARDS */}
               <div className="p-5 rounded-2xl bg-[#151824] border border-[#1E2230] space-y-4 shadow-lg">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <h4 className="text-xs font-extrabold text-white uppercase tracking-wider flex items-center space-x-2">
                     <BarChart3 className="w-4 h-4 text-[#C5A059]" />
                     <span>Meta Ads vs Google Ads ROI Comparison</span>
                   </h4>
-                  <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">
-                    Live Engine
-                  </span>
+                  <div className="flex items-center space-x-1.5 bg-[#0D0F17] p-1 rounded-lg border border-[#1E2230] text-[10px] font-bold">
+                    {[
+                      { key: "today", label: "Today" },
+                      { key: "last_7d", label: "7D" },
+                      { key: "last_30d", label: "30D" },
+                      { key: "this_month", label: "Month" },
+                      { key: "maximum", label: "All" },
+                    ].map((btn) => (
+                      <button
+                        key={btn.key}
+                        type="button"
+                        onClick={() => handleSelectAdPeriod(btn.key)}
+                        className={`px-2 py-0.5 rounded transition-all ${
+                          adPeriod === btn.key
+                            ? "bg-[#C5A059] text-black font-extrabold shadow-sm"
+                            : "text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        {btn.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Visual Bar Comparison Chart */}
