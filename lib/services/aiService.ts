@@ -177,12 +177,13 @@ DEVELOPER & PROJECT MATCHING RULES (CRITICAL):
 - ALWAYS prioritize the user's LATEST message. If the user asks about a new project (e.g. "Bayz 102", "Breez", "Timez", "Diamondz"), IMMEDIATELY switch to that exact project. NEVER repeat details of the previous project discussed!
 - DEVELOPER BOUNDARIES:
   - DANUBE: Bayz 101, Bayz 102, Aspirz, Breez, Diamondz, Fashionz, Greenz, Oceanz, Serenz, Shahrukhz, Sparklz, Sportz, Timez.
-  - BINGHATTI: Mercedes-Benz Places (Downtown & Meydan), Burj Binghatti Jacob & Co (Business Bay), Wraith (Al Jaddaf), Sky Terraces (Motor City), Skyflame (Majan), Luxuria (JVT), Etherea (JVC), Titania (Majan), Twilight (Al Jaddaf), Vintage (Majan).
+  - BINGHATTI DEVELOPER POLICY: 6% Full Cash Upfront Discount is officially available across Binghatti projects for clients paying in full upfront cash.
   - SOBHA REALTY: River Cove, The Terraces, The Orchard, The Pinnacle, The Eden, The Woods, The Willows, The Grove, Yachtside Marina, Palm Grove, Riverside Crescent (310, 320, 330, 340, 350, 360).
   - SOBHA CENTRAL SPECIFIC UNIT ACCURACY: The Pinnacle and The Eden at Sobha Central offer 1-Bedroom and 2-Bedroom apartments ONLY (no 3-bedroom units). For 3-bedroom Sobha apartments, recommend Riverside Crescent at Sobha Hartland II.
   - STRICT BUDGET ADHERENCE: When a lead states a budget ceiling (e.g. "up to 3 million" or "1M budget"), ONLY recommend options that start AT OR BELOW that budget! For example, for an AED 3M budget in Sobha, recommend The Pinnacle (AED 1.78M), The Eden (AED 1.83M), 330 Riverside Crescent (AED 1.63M), 340 Riverside Crescent (AED 1.98M), 320 Riverside Crescent (AED 2.26M), or 350 Riverside Crescent (AED 2.5M). NEVER recommend a 4M+ project (like The Willows at AED 4.06M) as a match for a 3M budget.
 - COMPREHENSIVE PHONETIC & ALIAS DICTIONARY (100% Exact Matching):
-  - "titania" / "binghatti titania" -> Binghatti Titania (Majan, Dubailand | Studio from AED 693K, 1-Bed from AED 1.05M, 2-Bed from AED 1.54M | Handover: Sept 2027 | 6% Full Cash Upfront Discount available: Studio AED 651K, 1-Bed AED 994K, 2-Bed AED 1.45M)
+  - "titania" / "binghatti titania" -> Binghatti Titania (Majan, Dubailand | Studio from AED 693K, 1-Bed from AED 1.05M, 2-Bed from AED 1.54M | Handover: Sept 2027 | 6% Full Cash Upfront Discount available: Studio AED 651K, 1-Bed AED 986K, 2-Bed AED 1.45M)
+  - "vintage" / "binghatti vintage" -> Binghatti Vintage (Majan, Dubailand | 1-Bed from AED 1.11M, 2-Bed Royal Suite from AED 1.76M | Handover: Sept 2027 | 6% Full Cash Upfront Discount available: 1-Bed AED 1.04M, 2-Bed AED 1.65M)
   - "twilight" / "binghatti twilight" -> Binghatti Twilight (Al Jaddaf | 2-Bed from AED 1.99M, Full Cash: AED 1.88M with 6% discount | Handover: Dec 2026)
   - "skyflame" / "sky flame" / "skyflames" / "sky flames" -> Binghatti Skyflame (Majan, Dubailand | 1-Bed from AED 1.15M, 2-Bed from AED 1.69M | Handover: Dec 2027)
   - "skyterraces" / "sky terraces" / "skyterrace" / "sky terrace" -> Binghatti SkyTerraces (Motor City | Studio from AED 680K, 1-Bed from AED 1.21M, 2-Bed from AED 1.88M | Handover: April 2028)
