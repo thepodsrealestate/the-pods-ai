@@ -52,8 +52,8 @@ export async function POST(req: NextRequest) {
 
 
     // Audio / Voice Note Detection & Automatic OpenAI Whisper Transcription
-    const audioUrl = body.voice_url || body.audio_url || body.media_url || body.file_url || body.payload?.url;
-    if (audioUrl && (!userText || userText === "Hi" || userText.toLowerCase().includes("voice") || userText.toLowerCase().includes("audio"))) {
+    const audioUrl = body.voice_url || body.audio_url || body.media_url || body.file_url || body.last_media_url || body.last_input_url || body.last_media || body.media || body.payload?.url || body.custom_fields?.voice_url || body.custom_fields?.audio_url;
+    if (audioUrl && typeof audioUrl === 'string' && audioUrl.startsWith('http') && (!userText || userText === "Hi" || userText.toLowerCase().includes("voice") || userText.toLowerCase().includes("audio") || userText.toLowerCase().includes("media") || userText.trim().length < 5)) {
       try {
         const transcribed = await WhisperService.transcribeAudio(audioUrl);
         if (transcribed && transcribed.trim()) {

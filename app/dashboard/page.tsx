@@ -180,6 +180,49 @@ export default function MasterDashboardPage() {
   const [leadBriefings, setLeadBriefings] = useState<Record<string, any>>({});
   const [loadingBriefing, setLoadingBriefing] = useState<Record<string, boolean>>({});
   const [chatReplyInput, setChatReplyInput] = useState<string>("");
+  // Delete Lead & Chat History State
+  const [deleteModalLead, setDeleteModalLead] = useState<any | null>(null);
+  const [deletePasscode, setDeletePasscode] = useState<string>("");
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [deleteSuccessMsg, setDeleteSuccessMsg] = useState<string | null>(null);
+
+  const handleDeleteLead = async () => {
+    if (!deleteModalLead) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      const res = await fetch("/api/leads/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          leadId: deleteModalLead.id,
+          passcode: deletePasscode,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setDeleteError(data.message || "Invalid passcode or deletion failed");
+        setIsDeleting(false);
+        return;
+      }
+      setDeleteSuccessMsg(data.message);
+      await fetchData();
+      setTimeout(() => {
+        setDeleteModalLead(null);
+        setDeletePasscode("");
+        setDeleteSuccessMsg(null);
+        if (selectedLead?.id === deleteModalLead.id) {
+          setDrawerOpen(false);
+          setSelectedLead(null);
+        }
+      }, 1200);
+    } catch (e: any) {
+      setDeleteError(e.message || "Failed to delete lead");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const handleGenerateAiSuggestions = async (convId: string) => {
     setLoadingSuggestions(true);
@@ -1354,6 +1397,14 @@ export default function MasterDashboardPage() {
                                     <span>Dossier</span>
                                     <ChevronRight className="w-3.5 h-3.5" />
                                   </button>
+
+                                  <button
+                                    onClick={() => { setDeleteModalLead(lead); setDeletePasscode(""); setDeleteError(null); setDeleteSuccessMsg(null); }}
+                                    title="Delete Lead & Conversation (Password Protected)"
+                                    className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:text-rose-300 transition-colors"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
                                 </div>
                               </td>
                             </tr>
@@ -1508,13 +1559,32 @@ export default function MasterDashboardPage() {
                         </div>
                       </div>
 
-                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${
-                        conversations[selectedConvIndex]?.lead.aiEnabled
-                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                          : "bg-rose-500/10 text-rose-400 border border-rose-500/30"
-                      }`}>
-                        {conversations[selectedConvIndex]?.lead.aiEnabled ? "AI Active" : "Human Control"}
-                      </span>
+                      <div className="flex items-center space-x-2">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${
+                          conversations[selectedConvIndex]?.lead.aiEnabled
+                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                            : "bg-rose-500/10 text-rose-400 border border-rose-500/30"
+                        }`}>
+                          {conversations[selectedConvIndex]?.lead.aiEnabled ? "AI Active" : "Human Control"}
+                        </span>
+
+                        <button
+                          onClick={() => {
+                            const curLead = conversations[selectedConvIndex]?.lead;
+                            if (curLead) {
+                              setDeleteModalLead(curLead);
+                              setDeletePasscode("");
+                              setDeleteError(null);
+                              setDeleteSuccessMsg(null);
+                            }
+                          }}
+                          title="Delete Thread & Lead (Password Protected)"
+                          className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border border-rose-500/30 transition-colors flex items-center space-x-1 text-xs font-bold"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span className="hidden sm:inline">Delete</span>
+                        </button>
+                      </div>
                     </div>
 
                     {/* Messages */}
@@ -2147,12 +2217,28 @@ export default function MasterDashboardPage() {
                   <p className="text-xs text-slate-400 font-mono">{selectedLead.phone}</p>
                 </div>
               </div>
-              <button
-                onClick={() => setDrawerOpen(false)}
-                className="p-2 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] text-slate-400 hover:text-white transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => {
+                    setDeleteModalLead(selectedLead);
+                    setDeletePasscode("");
+                    setDeleteError(null);
+                    setDeleteSuccessMsg(null);
+                  }}
+                  title="Delete this Lead & All History (Password Protected)"
+                  className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border border-rose-500/30 transition-colors flex items-center space-x-1.5 text-xs font-bold"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span className="hidden sm:inline">Delete Lead</span>
+                </button>
+
+                <button
+                  onClick={() => setDrawerOpen(false)}
+                  className="p-2 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] text-slate-400 hover:text-white transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Scrollable Body */}
@@ -2654,6 +2740,89 @@ export default function MasterDashboardPage() {
                 </button>
               </form>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🔒 PASSWORD-PROTECTED DELETE LEAD MODAL */}
+      {deleteModalLead && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="w-full max-w-md bg-[#0D0F17] border border-rose-500/40 rounded-3xl p-6 shadow-2xl space-y-5">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-white">Delete Lead & Chat History</h3>
+                <p className="text-xs text-slate-400 mt-0.5">Permanent admin deletion</p>
+              </div>
+            </div>
+
+            <div className="bg-[#151824] border border-[#1E2230] rounded-2xl p-4 space-y-2">
+              <div className="text-xs text-slate-300">
+                <span className="text-slate-500">Lead Name:</span> <strong className="text-white ml-1">{deleteModalLead.fullName || "VIP Client"}</strong>
+              </div>
+              <div className="text-xs text-slate-300">
+                <span className="text-slate-500">Phone:</span> <strong className="text-[#C5A059] font-mono ml-1">{deleteModalLead.phone}</strong>
+              </div>
+              <p className="text-[11px] text-rose-400/90 leading-relaxed pt-1.5 border-t border-[#1E2230]">
+                ⚠️ This will permanently delete this lead, all WhatsApp chat transcripts, bookings, vouchers, and attribution records.
+              </p>
+            </div>
+
+            {deleteSuccessMsg ? (
+              <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-xl text-xs font-semibold flex items-center space-x-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>{deleteSuccessMsg}</span>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                    Enter Admin Passcode to Confirm
+                  </label>
+                  <input
+                    type="password"
+                    value={deletePasscode}
+                    onChange={(e) => setDeletePasscode(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") handleDeleteLead(); }}
+                    placeholder="Enter login passcode..."
+                    className="w-full bg-[#151824] border border-[#1E2230] focus:border-rose-500 rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 outline-none font-mono transition-colors"
+                    autoFocus
+                  />
+                </div>
+
+                {deleteError && (
+                  <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-400 rounded-xl text-xs flex items-center space-x-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{deleteError}</span>
+                  </div>
+                )}
+
+                <div className="flex items-center space-x-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeleteModalLead(null);
+                      setDeletePasscode("");
+                      setDeleteError(null);
+                    }}
+                    className="flex-1 py-3 bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 font-bold text-xs rounded-xl transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!deletePasscode.trim() || isDeleting}
+                    onClick={handleDeleteLead}
+                    className="flex-1 py-3 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-lg shadow-rose-900/30 transition-all flex items-center justify-center space-x-2"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>{isDeleting ? "Deleting..." : "Delete Permanently"}</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

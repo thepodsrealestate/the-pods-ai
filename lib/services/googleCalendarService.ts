@@ -14,25 +14,59 @@ export class GoogleCalendarService {
   private static cachedToken: { token: string; expiresAt: number } | null = null;
 
   /**
-   * Generates a signed Google OAuth2 Access Token using RS256 Service Account JWT
+   * Generates a Google Access Token using either:
+   * 1. Direct User OAuth 2.0 Refresh Token (Owner permissions, no Workspace Admin required)
+   * 2. Service Account RS256 JWT
    */
   private static async getAccessToken(): Promise<string | null> {
-    const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || 'pods-calendar-bot@graphic-transit-506308-k5.iam.gserviceaccount.com';
-    let privateKey = process.env.GOOGLE_PRIVATE_KEY;
-
-    if (!privateKey) {
-      console.warn('[GCAL] GOOGLE_PRIVATE_KEY not set in environment variables');
-      return null;
-    }
-
-    // Handle escaped newlines in .env
-    privateKey = privateKey.replace(/\\n/g, '\n');
-
     // Check cache
     const now = Math.floor(Date.now() / 1000);
     if (this.cachedToken && this.cachedToken.expiresAt > now + 60) {
       return this.cachedToken.token;
     }
+
+    // Method 1: OAuth2 User Refresh Token (Bypasses Workspace Admin restrictions)
+    const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
+    const clientId = process.env.GOOGLE_CALENDAR_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CALENDAR_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET;
+
+    if (refreshToken && clientId && clientSecret && !clientId.includes('placeholder')) {
+      try {
+        const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            client_id: clientId,
+            client_secret: clientSecret,
+            refresh_token: refreshToken,
+            grant_type: 'refresh_token',
+          }),
+        });
+
+        const tokenData = await tokenRes.json();
+        if (tokenData.access_token) {
+          this.cachedToken = {
+            token: tokenData.access_token,
+            expiresAt: now + (tokenData.expires_in || 3600),
+          };
+          return this.cachedToken.token;
+        }
+      } catch (oauthErr: any) {
+        console.warn('[GCAL] OAuth refresh token error, falling back to service account:', oauthErr.message);
+      }
+    }
+
+    // Method 2: Service Account RS256 JWT
+    const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || 'pods-calendar-bot@graphic-transit-506308-k5.iam.gserviceaccount.com';
+    let privateKey = process.env.GOOGLE_PRIVATE_KEY;
+
+    if (!privateKey) {
+      console.warn('[GCAL] Neither GOOGLE_REFRESH_TOKEN nor GOOGLE_PRIVATE_KEY is set');
+      return null;
+    }
+
+    // Handle escaped newlines in .env
+    privateKey = privateKey.replace(/\\n/g, '\n');
 
     try {
       const header = { alg: 'RS256', typ: 'JWT' };
