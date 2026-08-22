@@ -37,7 +37,11 @@ import {
   Sliders,
   Mic,
   Trash2,
-  Share2
+  Share2,
+  Search,
+  MessageCircle,
+  ExternalLink,
+  Filter
 } from "lucide-react";
 
 function SourceBadge({ source }: { source: string }) {
@@ -98,6 +102,28 @@ function SourceBadge({ source }: { source: string }) {
   );
 }
 
+function formatTimeAgo(dateString?: string | Date | null) {
+  if (!dateString) return "Just now";
+  const now = new Date();
+  const date = new Date(dateString);
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (diffInSeconds < 60) return "Just now";
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) return `${diffInHours}h ago`;
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays === 1) return "Yesterday";
+  if (diffInDays < 7) return `${diffInDays}d ago`;
+  return date.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
+
+function cleanWhatsAppPhone(phone?: string | null) {
+  if (!phone) return "";
+  return phone.replace(/[^0-9]/g, "");
+}
+
 export default function MasterDashboardPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -124,8 +150,17 @@ export default function MasterDashboardPage() {
   const [savingSettings, setSavingSettings] = useState<boolean>(false);
   const [settingsSaveMsg, setSettingsSaveMsg] = useState<string | null>(null);
 
-  // Lead Filter State
+  // Lead Filter & Search State
   const [leadStatusFilter, setLeadStatusFilter] = useState<string>("ALL");
+  const [leadSearchQuery, setLeadSearchQuery] = useState<string>("");
+  const [leadAiFilter, setLeadAiFilter] = useState<string>("ALL");
+
+  // Conversation Search & Filter State
+  const [convSearchQuery, setConvSearchQuery] = useState<string>("");
+  const [convFilter, setConvFilter] = useState<string>("ALL");
+
+  // VIP Bookings View Mode State
+  const [bookingViewMode, setBookingViewMode] = useState<"list" | "calendar">("list");
 
   // Test Email State
   const [sendingTestEmail, setSendingTestEmail] = useState<boolean>(false);
@@ -679,6 +714,45 @@ export default function MasterDashboardPage() {
   const conversations = data?.conversations || [];
   const bookings = data?.bookings || [];
 
+  // Dynamic filtered leads list based on search and status filters
+  const filteredLeads = leads.filter((lead: any) => {
+    if (leadStatusFilter !== "ALL" && lead.status !== leadStatusFilter) {
+      return false;
+    }
+    if (leadAiFilter === "ACTIVE" && !lead.aiEnabled) return false;
+    if (leadAiFilter === "PAUSED" && lead.aiEnabled) return false;
+
+    if (leadSearchQuery.trim()) {
+      const q = leadSearchQuery.toLowerCase();
+      const name = (lead.fullName || "").toLowerCase();
+      const phone = (lead.phone || "").toLowerCase();
+      const location = (lead.buyerLocation || "").toLowerCase();
+      const developer = (lead.preferredDeveloper || "").toLowerCase();
+      if (!name.includes(q) && !phone.includes(q) && !location.includes(q) && !developer.includes(q)) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  // Dynamic filtered conversations list based on search & mode
+  const filteredConversations = conversations.filter((conv: any) => {
+    const lead = conv.lead;
+    if (convFilter === "AI" && lead && !lead.aiEnabled) return false;
+    if (convFilter === "HUMAN" && lead && lead.aiEnabled) return false;
+
+    if (convSearchQuery.trim()) {
+      const q = convSearchQuery.toLowerCase();
+      const name = (lead?.fullName || "").toLowerCase();
+      const phone = (lead?.phone || "").toLowerCase();
+      const lastMsg = (conv.messages?.[conv.messages.length - 1]?.content || "").toLowerCase();
+      if (!name.includes(q) && !phone.includes(q) && !lastMsg.includes(q)) {
+        return false;
+      }
+    }
+    return true;
+  });
+
   // Auto-scroll ONLY when switching contact or when new message is added
   const prevMsgCountRef = useRef<number>(0);
   const currentMsgsLength = conversations[selectedConvIndex]?.messages?.length || 0;
@@ -1063,21 +1137,91 @@ export default function MasterDashboardPage() {
           {/* TAB 2: LEAD MATRIX */}
           {activeTab === "leads" && (
             <div className="space-y-6 max-w-7xl mx-auto">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <h1 className="text-2xl font-black text-white tracking-tight">Lead Matrix System</h1>
-                  <p className="text-xs text-slate-400 mt-1">Real-time deduplicated WhatsApp lead directory</p>
+                  <p className="text-xs text-slate-400 mt-1">Real-time deduplicated WhatsApp lead directory with instant action controls</p>
                 </div>
 
-                <a
-                  href="/api/export/csv"
-                  download="the_pods_leads_export.csv"
-                  className="px-4 py-2.5 bg-[#151824] hover:bg-[#1E2230] border border-[#C5A059]/40 text-[#C5A059] font-bold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>Export CSV</span>
-                </a>
-               <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl shadow-xl overflow-hidden">
+                <div className="flex items-center space-x-3">
+                  <span className="text-xs text-slate-400 font-mono">
+                    Showing <strong className="text-white">{filteredLeads.length}</strong> of {leads.length} leads
+                  </span>
+                  <a
+                    href="/api/export/csv"
+                    download="the_pods_leads_export.csv"
+                    className="px-4 py-2.5 bg-[#151824] hover:bg-[#1E2230] border border-[#C5A059]/40 text-[#C5A059] font-bold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export CSV</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Search & Filter Bar */}
+              <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-4 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+                {/* Search Box */}
+                <div className="relative w-full md:w-80">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={leadSearchQuery}
+                    onChange={(e) => setLeadSearchQuery(e.target.value)}
+                    placeholder="Search by name, phone, or location..."
+                    className="w-full bg-[#151824] border border-[#1E2230] focus:border-[#C5A059] rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 outline-none transition-all font-medium"
+                  />
+                  {leadSearchQuery && (
+                    <button
+                      onClick={() => setLeadSearchQuery("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Filter Pills */}
+                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                  <div className="flex items-center space-x-1 bg-[#151824] p-1 rounded-xl border border-[#1E2230] text-[11px] font-bold">
+                    {["ALL", "QUALIFIED", "NEW", "HOT", "BOOKED"].map((status) => (
+                      <button
+                        key={status}
+                        onClick={() => setLeadStatusFilter(status)}
+                        className={`px-3 py-1 rounded-lg transition-all ${
+                          leadStatusFilter === status
+                            ? "bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-extrabold shadow-sm"
+                            : "text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        {status}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center space-x-1 bg-[#151824] p-1 rounded-xl border border-[#1E2230] text-[11px] font-bold">
+                    {[
+                      { key: "ALL", label: "All AI" },
+                      { key: "ACTIVE", label: "AI On" },
+                      { key: "PAUSED", label: "AI Paused" },
+                    ].map((mode) => (
+                      <button
+                        key={mode.key}
+                        onClick={() => setLeadAiFilter(mode.key)}
+                        className={`px-2.5 py-1 rounded-lg transition-all ${
+                          leadAiFilter === mode.key
+                            ? "bg-purple-600 text-white font-extrabold shadow-sm"
+                            : "text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        {mode.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Table Container */}
+              <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl shadow-xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm text-slate-300">
                     <thead className="bg-[#151824] text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-[#1E2230]">
@@ -1087,47 +1231,49 @@ export default function MasterDashboardPage() {
                         <th className="px-6 py-4">Status</th>
                         <th className="px-6 py-4">Buyer Location</th>
                         <th className="px-6 py-4">Budget Range</th>
-                        <th className="px-6 py-4 text-right">Actions</th>
+                        <th className="px-6 py-4">Last Activity</th>
+                        <th className="px-6 py-4 text-right">Instant Actions</th>
                       </tr>
                     </thead>
 
                     <tbody className="divide-y divide-[#1E2230]">
-                      {leads.length === 0 ? (
+                      {filteredLeads.length === 0 ? (
                         <tr>
-                          <td colSpan={6} className="px-6 py-12 text-center text-slate-500 text-sm">
-                            No leads found in database. Send a WhatsApp test message to see live records here!
+                          <td colSpan={7} className="px-6 py-12 text-center text-slate-500 text-sm">
+                            {leadSearchQuery || leadStatusFilter !== "ALL" || leadAiFilter !== "ALL"
+                              ? "No matching leads found for current search/filter."
+                              : "No leads found in database. Send a WhatsApp test message to see live records here!"}
                           </td>
                         </tr>
                       ) : (
-                        leads.map((lead: any) => {
+                        filteredLeads.map((lead: any) => {
                           const attribution = lead.attributions?.[0];
                           const source = lead.leadSource || attribution?.source || "DIRECT";
                           const campaign = attribution?.campaign || attribution?.utmCampaign || null;
-                          
-                          // Style for different ad platforms
-                          let badgeStyle = "bg-slate-800 text-slate-400 border-slate-700";
-                          if (source.includes("FACEBOOK")) {
-                            badgeStyle = "bg-blue-600/10 text-blue-400 border-blue-500/20";
-                          } else if (source.includes("INSTAGRAM")) {
-                            badgeStyle = "bg-purple-600/10 text-purple-400 border-purple-500/20";
-                          } else if (source.includes("GOOGLE")) {
-                            badgeStyle = "bg-red-600/10 text-red-400 border-red-500/20";
-                          } else if (source.includes("TIKTOK")) {
-                            badgeStyle = "bg-zinc-800 text-zinc-100 border-zinc-700";
-                          } else if (source !== "DIRECT") {
-                            badgeStyle = "bg-[#C5A059]/10 text-[#C5A059] border-[#C5A059]/30";
-                          }
+                          const rawPhone = cleanWhatsAppPhone(lead.phone);
 
                           return (
-                            <tr key={lead.id} className="hover:bg-[#151824]/50 transition-colors">
+                            <tr key={lead.id} className="hover:bg-[#151824]/50 transition-colors group">
+                              {/* Lead Contact with Click-to-WhatsApp */}
                               <td className="px-6 py-4">
                                 <div className="flex items-center space-x-3">
-                                  <div className="w-9 h-9 rounded-full bg-[#151824] border border-[#C5A059]/30 flex items-center justify-center font-bold text-xs text-[#C5A059]">
+                                  <div className="w-9 h-9 rounded-full bg-[#151824] border border-[#C5A059]/30 flex items-center justify-center font-bold text-xs text-[#C5A059] shrink-0">
                                     {lead.fullName ? lead.fullName.slice(0, 2).toUpperCase() : "WA"}
                                   </div>
                                   <div>
                                     <p className="font-semibold text-white">{lead.fullName || "WhatsApp Lead"}</p>
-                                    <p className="text-xs text-slate-400 font-mono">{lead.phone}</p>
+                                    <div className="flex items-center space-x-2 mt-0.5">
+                                      <a
+                                        href={`https://wa.me/${rawPhone}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-xs text-emerald-400 hover:text-emerald-300 font-mono flex items-center space-x-1 hover:underline"
+                                        title="Open in WhatsApp Web"
+                                      >
+                                        <MessageCircle className="w-3 h-3 text-emerald-400" />
+                                        <span>{lead.phone}</span>
+                                      </a>
+                                    </div>
                                   </div>
                                 </div>
                               </td>
@@ -1148,6 +1294,10 @@ export default function MasterDashboardPage() {
                                 <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
                                   lead.status === "QUALIFIED"
                                     ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                                    : lead.status === "HOT"
+                                    ? "bg-rose-500/10 text-rose-400 border border-rose-500/30 animate-pulse"
+                                    : lead.status === "BOOKED"
+                                    ? "bg-[#C5A059]/10 text-[#C5A059] border border-[#C5A059]/30"
                                     : "bg-slate-800 text-slate-400"
                                 }`}>
                                   {lead.status}
@@ -1162,14 +1312,49 @@ export default function MasterDashboardPage() {
                                 {lead.budgetMax ? `AED ${lead.budgetMax.toLocaleString()}` : "Not Disclosed"}
                               </td>
 
+                              {/* Last Activity relative timestamp */}
+                              <td className="px-6 py-4 text-xs text-slate-400 font-mono">
+                                <span className="inline-flex items-center space-x-1.5">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                  <span>{formatTimeAgo(lead.updatedAt)}</span>
+                                </span>
+                              </td>
+
+                              {/* Inline Actions */}
                               <td className="px-6 py-4 text-right">
-                                <button
-                                  onClick={() => { setSelectedLead(lead); setDrawerOpen(true); setIssuedVoucher(null); }}
-                                  className="px-3.5 py-1.5 bg-[#C5A059]/10 hover:bg-[#C5A059]/20 text-[#C5A059] border border-[#C5A059]/30 font-bold text-xs rounded-lg transition-colors inline-flex items-center space-x-1"
-                                >
-                                  <span>Lead Dossier</span>
-                                  <ChevronRight className="w-3.5 h-3.5" />
-                                </button>
+                                <div className="flex items-center justify-end space-x-2">
+                                  <button
+                                    onClick={() => handleToggleAi(lead.id, lead.aiEnabled)}
+                                    title={lead.aiEnabled ? "Pause AI for human takeover" : "Resume AI Concierge"}
+                                    className={`p-2 rounded-lg text-xs font-bold transition-all border ${
+                                      lead.aiEnabled
+                                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30"
+                                        : "bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-emerald-500/10 hover:text-emerald-400 hover:border-emerald-500/30"
+                                    }`}
+                                  >
+                                    {lead.aiEnabled ? <Play className="w-3.5 h-3.5 fill-current" /> : <Pause className="w-3.5 h-3.5 fill-current" />}
+                                  </button>
+
+                                  <button
+                                    onClick={() => {
+                                      const convIdx = conversations.findIndex((c: any) => c.leadId === lead.id);
+                                      if (convIdx !== -1) setSelectedConvIndex(convIdx);
+                                      setActiveTab("conversations");
+                                    }}
+                                    title="Open WhatsApp Chat transcript"
+                                    className="p-2 rounded-lg bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 hover:text-white transition-colors"
+                                  >
+                                    <MessageSquare className="w-3.5 h-3.5 text-[#C5A059]" />
+                                  </button>
+
+                                  <button
+                                    onClick={() => { setSelectedLead(lead); setDrawerOpen(true); setIssuedVoucher(null); }}
+                                    className="px-3 py-1.5 bg-[#C5A059]/10 hover:bg-[#C5A059]/20 text-[#C5A059] border border-[#C5A059]/30 font-bold text-xs rounded-lg transition-colors inline-flex items-center space-x-1"
+                                  >
+                                    <span>Dossier</span>
+                                    <ChevronRight className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           );
@@ -1179,7 +1364,6 @@ export default function MasterDashboardPage() {
                   </table>
                 </div>
               </div>
-              </div>
             </div>
           )}
 
@@ -1187,22 +1371,64 @@ export default function MasterDashboardPage() {
           {activeTab === "conversations" && (
             <div className="h-[calc(100vh-7.5rem)] md:h-[calc(100vh-10rem)] flex flex-col md:flex-row gap-6 max-w-7xl mx-auto overflow-hidden">
               {/* Left Thread List */}
-              <div className={`w-full md:w-80 bg-[#0D0F17] border border-[#1E2230] rounded-2xl flex-col shadow-xl overflow-hidden select-none shrink-0 ${
+              <div className={`w-full md:w-88 bg-[#0D0F17] border border-[#1E2230] rounded-2xl flex-col shadow-xl overflow-hidden select-none shrink-0 ${
                 mobileShowChat ? "hidden md:flex" : "flex h-full"
               }`}>
-                <div className="p-4 border-b border-[#1E2230] bg-[#151824]">
-                  <h3 className="font-bold text-white text-sm">Active Threads</h3>
-                  <p className="text-[11px] text-slate-400">Live WhatsApp Chat Feeds</p>
+                <div className="p-4 border-b border-[#1E2230] bg-[#151824] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-bold text-white text-sm">Active Threads</h3>
+                      <p className="text-[11px] text-slate-400">Live WhatsApp Chat Feeds</p>
+                    </div>
+                    <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full font-bold">
+                      {filteredConversations.length} Active
+                    </span>
+                  </div>
+
+                  {/* Search in conversations */}
+                  <div className="relative">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={convSearchQuery}
+                      onChange={(e) => setConvSearchQuery(e.target.value)}
+                      placeholder="Search chats by name or phone..."
+                      className="w-full bg-[#0D0F17] border border-[#1E2230] focus:border-[#C5A059] rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 outline-none transition-all"
+                    />
+                  </div>
+
+                  {/* Filter Pills */}
+                  <div className="flex items-center space-x-1 bg-[#0D0F17] p-1 rounded-xl border border-[#1E2230] text-[10px] font-bold">
+                    {[
+                      { key: "ALL", label: "All Chats" },
+                      { key: "AI", label: "AI Active" },
+                      { key: "HUMAN", label: "Human Paused" },
+                    ].map((btn) => (
+                      <button
+                        key={btn.key}
+                        onClick={() => setConvFilter(btn.key)}
+                        className={`flex-1 py-1 rounded-lg transition-all text-center ${
+                          convFilter === btn.key
+                            ? "bg-[#C5A059] text-black font-extrabold shadow-sm"
+                            : "text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        {btn.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto divide-y divide-[#1E2230]">
-                  {conversations.length === 0 ? (
+                  {filteredConversations.length === 0 ? (
                     <div className="p-8 text-center text-slate-500 text-xs">
-                      No active conversations in database yet.
+                      {convSearchQuery || convFilter !== "ALL"
+                        ? "No conversations match your search."
+                        : "No active conversations in database yet."}
                     </div>
                   ) : (
-                    conversations.map((conv: any, idx: number) => {
-                      const lastMsg = conv.messages[conv.messages.length - 1];
+                    filteredConversations.map((conv: any, idx: number) => {
+                      const lastMsg = conv.messages?.[conv.messages.length - 1];
                       const isSelected = selectedConvIndex === idx;
                       return (
                         <div
@@ -1211,16 +1437,16 @@ export default function MasterDashboardPage() {
                             setSelectedConvIndex(idx);
                             setMobileShowChat(true);
                           }}
-                          className={`p-4 cursor-pointer transition-colors space-y-1 ${
+                          className={`p-4 cursor-pointer transition-colors space-y-1.5 ${
                             isSelected ? "bg-[#C5A059]/10 border-l-4 border-[#C5A059]" : "hover:bg-[#151824]/50"
                           }`}
                         >
                           <div className="flex justify-between items-start">
                             <span className="font-semibold text-white text-xs truncate max-w-[170px]">
-                              {conv.lead.fullName || conv.lead.phone}
+                              {conv.lead?.fullName || conv.lead?.phone}
                             </span>
                             <span className="text-[10px] text-slate-400 font-mono">
-                              {new Date(conv.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              {formatTimeAgo(conv.updatedAt)}
                             </span>
                           </div>
 
@@ -1228,11 +1454,18 @@ export default function MasterDashboardPage() {
                             {lastMsg ? lastMsg.content : "No messages yet"}
                           </p>
 
-                          <div className="flex items-center space-x-2 pt-1">
-                            <span className={`w-2 h-2 rounded-full ${conv.lead.aiEnabled ? "bg-emerald-400" : "bg-rose-400"}`}></span>
-                            <span className="text-[10px] font-semibold uppercase text-slate-400">
-                              {conv.lead.aiEnabled ? "AI Active" : "Human Control"}
-                            </span>
+                          <div className="flex items-center justify-between pt-1">
+                            <div className="flex items-center space-x-1.5">
+                              <span className={`w-2 h-2 rounded-full ${conv.lead?.aiEnabled ? "bg-emerald-400 animate-pulse" : "bg-rose-400"}`}></span>
+                              <span className="text-[10px] font-semibold uppercase text-slate-400">
+                                {conv.lead?.aiEnabled ? "AI Active" : "Human Paused"}
+                              </span>
+                            </div>
+                            {conv.lead?.buyerLocation && (
+                              <span className="text-[9px] font-mono text-slate-400 bg-[#151824] px-1.5 py-0.5 rounded border border-[#1E2230]">
+                                {conv.lead.buyerLocation}
+                              </span>
+                            )}
                           </div>
                         </div>
                       );
@@ -1397,17 +1630,42 @@ export default function MasterDashboardPage() {
                 <div>
                   <h1 className="text-2xl font-black text-white tracking-tight">VIP Presentation Bookings</h1>
                   <p className="text-xs text-slate-400 mt-1">
-                    Scheduled client presentations at Bluewaters Island Pods & London Office
+                    Scheduled client presentations at Bluewaters Island Pods, London Office, and Google Meet
                   </p>
                 </div>
 
-                <button
-                  onClick={handleTriggerTestBooking}
-                  disabled={testingBooking}
-                  className="px-5 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-lg hover:brightness-110 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
-                >
-                  <span>{testingBooking ? "Simulating AI Booking..." : "+ Simulate Test AI Booking"}</span>
-                </button>
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-1 bg-[#151824] p-1 rounded-xl border border-[#1E2230] text-[11px] font-bold">
+                    <button
+                      onClick={() => setBookingViewMode("list")}
+                      className={`px-3 py-1.5 rounded-lg transition-all ${
+                        bookingViewMode === "list"
+                          ? "bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-extrabold shadow-sm"
+                          : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      List View
+                    </button>
+                    <button
+                      onClick={() => setBookingViewMode("calendar")}
+                      className={`px-3 py-1.5 rounded-lg transition-all ${
+                        bookingViewMode === "calendar"
+                          ? "bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-extrabold shadow-sm"
+                          : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      Schedule View
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={handleTriggerTestBooking}
+                    disabled={testingBooking}
+                    className="px-4 py-2 bg-[#151824] hover:bg-[#1E2230] border border-[#C5A059]/40 text-[#C5A059] font-bold text-xs rounded-xl shadow-lg hover:brightness-110 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+                  >
+                    <span>{testingBooking ? "Simulating..." : "+ Simulate Test Booking"}</span>
+                  </button>
+                </div>
               </div>
 
               {testBookingMsg && (
@@ -1416,53 +1674,146 @@ export default function MasterDashboardPage() {
                 </div>
               )}
 
-              <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl shadow-xl overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm text-slate-300">
-                    <thead className="bg-[#151824] text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-[#1E2230]">
-                      <tr>
-                        <th className="px-6 py-4">Client Contact</th>
-                        <th className="px-6 py-4">Presentation Location</th>
-                        <th className="px-6 py-4">Scheduled Date & Time</th>
-                        <th className="px-6 py-4">Status</th>
-                      </tr>
-                    </thead>
-
-                    <tbody className="divide-y divide-[#1E2230]">
-                      {bookings.length === 0 ? (
+              {bookingViewMode === "list" ? (
+                <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl shadow-xl overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm text-slate-300">
+                      <thead className="bg-[#151824] text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-[#1E2230]">
                         <tr>
-                          <td colSpan={4} className="px-6 py-12 text-center text-slate-500 text-sm">
-                            No presentation bookings recorded yet.
-                          </td>
+                          <th className="px-6 py-4">Client Contact</th>
+                          <th className="px-6 py-4">Presentation Venue</th>
+                          <th className="px-6 py-4">Scheduled Date & Time</th>
+                          <th className="px-6 py-4">Status</th>
+                          <th className="px-6 py-4 text-right">Instant Action</th>
                         </tr>
-                      ) : (
-                        bookings.map((b: any) => (
-                          <tr key={b.id} className="hover:bg-[#151824]/50 transition-colors">
-                            <td className="px-6 py-4">
-                              <p className="font-semibold text-white">{b.lead.fullName || "VIP Client"}</p>
-                              <p className="text-xs text-slate-400 font-mono">{b.lead.phone}</p>
-                            </td>
+                      </thead>
 
-                            <td className="px-6 py-4 text-xs font-semibold text-slate-200">
-                              {b.location}
-                            </td>
-
-                            <td className="px-6 py-4 text-xs font-mono text-emerald-400">
-                              {new Date(b.meetingTime).toLocaleString()}
-                            </td>
-
-                            <td className="px-6 py-4">
-                              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                                {b.status}
-                              </span>
+                      <tbody className="divide-y divide-[#1E2230]">
+                        {bookings.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="px-6 py-12 text-center text-slate-500 text-sm">
+                              No presentation bookings recorded yet.
                             </td>
                           </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
+                        ) : (
+                          bookings.map((b: any) => {
+                            const rawPhone = cleanWhatsAppPhone(b.lead?.phone);
+                            const isGoogleMeet = (b.location || "").toLowerCase().includes("meet") || (b.location || "").toLowerCase().includes("video");
+
+                            return (
+                              <tr key={b.id} className="hover:bg-[#151824]/50 transition-colors">
+                                <td className="px-6 py-4">
+                                  <p className="font-semibold text-white">{b.lead?.fullName || "VIP Client"}</p>
+                                  <a
+                                    href={`https://wa.me/${rawPhone}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-emerald-400 hover:text-emerald-300 font-mono flex items-center space-x-1 mt-0.5"
+                                  >
+                                    <MessageCircle className="w-3 h-3 text-emerald-400" />
+                                    <span>{b.lead?.phone}</span>
+                                  </a>
+                                </td>
+
+                                <td className="px-6 py-4 text-xs font-semibold text-slate-200">
+                                  <div className="flex items-center space-x-2">
+                                    <MapPin className="w-3.5 h-3.5 text-[#C5A059] shrink-0" />
+                                    <span>{b.location}</span>
+                                  </div>
+                                </td>
+
+                                <td className="px-6 py-4 text-xs font-mono text-emerald-400 font-bold">
+                                  {new Date(b.meetingTime).toLocaleString("en-GB", {
+                                    weekday: "short",
+                                    day: "numeric",
+                                    month: "short",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </td>
+
+                                <td className="px-6 py-4">
+                                  <span className="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                                    {b.status}
+                                  </span>
+                                </td>
+
+                                <td className="px-6 py-4 text-right">
+                                  <a
+                                    href="https://calendar.app.google/xGRVwZCTkrnZCypUA"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-3 py-1.5 bg-[#C5A059]/10 hover:bg-[#C5A059]/20 text-[#C5A059] border border-[#C5A059]/30 font-bold text-xs rounded-lg transition-colors inline-flex items-center space-x-1"
+                                  >
+                                    <span>Google Calendar</span>
+                                    <ExternalLink className="w-3 h-3" />
+                                  </a>
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                /* Grid Schedule View */
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {bookings.length === 0 ? (
+                    <div className="col-span-full bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-12 text-center text-slate-500 text-sm">
+                      No upcoming presentation slots booked.
+                    </div>
+                  ) : (
+                    bookings.map((b: any) => (
+                      <div key={b.id} className="bg-[#0D0F17] border border-[#1E2230] hover:border-[#C5A059]/50 rounded-2xl p-5 shadow-xl space-y-3 transition-all">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="text-sm font-bold text-white">{b.lead?.fullName || "VIP Client"}</h4>
+                            <p className="text-xs text-slate-400 font-mono">{b.lead?.phone}</p>
+                          </div>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                            Confirmed
+                          </span>
+                        </div>
+
+                        <div className="bg-[#151824] p-3 rounded-xl border border-[#1E2230] space-y-1.5">
+                          <div className="flex items-center space-x-2 text-xs text-emerald-400 font-mono font-bold">
+                            <Clock className="w-3.5 h-3.5" />
+                            <span>{new Date(b.meetingTime).toLocaleString()}</span>
+                          </div>
+                          <div className="flex items-center space-x-2 text-xs text-slate-300">
+                            <MapPin className="w-3.5 h-3.5 text-[#C5A059]" />
+                            <span className="truncate">{b.location}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-1">
+                          <a
+                            href={`https://wa.me/${cleanWhatsAppPhone(b.lead?.phone)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-emerald-400 hover:underline flex items-center space-x-1 font-medium"
+                          >
+                            <MessageCircle className="w-3.5 h-3.5" />
+                            <span>WhatsApp Client</span>
+                          </a>
+
+                          <a
+                            href="https://calendar.app.google/xGRVwZCTkrnZCypUA"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-[#C5A059] hover:underline flex items-center space-x-1 font-medium"
+                          >
+                            <span>Calendar</span>
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
             </div>
           )}
 
