@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 2. If no audio URL but leadId provided, extract intelligence from real lead conversation messages
+    // 2. If no audio URL passed in body but leadId provided, inspect lead's real messages & voice notes
     if (!transcript && leadId) {
       const lead = await prisma.lead.findUnique({
         where: { id: leadId },
@@ -39,13 +39,43 @@ export async function POST(req: NextRequest) {
       });
 
       if (lead) {
-        const leadMessages = lead.conversations?.[0]?.messages
-          ?.filter((m) => m.senderType === 'LEAD')
-          ?.map((m) => m.content)
-          ?.join(' | ');
+        const rawMessages = lead.conversations?.[0]?.messages?.filter((m) => m.senderType === 'LEAD') || [];
+        const processedParts: string[] = [];
 
-        if (leadMessages && leadMessages.trim()) {
-          transcript = leadMessages.trim();
+        for (const msg of rawMessages) {
+          const content = msg.content?.trim() || '';
+          if (!content) continue;
+
+          // Check if message content is an audio file URL from ManyChat / S3
+          const isAudioUrl = content.startsWith('http') && (
+            content.includes('.s3.') || 
+            content.includes('manybot') || 
+            content.includes('/wa/') || 
+            content.includes('.ogg') || 
+            content.includes('.mp3') || 
+            content.includes('.m4a') || 
+            content.includes('.wav')
+          );
+
+          if (isAudioUrl) {
+            try {
+              console.log(`[TRANSCRIBE] Found voice note URL in chat history: ${content}`);
+              const voiceText = await WhisperService.transcribeAudio(content);
+              if (voiceText && voiceText.trim()) {
+                processedParts.push(`[Voice Note Audio: "${voiceText.trim()}"]`);
+              } else {
+                processedParts.push('[Voice Note Audio]');
+              }
+            } catch (err) {
+              processedParts.push('[Voice Note Audio]');
+            }
+          } else {
+            processedParts.push(content);
+          }
+        }
+
+        if (processedParts.length > 0) {
+          transcript = processedParts.join(' | ');
         } else if (lead.purchasePurpose || lead.buyerLocation || lead.budgetMax) {
           transcript = `Lead Profile: ${lead.fullName || 'Client'} (${lead.phone}) interested in ${lead.purchasePurpose || 'off-plan property'} in ${lead.buyerLocation || 'Dubai'}.`;
         }
