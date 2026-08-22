@@ -119,7 +119,7 @@ export class LeadService {
       if (input.fullName && input.fullName !== 'VIP Client' && lead.fullName !== input.fullName) {
         updateData.fullName = input.fullName;
       }
-      if (normalizedPhone && !normalizedPhone.startsWith('+lead_') && lead.phone !== normalizedPhone) {
+      if (normalizedPhone && !normalizedPhone.startsWith('+lead_') && !normalizedPhone.startsWith('+mc_') && lead.phone !== normalizedPhone) {
         updateData.phone = normalizedPhone;
       }
       if (input.email && !lead.email) {
