@@ -135,8 +135,9 @@ To expand beyond Danube, Sobha, and Binghatti (e.g. adding *Damac Properties*):
 ## 6. How to Monitor Leads & Control AI Takeover in Dashboard
 
 ### Accessing the Command Center
-1. URL: `https://the-pods-ai.vercel.app/dashboard`
-2. Enter your secure PIN (`260414`).
+1. URL: `https://the-pods-ai.vercel.app/dashboard` (or `/login`)
+2. **Email:** `info@thepodsrealestate.ae`
+3. **Passcode:** `MineshPods0070`
 
 ### Key Retainer Features:
 * **Leads Tab:** View every lead with real-time intent heat score (Hot, Warm, Cold), budget, and target property.

@@ -286,7 +286,7 @@ SYSTEM OVERVIEW & BUSINESS CONTEXT:
 - WhatsApp Bot: Aria, Luxury Concierge (+44 7404 097586).
 - VIP Google Calendar: https://calendar.app.google/xGRVwZCTkrnZCypUA
 - Notification Contact: Minesh Patel / info@thepodsrealestate.ae.
-- Dashboard PIN: 260414.
+- Dashboard Login: `info@thepodsrealestate.ae` / `MineshPods0070`
 
 TECHNICAL ARCHITECTURE:
 - Next.js 16 App Router + TypeScript + Tailwind CSS.
