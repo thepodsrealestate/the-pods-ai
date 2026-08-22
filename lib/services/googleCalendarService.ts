@@ -84,7 +84,7 @@ export class GoogleCalendarService {
   /**
    * Inserts an event directly into Minesh Patel's Google Calendar
    */
-  static async insertEvent(params: CalendarEventParams): Promise<{ eventId?: string; htmlLink?: string } | null> {
+  static async insertEvent(params: CalendarEventParams): Promise<{ eventId?: string; htmlLink?: string; meetLink?: string } | null> {
     try {
       const accessToken = await this.getAccessToken();
       if (!accessToken) {
