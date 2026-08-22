@@ -82,37 +82,51 @@ export async function GET(
   const { slug } = await params;
   const cleanSlug = slug.replace('.pdf', '').toLowerCase().trim();
 
-  // 1. Direct file check first: if exact filename or slug + .pdf exists in public/brochures
+  // 1. Direct & Recursive file check: searches public/brochures and any subfolders (danube/, sobha/, binghatti/)
   const dir = path.join(process.cwd(), 'public', 'brochures');
   if (fs.existsSync(dir)) {
-    const files = fs.readdirSync(dir);
+    const getAllFiles = (dirPath: string): { relativePath: string; fullPath: string; fileName: string }[] => {
+      let results: { relativePath: string; fullPath: string; fileName: string }[] = [];
+      const list = fs.readdirSync(dirPath);
+      for (const file of list) {
+        const fullPath = path.join(dirPath, file);
+        const stat = fs.statSync(fullPath);
+        if (stat && stat.isDirectory()) {
+          results = results.concat(getAllFiles(fullPath));
+        } else if (file.toLowerCase().endsWith('.pdf')) {
+          results.push({ relativePath: path.relative(dir, fullPath), fullPath, fileName: file });
+        }
+      }
+      return results;
+    };
+
+    const allPdfs = getAllFiles(dir);
     const cleanNormalized = cleanSlug.replace(/[^a-z0-9]/g, '');
 
-    // Check exact match (e.g. binghatti-luxuria.pdf, burj-binghatti-jacob-co.pdf, binghatti-city-by-mercedes.pdf)
-    let matchedFile = files.find((f) => f.toLowerCase() === `${cleanSlug}.pdf`);
+    // Check exact match (e.g. binghatti-luxuria.pdf, binghatti-titania.pdf)
+    let matched = allPdfs.find((item) => item.fileName.toLowerCase() === `${cleanSlug}.pdf`);
 
-    if (!matchedFile) {
-      matchedFile = files.find((f) => {
-        const fNorm = f.toLowerCase().replace('.pdf', '').replace(/[^a-z0-9]/g, '');
+    if (!matched) {
+      matched = allPdfs.find((item) => {
+        const fNorm = item.fileName.toLowerCase().replace('.pdf', '').replace(/[^a-z0-9]/g, '');
         return fNorm === cleanNormalized;
       });
     }
 
-    // Substring fallback only if clean normalized match fails
-    if (!matchedFile) {
-      matchedFile = files.find((f) => {
-        const fNorm = f.toLowerCase().replace('.pdf', '').replace(/[^a-z0-9]/g, '');
+    if (!matched) {
+      matched = allPdfs.find((item) => {
+        const fNorm = item.fileName.toLowerCase().replace('.pdf', '').replace(/[^a-z0-9]/g, '');
         return fNorm.length > 5 && (cleanNormalized.includes(fNorm) || fNorm.includes(cleanNormalized));
       });
     }
 
-    if (matchedFile) {
-      console.log(`[BROCHURE] Serving real static PDF: ${matchedFile} for slug: ${slug}`);
-      const fileBuffer = fs.readFileSync(path.join(dir, matchedFile));
+    if (matched) {
+      console.log(`[BROCHURE] Serving real static PDF: ${matched.relativePath} for slug: ${slug}`);
+      const fileBuffer = fs.readFileSync(matched.fullPath);
       return new NextResponse(new Uint8Array(fileBuffer), {
         headers: {
           'Content-Type': 'application/pdf',
-          'Content-Disposition': `inline; filename="${matchedFile}"`,
+          'Content-Disposition': `inline; filename="${matched.fileName}"`,
           'Cache-Control': 'public, max-age=86400, must-revalidate',
         },
       });
