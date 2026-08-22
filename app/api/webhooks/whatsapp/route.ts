@@ -91,10 +91,11 @@ export async function POST(req: NextRequest) {
       normalizedPhone = LeadService.normalizePhone(phone, senderName);
     } catch (_) { /* fallback to raw phone */ }
 
-    // 4. Fetch past conversation history from database for 100% unlimited memory retention
+    // 4. Fetch past conversation history & dynamic lead profile for 100% memory retention
     let conversationHistory: { sender: string; text: string }[] = [];
+    let existingLead: any = null;
     try {
-      const existingLead = await prisma.lead.findFirst({
+      existingLead = await prisma.lead.findFirst({
         where: {
           OR: [
             { phone: normalizedPhone },
@@ -131,9 +132,14 @@ export async function POST(req: NextRequest) {
       console.warn('[CONTEXT] History lookup warning:', histErr);
     }
 
-    // Generate AI Response with full conversation memory
+    // Generate AI Response with full dynamic lead memory
     const aiResult = await AIService.generateResponse({
-      leadName: senderName || undefined,
+      leadName: senderName || existingLead?.fullName || undefined,
+      buyerLocation: existingLead?.buyerLocation || undefined,
+      purchasePurpose: existingLead?.purchasePurpose || undefined,
+      budgetMin: existingLead?.budgetMin || undefined,
+      budgetMax: existingLead?.budgetMax || undefined,
+      timeline: existingLead?.timeline || undefined,
       conversationHistory,
       userMessage: userText,
     });
