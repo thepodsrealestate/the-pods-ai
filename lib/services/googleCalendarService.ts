@@ -102,6 +102,12 @@ export class GoogleCalendarService {
         location: params.location,
         start: { dateTime: startDateTime, timeZone: 'Asia/Dubai' },
         end: { dateTime: endDateTime, timeZone: 'Asia/Dubai' },
+        conferenceData: {
+          createRequest: {
+            requestId: `meet_${Date.now()}_${Math.floor(Math.random() * 10000)}`,
+            conferenceSolutionKey: { type: 'hangoutsMeet' },
+          },
+        },
         reminders: {
           useDefault: false,
           overrides: [
@@ -115,7 +121,7 @@ export class GoogleCalendarService {
         eventPayload.attendees = [{ email: params.attendeeEmail, displayName: params.attendeeName || undefined }];
       }
 
-      const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`, {
+      const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?conferenceDataVersion=1&sendUpdates=all`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -130,8 +136,9 @@ export class GoogleCalendarService {
         return null;
       }
 
-      console.log('[GCAL] Event created successfully on Google Calendar:', data.id, data.htmlLink);
-      return { eventId: data.id, htmlLink: data.htmlLink };
+      const meetLink = data.hangoutLink || data.conferenceData?.entryPoints?.find((e: any) => e.entryPointType === 'video')?.uri;
+      console.log('[GCAL] Event created successfully with Google Meet:', data.id, meetLink);
+      return { eventId: data.id, htmlLink: data.htmlLink, meetLink };
     } catch (err: any) {
       console.error('[GCAL] Failed to insert event:', err.message);
       return null;

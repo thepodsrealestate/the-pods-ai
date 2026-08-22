@@ -75,10 +75,14 @@ export class NotificationService {
                   <p style="margin: 4px 0;"><strong>Client Name:</strong> ${payload.leadName}</p>
                   <p style="margin: 4px 0;"><strong>Phone:</strong> ${payload.phone}</p>
                   <p style="margin: 4px 0;"><strong>Scheduled Time:</strong> ${timeFormatted}</p>
-                  <p style="margin: 4px 0;"><strong>Location:</strong> ${payload.location || 'The Pods, Bluewaters Island'}</p>
+                  <p style="margin: 4px 0;"><strong>Location / Format:</strong> ${payload.location || 'Google Meet Video Consultation'}</p>
+                  ${payload.location?.toLowerCase().includes('google meet') || !payload.location ? `<p style="margin: 8px 0;"><a href="https://calendar.app.google/xGRVwZCTkrnZCypUA" style="color: #60A5FA; text-decoration: underline;">👉 Open Google Calendar & Meet Details</a></p>` : ''}
                   ${payload.voucherCode ? `<p style="margin: 4px 0; color: #10B981;"><strong>VIP Voucher:</strong> ${payload.voucherCode}</p>` : ''}
                 </div>
-                <a href="https://the-pods-ai.vercel.app/dashboard" style="display: inline-block; background-color: #C5A059; color: #000000; font-weight: bold; padding: 10px 20px; border-radius: 8px; text-decoration: none; margin-top: 12px;">Open Command Center</a>
+                <div style="margin-top: 16px;">
+                  <a href="https://the-pods-ai.vercel.app/dashboard" style="display: inline-block; background-color: #C5A059; color: #000000; font-weight: bold; padding: 10px 20px; border-radius: 8px; text-decoration: none; margin-right: 12px;">Open Command Center</a>
+                  <a href="https://calendar.google.com" style="display: inline-block; background-color: #1E2230; color: #ffffff; padding: 10px 16px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">View in Calendar</a>
+                </div>
               </div>
             `,
           }),
