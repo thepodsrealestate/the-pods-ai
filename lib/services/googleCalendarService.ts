@@ -92,7 +92,7 @@ export class GoogleCalendarService {
         return null;
       }
 
-      const calendarId = encodeURIComponent(process.env.GOOGLE_CALENDAR_ID || 'info@thepodsrealestate.ae');
+      const calendarId = encodeURIComponent(process.env.GOOGLE_CALENDAR_ID || 'primary');
       const startDateTime = params.startTime.toISOString();
       const endDateTime = (params.endTime || new Date(params.startTime.getTime() + 45 * 60 * 1000)).toISOString();
 
