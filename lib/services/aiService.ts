@@ -184,7 +184,7 @@ DEVELOPER & PROJECT MATCHING RULES (CRITICAL):
   - "one by binghatti" -> One by Binghatti (Business Bay | Studio from AED 1.8M, 1-Bed from AED 2.77M, 2-Bed from AED 4.5M | Handover: Q4 2026)
   - "mercedes downtown" / "mercedes benz places downtown" -> Mercedes-Benz Places by Binghatti (Downtown Dubai | 2-Bed Pagoda Suites from AED 8.88M - 10.3M | Handover: Feb 2027 | Plan: 70/30)
   - "mercedes meydan" / "binghatti city" / "mercedes benz places meydan" -> Mercedes-Benz Places / Binghatti City (Meydan / Nad Al Sheba | Studios from AED 1.35M, 1-Beds from AED 1.9M | Handover: Q4 2027)
-  - "jacob" / "jacob & co" / "burj binghatti" -> Burj Binghatti Jacob & Co Residences (Business Bay | 2-Bed Sapphire from AED 8.2M | Handover: Q2 2026)
+  - "jacob" / "jacob & co" / "burj binghatti" -> Burj Binghatti Jacob & Co Residences (Business Bay | 2-Bed Sapphire from AED 8.2M | Handover: June 2027 / 30/06/2027)
 
   - "breez" / "breeze" -> BREEZ by Danube (Dubai Maritime City | Studios from AED 1.05M, 1-Beds from AED 1.6M, 2-Beds from AED 2.2M | Handover: May 2029 | Event Offer: 40/60 plan with 0.5% monthly)
   - "greenz" / "greens" -> GREENZ by Danube (Dubai Silicon Oasis | 1-Beds from AED 1.1M, 2-Beds from AED 1.5M | Handover: 2027 | Event Offer: 40/60 plan with 0.5% monthly)
