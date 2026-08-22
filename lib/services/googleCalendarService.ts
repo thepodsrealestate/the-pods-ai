@@ -92,9 +92,16 @@ export class GoogleCalendarService {
         return null;
       }
 
-      const calendarId = encodeURIComponent(process.env.GOOGLE_CALENDAR_ID || 'primary');
+      const calendarId = encodeURIComponent(process.env.GOOGLE_CALENDAR_ID || 'info@thepodsrealestate.ae');
       const startDateTime = params.startTime.toISOString();
       const endDateTime = (params.endTime || new Date(params.startTime.getTime() + 45 * 60 * 1000)).toISOString();
+
+      const attendees: { email: string; displayName?: string }[] = [
+        { email: 'info@thepodsrealestate.ae', displayName: 'Minesh Patel (The Pods)' },
+      ];
+      if (params.attendeeEmail && params.attendeeEmail !== 'info@thepodsrealestate.ae') {
+        attendees.push({ email: params.attendeeEmail, displayName: params.attendeeName || undefined });
+      }
 
       const eventPayload: any = {
         summary: params.summary,
@@ -102,6 +109,7 @@ export class GoogleCalendarService {
         location: params.location,
         start: { dateTime: startDateTime, timeZone: 'Asia/Dubai' },
         end: { dateTime: endDateTime, timeZone: 'Asia/Dubai' },
+        attendees,
         conferenceData: {
           createRequest: {
             requestId: `meet_${Date.now()}_${Math.floor(Math.random() * 10000)}`,
@@ -116,10 +124,6 @@ export class GoogleCalendarService {
           ],
         },
       };
-
-      if (params.attendeeEmail) {
-        eventPayload.attendees = [{ email: params.attendeeEmail, displayName: params.attendeeName || undefined }];
-      }
 
       const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?conferenceDataVersion=1&sendUpdates=all`, {
         method: 'POST',
