@@ -5,37 +5,52 @@ import { googleAdsService } from '@/lib/services/googleAdsService';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { query } = body;
+    const { query, period = 'last_30d', leadContext } = body;
 
     if (!query || typeof query !== 'string') {
       return NextResponse.json({ error: 'Query parameter is required' }, { status: 400 });
     }
 
-    // Fetch live ad metrics & pipeline stats
+    // Fetch live ad metrics for the specified period & pipeline stats
     const [meta, google] = await Promise.all([
-      metaAdsService.getMetrics(),
-      googleAdsService.getMetrics(),
+      metaAdsService.getMetrics(period),
+      googleAdsService.getMetrics(period),
     ]);
 
-    const totalSpend = meta.spendAed + google.spendAed;
+    const totalSpend = parseFloat((meta.spendAed + google.spendAed).toFixed(2));
     const totalLeads = meta.leads + google.leads;
-    const overallCpl = totalLeads > 0 ? (totalSpend / totalLeads).toFixed(2) : '0';
+    const overallCpl = totalLeads > 0 ? (totalSpend / totalLeads).toFixed(2) : (meta.clicks + google.clicks > 0 ? (totalSpend / (meta.clicks + google.clicks)).toFixed(2) : '0');
+
+    let leadPromptSection = '';
+    if (leadContext) {
+      leadPromptSection = `
+ACTIVE LEAD IN FOCUS:
+- Name: ${leadContext.fullName || 'Unknown'}
+- Phone: ${leadContext.phone || 'Unknown'}
+- Budget: AED ${leadContext.budgetMax ? leadContext.budgetMax.toLocaleString() : 'Undisclosed'}
+- Location Interest: ${leadContext.buyerLocation || 'Undisclosed'}
+- Status: ${leadContext.status || 'NEW'}
+- AI Enabled: ${leadContext.aiEnabled ? 'Yes' : 'No'}
+`;
+    }
 
     const systemPrompt = `You are the AI Executive Advisor for "The Pods Real Estate" Dubai lead command center.
 Your job is to provide concise, data-backed executive insights to Minesh Patel (CEO) and his sales leadership team.
 
+SELECTED DATE TIMEFRAME: ${period.toUpperCase().replace('_', ' ')}
+
 CURRENT LIVE METRICS:
 - Total Ad Spend: AED ${totalSpend.toLocaleString()}
 - Total Inbound Leads: ${totalLeads}
-- Overall Cost Per Lead (CPL): AED ${overallCpl}
+- Overall Cost Per Lead / Interaction: AED ${overallCpl}
 
 META ADS (Facebook & Instagram):
 - Spend: AED ${meta.spendAed.toLocaleString()}
 - Impressions: ${meta.impressions.toLocaleString()}
-- Clicks: ${meta.clicks.toLocaleString()} (CTR: ${meta.ctr}%)
+- Reach / Link Clicks: ${meta.clicks.toLocaleString()} (CTR: ${meta.ctr}%)
 - Inbound Leads: ${meta.leads}
 - CPL: AED ${meta.cplAed}
-- Status: ${meta.isLive ? 'Live API Account Connected' : 'Demo Fallback Metrics Active'}
+- Status: ${meta.isLive ? 'Live API Account Connected (act_570749328966450)' : 'Pending API Connection'}
 
 GOOGLE ADS (Search & Display):
 - Spend: AED ${google.spendAed.toLocaleString()}
@@ -43,10 +58,10 @@ GOOGLE ADS (Search & Display):
 - Clicks: ${google.clicks.toLocaleString()} (CTR: ${google.ctr}%)
 - Inbound Leads: ${google.leads}
 - CPL: AED ${google.cplAed}
-- Status: ${google.isLive ? 'Live API Account Connected' : 'Demo Fallback Metrics Active'}
-
+- Status: ${google.isLive ? 'Live API Account Connected' : 'Pending API Credentials'}
+${leadPromptSection}
 STRICT RESPONSE RULES:
-1. Provide a direct, 2-sentence executive summary answering the user's specific question.
+1. Provide a direct, 2-3 sentence executive summary answering the user's specific question.
 2. Follow with 3 bullet points containing key numbers, ROI comparisons, or recommended actions.
 3. Be professional, accurate, and concise. Never hallucinate metrics outside the data provided above.
 4. Do not use emojis.`;

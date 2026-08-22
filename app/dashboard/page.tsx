@@ -34,7 +34,10 @@ import {
   Megaphone,
   Lightbulb,
   Globe,
-  Sliders
+  Sliders,
+  Mic,
+  Trash2,
+  Share2
 } from "lucide-react";
 
 function SourceBadge({ source }: { source: string }) {
@@ -236,12 +239,122 @@ export default function MasterDashboardPage() {
     fetchAdMetrics(p);
   };
 
+  // Load advisor history on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("the_pods_advisor_history");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setAdvisorMessages(parsed);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load advisor history:", e);
+    }
+  }, []);
+
+  // Global Keyboard Shortcuts (Cmd+K / Ctrl+K and Esc)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setAdvisorOpen((prev) => !prev);
+      } else if (e.key === "Escape") {
+        setAdvisorOpen(false);
+        setDrawerOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const [isListeningVoice, setIsListeningVoice] = useState<boolean>(false);
+  const [copiedAdvisor, setCopiedAdvisor] = useState<boolean>(false);
+
+  const updateAdvisorMessages = (msgs: Array<{ role: "user" | "ai"; text: string; bullets?: string[] }>) => {
+    setAdvisorMessages(msgs);
+    try {
+      localStorage.setItem("the_pods_advisor_history", JSON.stringify(msgs));
+    } catch (e) {
+      console.error("Failed to save advisor history:", e);
+    }
+  };
+
+  const handleClearAdvisorHistory = () => {
+    const initial = [
+      {
+        role: "ai" as const,
+        text: "Welcome to The Pods Executive AI Advisor console. Ask me any question about your live Meta Ads ROI, Google Ads performance, lead response SLAs, or sales pipeline statistics.",
+        bullets: [
+          "Live Meta Ads API connected with real-time spend and reach sync",
+          "Configurable date range filters (Today, Last 7D, Last 30D, This Month, All Time)",
+          "Sub-10s WhatsApp greeting SLA active across all inbound leads"
+        ]
+      }
+    ];
+    setAdvisorMessages(initial);
+    try {
+      localStorage.removeItem("the_pods_advisor_history");
+    } catch (e) {}
+  };
+
+  const handleToggleVoiceDictation = () => {
+    if (typeof window === "undefined") return;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Voice input is not supported in this browser. Please use Google Chrome or Safari.");
+      return;
+    }
+
+    if (isListeningVoice) {
+      setIsListeningVoice(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
+
+      recognition.onstart = () => setIsListeningVoice(true);
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+          setAdvisorQuery((prev) => (prev ? `${prev} ${transcript}` : transcript));
+        }
+      };
+      recognition.onerror = () => setIsListeningVoice(false);
+      recognition.onend = () => setIsListeningVoice(false);
+
+      recognition.start();
+    } catch (e) {
+      console.error("Voice dictation error:", e);
+      setIsListeningVoice(false);
+    }
+  };
+
+  const handleExportAdvisorSession = () => {
+    const header = `# The Pods Real Estate - Executive AI Advisor Report\n**Generated:** ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Dubai' })} (Dubai GST)\n**Timeframe:** ${adPeriod.toUpperCase().replace('_', ' ')}\n**Meta Spend:** AED ${adMetrics.meta.spendAed.toLocaleString()} | **Impressions:** ${adMetrics.meta.impressions.toLocaleString()}\n\n---\n\n`;
+    const body = advisorMessages.map((m) => {
+      const author = m.role === "user" ? "### 👤 Minesh Patel (CEO)" : "### 🤖 AI Executive Advisor";
+      const bullets = m.bullets ? m.bullets.map(b => `- ${b}`).join("\n") : "";
+      return `${author}\n${m.text}\n${bullets ? `\n${bullets}` : ""}`;
+    }).join("\n\n---\n\n");
+
+    navigator.clipboard.writeText(header + body);
+    setCopiedAdvisor(true);
+    setTimeout(() => setCopiedAdvisor(false), 3000);
+  };
+
   const handleQueryAdvisor = async (customQuery?: string) => {
     const q = customQuery || advisorQuery;
     if (!q.trim()) return;
 
     const userMsg = { role: "user" as const, text: q };
-    setAdvisorMessages((prev) => [...prev, userMsg]);
+    const nextMessages = [...advisorMessages, userMsg];
+    updateAdvisorMessages(nextMessages);
     if (!customQuery) setAdvisorQuery("");
     setLoadingAdvisor(true);
 
@@ -249,24 +362,35 @@ export default function MasterDashboardPage() {
       const res = await fetch("/api/ai/advisor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: q }),
+        body: JSON.stringify({ 
+          query: q,
+          period: adPeriod,
+          leadContext: selectedLead ? {
+            fullName: selectedLead.fullName,
+            phone: selectedLead.phone,
+            budgetMax: selectedLead.budgetMax,
+            buyerLocation: selectedLead.buyerLocation,
+            status: selectedLead.status,
+            aiEnabled: selectedLead.aiEnabled
+          } : undefined
+        }),
       });
       const data = await res.json();
       if (data.success) {
-        setAdvisorMessages((prev) => [
-          ...prev,
+        updateAdvisorMessages([
+          ...nextMessages,
           { role: "ai", text: data.answer, bullets: data.bullets }
         ]);
       } else {
-        setAdvisorMessages((prev) => [
-          ...prev,
+        updateAdvisorMessages([
+          ...nextMessages,
           { role: "ai", text: "Unable to process report query right now. Please try again." }
         ]);
       }
     } catch (e) {
       console.error("Advisor Error:", e);
-      setAdvisorMessages((prev) => [
-        ...prev,
+      updateAdvisorMessages([
+        ...nextMessages,
         { role: "ai", text: "Error connecting to AI Advisor service." }
       ]);
     } finally {
@@ -1952,16 +2076,41 @@ export default function MasterDashboardPage() {
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white tracking-tight">AI Executive Advisor Console</h3>
+                  <div className="flex items-center space-x-2">
+                    <h3 className="text-base font-bold text-white tracking-tight">AI Executive Advisor Console</h3>
+                    <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-[#1E2230] text-slate-400 border border-[#2A2F42]">
+                      ⌘K / Ctrl+K
+                    </span>
+                  </div>
                   <p className="text-[11px] text-slate-400">Multi-Channel Ad Intelligence & Strategic Real Estate Co-Pilot</p>
                 </div>
               </div>
-              <button
-                onClick={() => setAdvisorOpen(false)}
-                className="p-2 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-slate-400 hover:text-white transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
+
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleExportAdvisorSession}
+                  title="Copy formatted markdown report to clipboard"
+                  className="px-2.5 py-1.5 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-xs font-bold text-slate-300 hover:text-white transition-all flex items-center space-x-1.5"
+                >
+                  <Share2 className="w-3.5 h-3.5 text-[#C5A059]" />
+                  <span className="hidden sm:inline">{copiedAdvisor ? "Copied!" : "Export"}</span>
+                </button>
+
+                <button
+                  onClick={handleClearAdvisorHistory}
+                  title="Clear conversation history"
+                  className="p-2 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-slate-400 hover:text-rose-400 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+
+                <button
+                  onClick={() => setAdvisorOpen(false)}
+                  className="p-2 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-slate-400 hover:text-white transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Scrollable Content Body */}
@@ -2125,11 +2274,24 @@ export default function MasterDashboardPage() {
                 }}
                 className="flex items-center space-x-2"
               >
+                <button
+                  type="button"
+                  onClick={handleToggleVoiceDictation}
+                  title={isListeningVoice ? "Listening... Click to stop" : "Click to speak your prompt"}
+                  className={`p-3 rounded-xl border transition-all ${
+                    isListeningVoice
+                      ? "bg-rose-500 text-white border-rose-400 animate-pulse"
+                      : "bg-[#0D0F17] hover:bg-[#1E2230] border-[#1E2230] text-slate-400 hover:text-[#C5A059]"
+                  }`}
+                >
+                  <Mic className={`w-4 h-4 ${isListeningVoice ? "animate-bounce" : ""}`} />
+                </button>
+
                 <input
                   type="text"
                   value={advisorQuery}
                   onChange={(e) => setAdvisorQuery(e.target.value)}
-                  placeholder="Ask AI Advisor about Google Ads, Meta Ads, or leads..."
+                  placeholder={isListeningVoice ? "Listening to your voice..." : "Ask AI Advisor about Google Ads, Meta Ads, or leads..."}
                   className="flex-1 bg-[#0D0F17] border border-[#1E2230] focus:border-[#C5A059] rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 outline-none transition-all"
                 />
                 <button
