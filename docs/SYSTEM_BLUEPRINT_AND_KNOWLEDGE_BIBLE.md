@@ -41,7 +41,7 @@
 
 ### Business Objectives
 1. Automatically qualify incoming Meta Ads and direct WhatsApp leads 24/7 in <3 seconds.
-2. Route UK/European leads to the London Park Lane desk (Danube Open Day Sept 3 & Binghatti Roadshow Oct 2026).
+2. Route UK/European leads to the London Danube Open House on Sept 3 (44 Brompton Rd, Knightsbridge) or London Mayfair Studio.
 3. Route UAE/International leads to the Bluewaters Executive Lounge.
 4. Seamlessly deliver verified official developer PDF brochures directly to WhatsApp clients.
 5. Book VIP investor consultations on Minesh Patel's Google Calendar (`https://calendar.app.google/xGRVwZCTkrnZCypUA`).
@@ -138,7 +138,7 @@ File location: [`lib/services/aiService.ts`](file:///c:/Users/USER/Desktop/mines
 ### Core Rules Programmed in Aria's Prompt:
 1. **Concierge Persona:** Aria, Senior Investment Consultant at The Pods Real Estate. Luxury, polite, direct, and under 60 words per WhatsApp response.
 2. **Geographic Routing:**
-   * UK/London leads ➔ Invited to Park Lane Mayfair Studio (Danube Open Day Sept 3 / Binghatti Roadshow Oct 2026).
+   * UK/London leads ➔ Invited to London Danube Open House on Sept 3 (44 Brompton Rd, Knightsbridge) or London Mayfair Studio.
    * UAE/International leads ➔ Invited to Bluewaters Executive Lounge.
 3. **Developer Separation:**
    * **Danube:** 13 projects with 40/60 plan (0.5% monthly).

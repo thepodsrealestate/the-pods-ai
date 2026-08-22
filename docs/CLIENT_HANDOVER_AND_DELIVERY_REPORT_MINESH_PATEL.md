@@ -22,7 +22,7 @@ Every milestone, technical requirement, and strategic objective defined in the o
 | # | Proposal Scope Deliverable | Delivered Status | Technical Implementation Details |
 |---|---|---|---|
 | **1** | **24/7 Autonomous WhatsApp AI Concierge** | ✅ **100% DELIVERED** | Persona **"Aria"** operating on `+44 7404 097586`. Multi-lingual, ultra-luxury tone, strict under-60-word response format, with sub-3-second response velocity. |
-| **2** | **Geographic Investor Routing** | ✅ **100% DELIVERED** | Intelligently identifies UK/European leads and invites them to the **London Mayfair Studio (14 Curzon Street)** for the Danube Open Day (Sept 3) and Binghatti Roadshow (Oct 2026). Directs UAE/Global leads to the **Bluewaters Executive Lounge**. |
+| **2** | **Geographic Investor Routing** | ✅ **100% DELIVERED** | Intelligently identifies UK/European leads and invites them to the **London Danube Open House (Sept 3 at 44 Brompton Rd, Knightsbridge)** or Mayfair Studio. Directs UAE/Global leads to the **Bluewaters Executive Lounge**. |
 | **3** | **Master Multi-Developer Knowledge Base** | ✅ **100% DELIVERED** | **40 verified off-plan projects** across Danube (13), Binghatti (11), and Sobha Realty (16). Real live pricing, handover dates, and verified payment plans. |
 | **4** | **Instant PDF Brochure Delivery Engine** | ✅ **100% DELIVERED** | Universal brochure server (`/brochures/[slug]`) serving verified high-resolution developer marketing decks directly to WhatsApp clients with 0% failure rate. |
 | **5** | **WhatsApp Voice Note Intelligence** | ✅ **100% DELIVERED** | Native **OpenAI Whisper (`whisper-1`)** integration. Automatically transcribes inbound voice recordings and extracts budget, location, and property preferences. |
