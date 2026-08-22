@@ -120,20 +120,69 @@ export async function GET(
   }
 
 
-  // 2. Guaranteed Real Designer PDF Fallback: Never return a 1-page white text summary!
+  // 2. Project-Specific Dynamic Prospectus: Generate official branded PDF from catalog data
+  try {
+    const catalogPath = path.join(process.cwd(), 'knowledge', 'published', 'offplan_catalog.json');
+    if (fs.existsSync(catalogPath)) {
+      const catalog = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
+      for (const dev of catalog.developers || []) {
+        for (const proj of dev.projects || []) {
+          const projIdNorm = proj.id.toLowerCase().replace(/[^a-z0-9]/g, '');
+          const projNameNorm = proj.projectName.toLowerCase().replace(/[^a-z0-9]/g, '');
+          const cleanNorm = cleanSlug.replace(/[^a-z0-9]/g, '');
+
+          if (
+            projIdNorm.includes(cleanNorm) || 
+            cleanNorm.includes(projIdNorm) ||
+            projNameNorm.includes(cleanNorm) ||
+            cleanNorm.includes(projNameNorm)
+          ) {
+            const overview = Array.isArray(proj.keyFacts) ? proj.keyFacts.join('. ') : (proj.description || 'Exclusive off-plan investment opportunity.');
+            const price = proj.startingPriceAed ? `AED ${proj.startingPriceAed.toLocaleString()}` : 'Price on Application';
+            const plan = proj.paymentPlan || 'Flexible developer payment plan';
+
+            const pdfBuffer = createMinimalPdfBuffer(
+              proj.projectName,
+              dev.name,
+              proj.location,
+              price,
+              plan,
+              overview
+            );
+
+            return new NextResponse(new Uint8Array(pdfBuffer), {
+              headers: {
+                'Content-Type': 'application/pdf',
+                'Content-Disposition': `inline; filename="${cleanSlug}.pdf"`,
+                'Cache-Control': 'public, max-age=86400',
+              },
+            });
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error('[BROCHURE] Error generating dynamic PDF:', err);
+  }
+
+  // 3. General Fallback
   const fallbackFile = cleanSlug.includes('sobha') 
     ? 'sobha-city.pdf' 
     : cleanSlug.includes('binghatti') 
-    ? 'binghatti-wraith-brochure.pdf' 
+    ? 'binghatti-skyterraces.pdf' 
     : 'danube-bayz101.pdf';
 
-  const defaultPdfBuffer = fs.readFileSync(path.join(dir, fallbackFile));
-  return new NextResponse(new Uint8Array(defaultPdfBuffer), {
-    headers: {
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': `inline; filename="${cleanSlug}.pdf"`,
-      'Cache-Control': 'public, max-age=3600',
-    },
-  });
+  if (fs.existsSync(path.join(dir, fallbackFile))) {
+    const defaultPdfBuffer = fs.readFileSync(path.join(dir, fallbackFile));
+    return new NextResponse(new Uint8Array(defaultPdfBuffer), {
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `inline; filename="${cleanSlug}.pdf"`,
+        'Cache-Control': 'public, max-age=3600',
+      },
+    });
+  }
+
+  return new NextResponse('Brochure not found', { status: 404 });
 }
 
