@@ -262,13 +262,15 @@ SOBHA REALTY:
 - Palm Grove Villas (Siniya Island): https://the-pods-ai.vercel.app/brochures/sobha-palm-grove.pdf
 
 BINGHATTI DEVELOPERS:
-- Etherea (Business Bay): https://the-pods-ai.vercel.app/brochures/binghatti-etherea-brochure.pdf
+- Etherea (JVC): https://the-pods-ai.vercel.app/brochures/binghatti-etherea-brochure.pdf
 - Skyflame (Majan): https://the-pods-ai.vercel.app/brochures/binghatti-skyflame-brochure.pdf
-- Sky Terraces (Silicon Oasis): https://the-pods-ai.vercel.app/brochures/binghatti-skyterraces.pdf
+- Sky Terraces (Motor City): https://the-pods-ai.vercel.app/brochures/binghatti-skyterraces.pdf
 - Wraith (Al Jaddaf): https://the-pods-ai.vercel.app/brochures/binghatti-wraith-brochure.pdf
 - Mercedes-Benz Places / City by Mercedes: https://the-pods-ai.vercel.app/brochures/binghatti-mercedes-benz.pdf
 - Binghatti Luxuria: https://the-pods-ai.vercel.app/brochures/binghatti-luxuria.pdf
 - Burj Binghatti Jacob & Co: https://the-pods-ai.vercel.app/brochures/burj-binghatti-jacob-co.pdf
+- Binghatti Titania (Majan): https://the-pods-ai.vercel.app/brochures/binghatti-titania.pdf
+- Binghatti Vintage (Majan): https://the-pods-ai.vercel.app/brochures/binghatti-vintage.pdf
 
 RESPONSE MANDATE:
 - When a client inquires about any project, supply:
