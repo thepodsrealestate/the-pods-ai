@@ -1,10 +1,12 @@
 import { prisma } from '@/lib/prisma';
 import { NotificationService } from './notificationService';
+import { GoogleCalendarService } from './googleCalendarService';
 
 export interface BookingInput {
   leadId: string;
   meetingTime: Date;
   location?: string;
+  notes?: string;
 }
 
 export class CalendarService {
@@ -17,7 +19,7 @@ export class CalendarService {
   }
 
   /**
-   * Create Confirmed Meeting Booking & Notify Minesh
+   * Create Confirmed Meeting Booking & Notify Minesh + Insert to Google Calendar
    */
   static async createBooking(input: BookingInput) {
     const calendarEventId = `gcal_evt_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
@@ -39,7 +41,28 @@ export class CalendarService {
       data: { status: 'MEETING_BOOKED' },
     });
 
-    // Trigger Instant Notification Alert for Minesh Patel
+    // Insert Event directly into Minesh Patel's Google Calendar
+    try {
+      const gcalResult = await GoogleCalendarService.insertEvent({
+        summary: `VIP Investor Consultation - ${booking.lead.fullName || 'VIP Client'}`,
+        description: `Investor Meeting with Minesh Patel (The Pods Real Estate)\n\nLead Name: ${booking.lead.fullName || 'VIP Client'}\nPhone: ${booking.lead.phone}\nEmail: ${booking.lead.email || 'N/A'}\nPurpose: ${booking.lead.purchasePurpose || 'Luxury Real Estate Investment'}\nBudget: ${booking.lead.budgetMax ? `AED ${booking.lead.budgetMax}` : 'HNW'}\n\nLocation: ${booking.location}`,
+        location: booking.location,
+        startTime: booking.meetingTime,
+        attendeeEmail: booking.lead.email || undefined,
+        attendeeName: booking.lead.fullName || undefined,
+      });
+
+      if (gcalResult?.eventId) {
+        await prisma.booking.update({
+          where: { id: booking.id },
+          data: { calendarEventId: gcalResult.eventId },
+        });
+      }
+    } catch (gcalErr: any) {
+      console.warn('[CALENDAR] Google Calendar direct sync notice:', gcalErr.message);
+    }
+
+    // Trigger Instant Notification Alert for Minesh Patel & Reshma Patel
     await NotificationService.notifyMineshBooking({
       leadName: booking.lead.fullName || 'VIP Client',
       phone: booking.lead.phone,
