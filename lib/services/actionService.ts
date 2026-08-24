@@ -18,6 +18,7 @@ export interface AIStructuredOutput {
     budget_max?: number;
     timeline?: string;
     meeting_preference?: string;
+    email?: string;
   };
   property_query?: {
     developer?: string;
@@ -25,8 +26,13 @@ export interface AIStructuredOutput {
     preferred_location?: string;
   };
   booking_details?: {
+    date?: string;
+    time?: string;
     preferred_date?: string;
     preferred_time?: string;
+    email?: string;
+    location?: string;
+    project?: string;
   };
   handoff_reason?: string;
 }
