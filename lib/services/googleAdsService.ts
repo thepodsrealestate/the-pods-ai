@@ -20,6 +20,37 @@ export class GoogleAdsService {
     return GoogleAdsService.instance;
   }
 
+  private async getAccessToken(): Promise<string | null> {
+    if (process.env.GOOGLE_ADS_ACCESS_TOKEN && !process.env.GOOGLE_ADS_ACCESS_TOKEN.includes('placeholder')) {
+      return process.env.GOOGLE_ADS_ACCESS_TOKEN;
+    }
+
+    const refreshToken = process.env.GOOGLE_ADS_REFRESH_TOKEN;
+    const clientId = process.env.GOOGLE_ADS_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_ADS_CLIENT_SECRET;
+
+    if (refreshToken && clientId && clientSecret) {
+      try {
+        const res = await fetch('https://oauth2.googleapis.com/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            client_id: clientId,
+            client_secret: clientSecret,
+            refresh_token: refreshToken,
+            grant_type: 'refresh_token',
+          }),
+        });
+        const data = await res.json();
+        if (data.access_token) return data.access_token;
+        console.error('[GOOGLE ADS] Token response failed:', data);
+      } catch (err: any) {
+        console.error('[GOOGLE ADS] Token exchange error:', err?.message || err);
+      }
+    }
+    return null;
+  }
+
   public async getMetrics(period: string = 'last_30d'): Promise<GoogleAdsMetrics> {
     const developerToken = process.env.GOOGLE_ADS_DEVELOPER_TOKEN;
     const customerId = process.env.GOOGLE_ADS_CUSTOMER_ID;
@@ -27,6 +58,12 @@ export class GoogleAdsService {
     // If live credentials are set up, fetch from Google Ads API
     if (developerToken && customerId) {
       try {
+        const accessToken = await this.getAccessToken();
+        if (!accessToken) {
+          console.warn('[GOOGLE ADS] No access token available yet');
+          return this.getFallbackMetrics();
+        }
+
         const cleanCustomerId = customerId.replace(/-/g, '');
         const query = `
           SELECT 
@@ -46,7 +83,7 @@ export class GoogleAdsService {
             headers: {
               'Content-Type': 'application/json',
               'developer-token': developerToken,
-              Authorization: `Bearer ${process.env.GOOGLE_ADS_ACCESS_TOKEN || ''}`,
+              Authorization: `Bearer ${accessToken}`,
             },
             body: JSON.stringify({ query }),
             cache: 'no-store',
@@ -80,7 +117,10 @@ export class GoogleAdsService {
       }
     }
 
-    // Return zero when credentials are not configured
+    return this.getFallbackMetrics();
+  }
+
+  private getFallbackMetrics(): GoogleAdsMetrics {
     return {
       spendAed: 0,
       impressions: 0,
