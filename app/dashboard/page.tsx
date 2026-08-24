@@ -882,6 +882,30 @@ export default function MasterDashboardPage() {
               </button>
             );
           })}
+
+          {/* Mobile Profile & Logout Footer */}
+          <div className="pt-3 mt-3 border-t border-[#1E2230] flex items-center justify-between px-2">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-7 h-7 rounded-full bg-[#1E2230] border border-[#C5A059]/40 flex items-center justify-center font-bold text-[11px] text-[#C5A059]">
+                MP
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-white">Minesh Patel</p>
+                <p className="text-[9px] text-slate-400">info@thepodsrealestate.ae</p>
+              </div>
+            </div>
+            <button
+              onClick={async () => {
+                await fetch("/api/auth/logout", { method: "POST" });
+                localStorage.removeItem("pods_auth_token");
+                router.push("/login");
+              }}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold hover:bg-rose-500/20 active:scale-95 transition-all"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Log Out</span>
+            </button>
+          </div>
         </div>
       )}
 
