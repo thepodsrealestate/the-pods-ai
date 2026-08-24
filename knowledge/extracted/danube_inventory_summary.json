@@ -1,0 +1,650 @@
+{
+  "ASPIRZ BY DANUBE": {
+    "totalAvailableUnits": 147,
+    "typologies": {
+      "Office": {
+        "count": 84,
+        "minPriceAed": 970000.0,
+        "maxPriceAed": 2029000.0,
+        "minSizeSqFt": 396.87,
+        "maxSizeSqFt": 801.05,
+        "views": [
+          "Golf Course View and Cricket Stadium View",
+          "City View",
+          "Cricket Stadium View",
+          "Golf Course View",
+          "MBZ Road (E311) View and City View"
+        ]
+      },
+      "Flex 1 BED / Convertible 2 Bedroom": {
+        "count": 25,
+        "minPriceAed": 1426000.0,
+        "maxPriceAed": 1567000.0,
+        "minSizeSqFt": 748.95,
+        "maxSizeSqFt": 791.69,
+        "views": [
+          "MBZ Road (E311) View",
+          "Golf Course View"
+        ]
+      },
+      "1 BED": {
+        "count": 19,
+        "minPriceAed": 1119000.0,
+        "maxPriceAed": 1169000.0,
+        "minSizeSqFt": 479.86,
+        "maxSizeSqFt": 495.9,
+        "views": [
+          "City View",
+          "Cricket Stadium View"
+        ]
+      },
+      "Flex 1 BED": {
+        "count": 1,
+        "minPriceAed": 1312000.0,
+        "maxPriceAed": 1312000.0,
+        "minSizeSqFt": 703.64,
+        "maxSizeSqFt": 703.64,
+        "views": [
+          "Cricket Stadium View and MBZ Road (E311) View"
+        ]
+      },
+      "Flex Studio / Convertible 1 Bedroom": {
+        "count": 7,
+        "minPriceAed": 874000.0,
+        "maxPriceAed": 924000.0,
+        "minSizeSqFt": 382.98,
+        "maxSizeSqFt": 394.07,
+        "views": [
+          "MBZ Road (E311) View",
+          "City View",
+          "Cricket Stadium View",
+          "Golf Course View"
+        ]
+      },
+      "Flex 3 BED": {
+        "count": 4,
+        "minPriceAed": 2402000.0,
+        "maxPriceAed": 2550000.0,
+        "minSizeSqFt": 1312.98,
+        "maxSizeSqFt": 1326.87,
+        "views": [
+          "Golf Course View and Cricket Stadium View",
+          "City View and Golf Course View"
+        ]
+      },
+      "2 BED": {
+        "count": 4,
+        "minPriceAed": 1778000.0,
+        "maxPriceAed": 1795000.0,
+        "minSizeSqFt": 848.08,
+        "maxSizeSqFt": 848.62,
+        "views": [
+          "MBZ Road (E311) View and City View",
+          "Cricket Stadium View and MBZ Road (E311) View"
+        ]
+      },
+      "Flex 2 BED": {
+        "count": 2,
+        "minPriceAed": 2054000.0,
+        "maxPriceAed": 2076000.0,
+        "minSizeSqFt": 986.62,
+        "maxSizeSqFt": 1011.16,
+        "views": [
+          "City View",
+          "Cricket Stadium View"
+        ]
+      },
+      "Flex Studio": {
+        "count": 1,
+        "minPriceAed": 921000.0,
+        "maxPriceAed": 921000.0,
+        "minSizeSqFt": 389.01,
+        "maxSizeSqFt": 389.01,
+        "views": [
+          "MBZ Road (E311) View"
+        ]
+      }
+    }
+  },
+  "BAYZ 101 BY DANUBE": {
+    "totalAvailableUnits": 146,
+    "typologies": {
+      "2 BED + POOL": {
+        "count": 124,
+        "minPriceAed": 3190000.0,
+        "maxPriceAed": 4391000.0,
+        "minSizeSqFt": 1054.11,
+        "maxSizeSqFt": 1155.83,
+        "views": [
+          "City,Canal,SheikhZayedRoad,Sea",
+          "Sheikh Zayed Road & Sea View"
+        ]
+      },
+      "1 BED + Office": {
+        "count": 19,
+        "minPriceAed": 2275000.0,
+        "maxPriceAed": 2685000.0,
+        "minSizeSqFt": 753.26,
+        "maxSizeSqFt": 753.47,
+        "views": [
+          "City & Canal View",
+          "Downtown & Sea & Burj Khalifa"
+        ]
+      },
+      "3 BED + POOL": {
+        "count": 3,
+        "minPriceAed": 5080000.0,
+        "maxPriceAed": 5129000.0,
+        "minSizeSqFt": 1491.98,
+        "maxSizeSqFt": 1491.98,
+        "views": [
+          "City,Canal,SheikhZayedRoad,Sea"
+        ]
+      }
+    }
+  },
+  "BAYZ 102 BY DANUBE": {
+    "totalAvailableUnits": 208,
+    "typologies": {
+      "Penthouse": {
+        "count": 4,
+        "minPriceAed": 33560000.0,
+        "maxPriceAed": 35270000.0,
+        "minSizeSqFt": 8320.07,
+        "maxSizeSqFt": 8642.67,
+        "views": [
+          "Downtown & Canal View and Canal View & City View",
+          "Canal View & City View and City View & Sea View"
+        ]
+      },
+      "Flex 1 BED / Convertible 2 Bedroom": {
+        "count": 57,
+        "minPriceAed": 2542000.0,
+        "maxPriceAed": 2790000.0,
+        "minSizeSqFt": 748.74,
+        "maxSizeSqFt": 805.89,
+        "views": [
+          "City View & Sea View",
+          "Canal View & City View",
+          "Downtown View"
+        ]
+      },
+      "Presidential Suite": {
+        "count": 37,
+        "minPriceAed": 2725000.0,
+        "maxPriceAed": 2939000.0,
+        "minSizeSqFt": 771.99,
+        "maxSizeSqFt": 822.47,
+        "views": [
+          "Canal View & City View"
+        ]
+      },
+      "2 BED + POOL": {
+        "count": 84,
+        "minPriceAed": 3295000.0,
+        "maxPriceAed": 4118000.0,
+        "minSizeSqFt": 1198.89,
+        "maxSizeSqFt": 1463.78,
+        "views": [
+          "Downtown View and Downtown & Canal View",
+          "Downtown View and City View & Sea View",
+          "Downtown & Canal View and Canal View & City View",
+          "Canal View & City View",
+          "Canal View & City View and City View & Sea View"
+        ]
+      },
+      "4 BED + POOL": {
+        "count": 16,
+        "minPriceAed": 7220000.0,
+        "maxPriceAed": 7831000.0,
+        "minSizeSqFt": 2009.4,
+        "maxSizeSqFt": 2009.4,
+        "views": [
+          "Downtown View and Downtown & Canal View"
+        ]
+      },
+      "3 BED + POOL": {
+        "count": 10,
+        "minPriceAed": 6017000.0,
+        "maxPriceAed": 6155000.0,
+        "minSizeSqFt": 1609.64,
+        "maxSizeSqFt": 1615.45,
+        "views": [
+          "Canal View & City View",
+          "Downtown View"
+        ]
+      }
+    }
+  },
+  "BREEZ BY DANUBE": {
+    "totalAvailableUnits": 107,
+    "typologies": {
+      "1 BED": {
+        "count": 4,
+        "minPriceAed": 2264000.0,
+        "maxPriceAed": 2909000.0,
+        "minSizeSqFt": 603.0,
+        "maxSizeSqFt": 628.82,
+        "views": [
+          "Panoramic Sea View",
+          "Skyline Sea View"
+        ]
+      },
+      "2 BED": {
+        "count": 20,
+        "minPriceAed": 3700000.0,
+        "maxPriceAed": 4900000.0,
+        "minSizeSqFt": 1025.8,
+        "maxSizeSqFt": 1276.71,
+        "views": [
+          "Panoramic Sea View"
+        ]
+      },
+      "Flex Studio / Convertible 1 Bedroom": {
+        "count": 25,
+        "minPriceAed": 1700000.0,
+        "maxPriceAed": 2100000.0,
+        "minSizeSqFt": 410.65,
+        "maxSizeSqFt": 447.24,
+        "views": [
+          "Panoramic Sea View"
+        ]
+      },
+      "Flex 1 BED / Convertible 2 Bedroom": {
+        "count": 36,
+        "minPriceAed": 2400000.0,
+        "maxPriceAed": 3300000.0,
+        "minSizeSqFt": 656.49,
+        "maxSizeSqFt": 806.44,
+        "views": [
+          "Marina Sea View",
+          "Panoramic Sea View"
+        ]
+      },
+      "Studio": {
+        "count": 16,
+        "minPriceAed": 1350000.0,
+        "maxPriceAed": 1500000.0,
+        "minSizeSqFt": 393.74,
+        "maxSizeSqFt": 403.54,
+        "views": [
+          "Skyline Sea View"
+        ]
+      },
+      "3 BED": {
+        "count": 5,
+        "minPriceAed": 6500000.0,
+        "maxPriceAed": 7875000.0,
+        "minSizeSqFt": 1626.0,
+        "maxSizeSqFt": 1769.15,
+        "views": [
+          "Panoramic Sea View"
+        ]
+      },
+      "4 BED": {
+        "count": 1,
+        "minPriceAed": 10341000.0,
+        "maxPriceAed": 10341000.0,
+        "minSizeSqFt": 3088.06,
+        "maxSizeSqFt": 3088.06,
+        "views": [
+          "Panoramic Sea View"
+        ]
+      }
+    }
+  },
+  "DIAMONDZ BY DANUBE": {
+    "totalAvailableUnits": 42,
+    "typologies": {
+      "2 BED + POOL": {
+        "count": 15,
+        "minPriceAed": 2782000.0,
+        "maxPriceAed": 2979000.0,
+        "minSizeSqFt": 1107.28,
+        "maxSizeSqFt": 1269.71,
+        "views": [
+          "Lake & City View",
+          "Uptown & Sea View",
+          "Jumeirah Island View"
+        ]
+      },
+      "1 BED": {
+        "count": 17,
+        "minPriceAed": 1947000.0,
+        "maxPriceAed": 2011000.0,
+        "minSizeSqFt": 746.48,
+        "maxSizeSqFt": 752.61,
+        "views": [
+          "Lake & City View",
+          "Uptown & Sea View"
+        ]
+      },
+      "3 BED + POOL": {
+        "count": 10,
+        "minPriceAed": 3761000.0,
+        "maxPriceAed": 3946000.0,
+        "minSizeSqFt": 1519.0,
+        "maxSizeSqFt": 1519.0,
+        "views": [
+          "Lake & City View",
+          "Uptown & Sea View",
+          "Jumeirah Island View"
+        ]
+      }
+    }
+  },
+  "FASHIONZ 1 BY DANUBE": {
+    "totalAvailableUnits": 47,
+    "typologies": {
+      "2 BED + POOL": {
+        "count": 4,
+        "minPriceAed": 2009280.0,
+        "maxPriceAed": 2298400.0,
+        "minSizeSqFt": 1070.15,
+        "maxSizeSqFt": 1178.11,
+        "views": [
+          "City View"
+        ]
+      },
+      "1 BED Executive": {
+        "count": 32,
+        "minPriceAed": 1573520.0,
+        "maxPriceAed": 1679600.0,
+        "minSizeSqFt": 871.98,
+        "maxSizeSqFt": 872.95,
+        "views": [
+          "City View & Community View",
+          "Panaromic Amenity & City View"
+        ]
+      },
+      "1 BED": {
+        "count": 9,
+        "minPriceAed": 1666080.0,
+        "maxPriceAed": 1713920.0,
+        "minSizeSqFt": 826.35,
+        "maxSizeSqFt": 872.74,
+        "views": [
+          "Panoramic Amenity & City",
+          "Bayside View",
+          "Panaromic Amenity & City View"
+        ]
+      },
+      "Presidential Suite": {
+        "count": 1,
+        "minPriceAed": 1782560.0,
+        "maxPriceAed": 1782560.0,
+        "minSizeSqFt": 828.5,
+        "maxSizeSqFt": 828.5,
+        "views": [
+          "Bayside View"
+        ]
+      },
+      "Retail": {
+        "count": 1,
+        "minPriceAed": 6636000.0,
+        "maxPriceAed": 6636000.0,
+        "minSizeSqFt": 2002.19,
+        "maxSizeSqFt": 2002.19,
+        "views": [
+          "null"
+        ]
+      }
+    }
+  },
+  "GREENZ BY DANUBE": {
+    "totalAvailableUnits": 103,
+    "typologies": {
+      "5 BED": {
+        "count": 34,
+        "minPriceAed": 5150000.0,
+        "maxPriceAed": 7930000.0,
+        "minSizeSqFt": 3663.0,
+        "maxSizeSqFt": 3950.0,
+        "views": [
+          "null"
+        ]
+      },
+      "3 BED": {
+        "count": 23,
+        "minPriceAed": 3767255.0,
+        "maxPriceAed": 3983846.5,
+        "minSizeSqFt": 2400.0,
+        "maxSizeSqFt": 2400.0,
+        "views": [
+          "null"
+        ]
+      },
+      "4 BED": {
+        "count": 46,
+        "minPriceAed": 4406400.0,
+        "maxPriceAed": 5200000.0,
+        "minSizeSqFt": 2750.0,
+        "maxSizeSqFt": 3154.0,
+        "views": [
+          "null"
+        ]
+      }
+    }
+  },
+  "SHAHRUKHZ BY DANUBE": {
+    "totalAvailableUnits": 43,
+    "typologies": {
+      "Premium Office": {
+        "count": 2,
+        "minPriceAed": 3838000.0,
+        "maxPriceAed": 4643000.0,
+        "minSizeSqFt": 955.08,
+        "maxSizeSqFt": 1189.08,
+        "views": [
+          "SZR(E11) & Skyline View and City Skyline - South"
+        ]
+      },
+      "Executive Office": {
+        "count": 12,
+        "minPriceAed": 3138000.0,
+        "maxPriceAed": 4237000.0,
+        "minSizeSqFt": 651.97,
+        "maxSizeSqFt": 805.58,
+        "views": [
+          "SZR(E11) & Skyline View and City Skyline - North",
+          "Palm Jumeirah & Sea View and City Skyline - South",
+          "City Skyline - North",
+          "SZR(E11) & Skyline View and City Skyline - South",
+          "Palm Jumeirah & Sea View and City Skyline - North"
+        ]
+      },
+      "Prestige Office": {
+        "count": 4,
+        "minPriceAed": 12544000.0,
+        "maxPriceAed": 14513000.0,
+        "minSizeSqFt": 2779.67,
+        "maxSizeSqFt": 3155.66,
+        "views": [
+          "SZR(E11) & Skyline View & City Skyline - North",
+          "SZR(E11) & Skyline View & City Skyline - South"
+        ]
+      },
+      "Standard Office": {
+        "count": 25,
+        "minPriceAed": 2416000.0,
+        "maxPriceAed": 3280000.0,
+        "minSizeSqFt": 453.59,
+        "maxSizeSqFt": 579.31,
+        "views": [
+          "SZR(E11) & Skyline View",
+          "City Skyline - South",
+          "Palm Jumeirah & Sea View",
+          "City Skyline - North"
+        ]
+      }
+    }
+  },
+  "SERENZ BY DANUBE": {
+    "totalAvailableUnits": 272,
+    "typologies": {
+      "Flex 1 BED / Convertible 2 Bedroom": {
+        "count": 50,
+        "minPriceAed": 1402000.0,
+        "maxPriceAed": 1569000.0,
+        "minSizeSqFt": 572.0,
+        "maxSizeSqFt": 771.66,
+        "views": [
+          "JVC Skyline View",
+          "Jumeirah Village Community View and JVC Skyline View",
+          "Jumeirah Village Community View"
+        ]
+      },
+      "Premium 2 BED": {
+        "count": 3,
+        "minPriceAed": 2602000.0,
+        "maxPriceAed": 2806000.0,
+        "minSizeSqFt": 1478.85,
+        "maxSizeSqFt": 1535.8,
+        "views": [
+          "Springs, Skyline & Serenz Amenities View"
+        ]
+      },
+      "2 BED": {
+        "count": 24,
+        "minPriceAed": 1795000.0,
+        "maxPriceAed": 2048000.0,
+        "minSizeSqFt": 852.83,
+        "maxSizeSqFt": 1174.45,
+        "views": [
+          "Jumeirah Village Community View",
+          "Springs, Skyline & Serenz Amenities View"
+        ]
+      },
+      "Flex Plus 1 BED / Convertible 2 Bedroom": {
+        "count": 53,
+        "minPriceAed": 1630000.0,
+        "maxPriceAed": 1765000.0,
+        "minSizeSqFt": 716.34,
+        "maxSizeSqFt": 804.71,
+        "views": [
+          "Jumeirah Village Community View",
+          "Springs, Skyline & Serenz Amenities View"
+        ]
+      },
+      "1 BED": {
+        "count": 68,
+        "minPriceAed": 1289000.0,
+        "maxPriceAed": 1680000.0,
+        "minSizeSqFt": 540.46,
+        "maxSizeSqFt": 970.37,
+        "views": [
+          "JVC Skyline View",
+          "Springs & Skyline View",
+          "Jumeirah Village Community View",
+          "Springs, Skyline & Serenz Amenities View"
+        ]
+      },
+      "Studio": {
+        "count": 30,
+        "minPriceAed": 905000.0,
+        "maxPriceAed": 965000.0,
+        "minSizeSqFt": 380.83,
+        "maxSizeSqFt": 401.49,
+        "views": [
+          "Jumeirah Village Community View",
+          "Springs, Skyline & Serenz Amenities View"
+        ]
+      },
+      "Flex Studio / Convertible 1 Bedroom": {
+        "count": 34,
+        "minPriceAed": 1017000.0,
+        "maxPriceAed": 1070000.0,
+        "minSizeSqFt": 421.41,
+        "maxSizeSqFt": 438.95,
+        "views": [
+          "JVC Skyline View",
+          "Springs, Skyline & Serenz Amenities View"
+        ]
+      },
+      "Retail": {
+        "count": 10,
+        "minPriceAed": 4605000.0,
+        "maxPriceAed": 8524000.0,
+        "minSizeSqFt": 1204.37,
+        "maxSizeSqFt": 2367.63,
+        "views": [
+          "NA"
+        ]
+      }
+    }
+  },
+  "SPARKLZ BY DANUBE": {
+    "totalAvailableUnits": 29,
+    "typologies": {
+      "3 BED": {
+        "count": 27,
+        "minPriceAed": 2433600.0,
+        "maxPriceAed": 2978560.0,
+        "minSizeSqFt": 1378.97,
+        "maxSizeSqFt": 2018.12,
+        "views": [
+          "Gardens View",
+          "Gardens View and Community View",
+          "City Skyline View",
+          "Gardens View and Road & Metro View",
+          "City Skyline View and Community View"
+        ]
+      },
+      "Retail": {
+        "count": 2,
+        "minPriceAed": 5424640.0,
+        "maxPriceAed": 5546320.0,
+        "minSizeSqFt": 1605.0,
+        "maxSizeSqFt": 1641.06,
+        "views": [
+          "NA"
+        ]
+      }
+    }
+  },
+  "TIMEZ BY DANUBE": {
+    "totalAvailableUnits": 25,
+    "typologies": {
+      "3 BED + POOL": {
+        "count": 1,
+        "minPriceAed": 2301000.0,
+        "maxPriceAed": 2301000.0,
+        "minSizeSqFt": 1418.14,
+        "maxSizeSqFt": 1418.14,
+        "views": [
+          "DSO Community View and City View"
+        ]
+      },
+      "Presidential Suite": {
+        "count": 1,
+        "minPriceAed": 1670000.0,
+        "maxPriceAed": 1670000.0,
+        "minSizeSqFt": 904.49,
+        "maxSizeSqFt": 904.49,
+        "views": [
+          "Dubai Skyline View and DSO Community View"
+        ]
+      },
+      "2 BED + POOL": {
+        "count": 1,
+        "minPriceAed": 1926000.0,
+        "maxPriceAed": 1926000.0,
+        "minSizeSqFt": 1216.0,
+        "maxSizeSqFt": 1216.0,
+        "views": [
+          "Dubai Skyline View and DSO Community View"
+        ]
+      },
+      "Retail": {
+        "count": 22,
+        "minPriceAed": 3876000.0,
+        "maxPriceAed": 10593000.0,
+        "minSizeSqFt": 1119.13,
+        "maxSizeSqFt": 3169.11,
+        "views": [
+          "NA"
+        ]
+      }
+    }
+  }
+}

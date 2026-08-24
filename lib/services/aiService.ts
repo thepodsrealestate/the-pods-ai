@@ -161,9 +161,9 @@ Aria: "Al Jaddaf is high-performing for rentals with expected 7-8% net yields. W
 
 [CHEAPEST 1-BED DANUBE INQUIRY]:
 Lead: "I'm looking for the cheapest 1 bed in Danube"
-Aria: "The most affordable 1-bedroom options from Danube are GREENZ in Dubai Silicon Oasis and SERENZ in JVC, both starting from AED 1.10M with Danube's 1% monthly plan.
+Aria: "In Danube's current live inventory, the most affordable 1-bedroom is at ASPIRZ in Sports City, starting from AED 1.119M.
 
-We also have TIMEZ (Silicon Oasis) and ASPIRZ (Sports City) starting from AED 1.15M.
+In SERENZ (JVC), 1-beds start from AED 1.289M (with convertible Flex 1-beds from AED 1.017M). Both feature Danube's 1% monthly plan.
 
 Were you looking for higher rental yields or a specific area in Dubai?"
 
@@ -217,9 +217,17 @@ DEVELOPER & PROJECT MATCHING RULES (CRITICAL):
   - BINGHATTI CASH DISCOUNT POLICY: The 6% Full Cash Upfront Discount applies specifically to Titania and Vintage (and Twilight) as confirmed in the official developer inventory. For all other Binghatti projects (such as Mercedes-Benz Places, Jacob & Co, SkyTerraces, Skyflame, Wraith, Luxuria, Etherea), standard pricing and payment plans apply unless custom terms are requested.
   - SOBHA CENTRAL SPECIFIC UNIT ACCURACY: The Pinnacle and The Eden at Sobha Central offer 1-Bedroom and 2-Bedroom apartments ONLY (no 3-bedroom units). For 3-bedroom Sobha apartments, recommend Riverside Crescent at Sobha Hartland II.
   - STRICT BUDGET ADHERENCE: When a lead states a budget ceiling (e.g. "up to 3 million" or "1M budget"), ONLY recommend options that start AT OR BELOW that budget! For example, for an AED 3M budget in Sobha, recommend The Pinnacle (AED 1.78M), The Eden (AED 1.83M), 330 Riverside Crescent (AED 1.63M), 340 Riverside Crescent (AED 1.98M), 320 Riverside Crescent (AED 2.26M), or 350 Riverside Crescent (AED 2.5M). NEVER recommend a 4M+ project (like The Willows at AED 4.06M) as a match for a 3M budget.
-  - CHEAPEST / ENTRY PRICE QUERIES FOR DANUBE (CRITICAL):
-    * Cheapest 1-Bed in Danube: GREENZ (Dubai Silicon Oasis) from AED 1.10M and SERENZ (JVC) from AED 1.10M are the #1 most affordable 1-bedroom options. Secondary options are TIMEZ (Silicon Oasis from AED 1.15M) and ASPIRZ (Sports City from AED 1.15M). When asked for the cheapest 1-bed in Danube, ALWAYS recommend GREENZ and SERENZ at AED 1.10M!
-    * Cheapest Studios in Danube: TIMEZ (Silicon Oasis from AED 871K), ASPIRZ (Sports City from AED 879K), and SPARKLZ (Al Furjan from AED 900K).
+  - DANUBE LIVE INVENTORY & AVAILABILITY RULES (OFFICIAL DEVELOPER STOCK):
+    * Cheapest Available 1-Bed in Danube: ASPIRZ (Sports City) starting from AED 1.119M (480-496 sqft) is currently the #1 most affordable live 1-bedroom available in Danube's stock! In SERENZ (JVC), standard 1-beds start from AED 1.289M (Flex 1-beds from AED 1.017M).
+    * Cheapest Available Studios in Danube: ASPIRZ (Sports City | Flex Studio from AED 874K), SERENZ (JVC | Studios from AED 905K).
+    * SOLD OUT UNITS: 
+      - SPORTZ: 100% Sold Out across all units.
+      - SPARKLZ: Studios, 1-Beds, and 2-Beds are completely Sold Out (only 3-Beds available from AED 2.433M).
+      - TIMEZ: Studios and 1-Beds are Sold Out (only 2-Bed+Pool from AED 1.926M and Presidential Suites from AED 1.670M available).
+      - BAYZ 101: Studios are Sold Out (1-Bed+Office available from AED 2.275M, 2-Bed+Pool from AED 3.190M).
+      - BAYZ 102: Studios are Sold Out (Flex 1-Bed available from AED 2.542M, 2-Bed+Pool from AED 3.295M).
+      - GREENZ: Only 3-Bed Townhouses (from AED 3.767M), 4-Bed Villas (from AED 4.406M), and 5-Bed Mansions (from AED 5.150M) available.
+      - If a client asks for a sold-out unit (e.g. "Studio in Sparklz" or "1-bed in Bayz 101 under 1.5M"), inform them it's sold out and recommend the best live alternative in ASPIRZ (AED 874K Studio / AED 1.119M 1-Bed) or SERENZ (AED 905K Studio / AED 1.289M 1-Bed)!
 - COMPREHENSIVE PHONETIC & ALIAS DICTIONARY (100% Exact Matching):
   - "roadshow" / "road show" / "open house" / "danube roadshow" / "london event" / "danube event" / "september 3" / "3rd sept" -> Danube Properties London Open House Event (Thursday, 3rd September 2026, 12:00 PM – 8:00 PM BST | Venue: Danube Properties, 44 Brompton Rd, Knightsbridge, London SW3 1BW | UK Tel: +44 7404 097586 | Exclusive event-only offers on prime Dubai off-plan with 1% monthly payment plans)
   - "titania" / "binghatti titania" -> Binghatti Titania (Majan, Dubailand | Studio from AED 679K - 693K, 1-Bed from AED 1.05M, 2-Bed from AED 1.54M | Handover: Sept 2027 | Plan: 20/50/30 | 6% Full Cash Discount: Studio AED 651K, 1-Bed AED 986K, 2-Bed AED 1.45M)
@@ -236,19 +244,19 @@ DEVELOPER & PROJECT MATCHING RULES (CRITICAL):
   - "mercedes meydan" / "binghatti city" / "mercedes benz places meydan" -> Mercedes-Benz Places / Binghatti City (Meydan / Nad Al Sheba | Studios from AED 1.35M, 1-Beds from AED 1.9M | Handover: Dec 2027 / 31/12/2027)
   - "jacob" / "jacob & co" / "burj binghatti" -> Burj Binghatti Jacob & Co Residences (Business Bay | 2-Bed Sapphire from AED 8.2M | Handover: June 2027 / 30/06/2027)
 
-  - "breez" / "breeze" -> BREEZ by Danube (Dubai Maritime City | Studios from AED 1.05M, 1-Beds from AED 1.6M, 2-Beds from AED 2.2M | Handover: May 2029 | Event Offer: 40/60 plan with 0.5% monthly)
-  - "greenz" / "greens" -> GREENZ by Danube (Dubai Silicon Oasis | 1-Beds from AED 1.1M, 2-Beds from AED 1.5M | Handover: 2027 | Event Offer: 40/60 plan with 0.5% monthly)
-  - "serenz" / "serene" / "serenz" -> SERENZ by Danube (JVC | Studios from AED 900K, 1-Beds from AED 1.1M, 2-Beds from AED 1.6M | Handover: 2029 | Event Offer: 40/60 plan with 0.5% monthly)
-  - "timez" / "times" / "time" -> TIMEZ by Danube (Dubai Silicon Oasis | Studios from AED 871K, 1-Beds from AED 1.15M, 2-Beds from AED 1.55M | Handover: Q2-2028 | Event Offer: 40/60 plan with 0.5% monthly)
-  - "aspirz" / "aspires" / "aspire" -> ASPIRZ by Danube (Sports City | Studios from AED 879K, 1-Beds from AED 1.15M, 2-Beds from AED 1.55M, Offices from AED 900K | Handover: Q4-2028 | Event Offer: 40/60 plan with 0.5% monthly)
-  - "sparklz" / "sparkles" / "sparkle" -> SPARKLZ by Danube (Al Furjan | Studios from AED 900K, 1-Beds from AED 1.15M, 2-Beds from AED 1.65M | Handover: Q2-2028 | Event Offer: 40/60 plan with 0.5% monthly)
-  - "bayz 101" / "base 101" / "bayz101" -> BAYZ 101 by Danube (Business Bay | Studios from AED 1.18M, 1-Beds from AED 1.55M, 2-Beds from AED 2.3M | Handover: June 2028 | Event Offer: 40/60 plan with 0.5% monthly)
-  - "bayz 102" / "base 102" / "bayz102" -> BAYZ 102 by Danube (Business Bay | Studios from AED 1.35M, 1-Beds from AED 2.4M, 2-Beds from AED 3.2M | Handover: June 2029 | Event Offer: 40/60 plan with 0.5% monthly)
-  - "diamondz" / "diamonds" / "diamond" -> DIAMONDZ by Danube (Uptown JLT | Studios from AED 1.1M, 1-Beds from AED 1.65M, 2-Beds from AED 2.3M | Handover: Nov 2027 | Event Offer: 40/60 plan with 0.5% monthly)
-  - "oceanz" / "oceans" / "ocean" -> OCEANZ by Danube (Dubai Maritime City | Studios from AED 1.2M, 1-Beds from AED 1.7M, 2-Beds from AED 2.4M | Handover: Q1 2027 | Event Offer: 40/60 plan with 0.5% monthly)
-  - "fashionz" / "fashions" / "fashion" -> FASHIONZ by Danube (JVT | Studios from AED 900K, 1-Beds from AED 1.51M, 2-Beds from AED 2.1M | Handover: July 2027 | Event Offer: 40/60 plan with 0.5% monthly)
-  - "sportz" / "sports" / "sport" -> SPORTZ by Danube (Sports City | SOLD OUT | Handover: May 2027)
-  - "shahrukh" / "sharukhz" / "shahrukhz" / "srk" -> SHAHRUKHZ by Danube (Sheikh Zayed Road | Commercial Units from AED 1.9M - 2.0M | Handover: 2029 | Event Offer: 40/60 plan with 0.5% monthly)
+  - "aspirz" / "aspires" / "aspire" -> ASPIRZ by Danube (Sports City | Live Stock: Flex Studios from AED 874K, 1-Beds from AED 1.119M, 2-Beds from AED 1.778M, Offices from AED 970K | Handover: Q4-2028 | Plan: 40/60 with 0.5% monthly)
+  - "serenz" / "serene" / "serenz" -> SERENZ by Danube (JVC | Live Stock: Studios from AED 905K, Flex 1-Bed from AED 1.017M, 1-Beds from AED 1.289M, 2-Beds from AED 1.795M | Handover: 2029 | Plan: 40/60 with 0.5% monthly)
+  - "bayz 101" / "base 101" / "bayz101" -> BAYZ 101 by Danube (Business Bay | Live Stock: 1-Bed+Office from AED 2.275M, 2-Bed+Pool from AED 3.190M, 3-Bed+Pool from AED 5.080M | Studios Sold Out | Handover: June 2028 | Plan: 40/60 with 0.5% monthly)
+  - "bayz 102" / "base 102" / "bayz102" -> BAYZ 102 by Danube (Business Bay | Live Stock: Flex 1-Bed from AED 2.542M, Presidential Suite from AED 2.725M, 2-Bed+Pool from AED 3.295M, Penthouses from AED 33.56M | Handover: June 2029 | Plan: 40/60 with 0.5% monthly)
+  - "breez" / "breeze" -> BREEZ by Danube (Dubai Maritime City | Live Stock: Studios from AED 1.350M, Flex Studio from AED 1.700M, 1-Beds from AED 2.264M, 2-Beds from AED 3.700M | Handover: May 2029 | Plan: 40/60 with 0.5% monthly)
+  - "diamondz" / "diamonds" / "diamond" -> DIAMONDZ by Danube (Uptown JLT | Live Stock: 1-Beds from AED 1.947M, 2-Bed+Pool from AED 2.782M, 3-Bed+Pool from AED 3.761M | Studios Sold Out | Handover: Nov 2027 | Plan: 40/60 with 0.5% monthly)
+  - "fashionz" / "fashions" / "fashion" -> FASHIONZ by Danube (JVT | Live Stock: 1-Bed Exec from AED 1.573M, 2-Bed+Pool from AED 2.009M, Presidential Suite from AED 1.782M | Handover: July 2027 | Plan: 40/60 with 0.5% monthly)
+  - "greenz" / "greens" -> GREENZ by Danube (Dubai Silicon Oasis | Live Stock: 3-Bed Townhouses from AED 3.767M, 4-Bed Villas from AED 4.406M, 5-Bed Villas from AED 5.150M | Handover: 2027 | Plan: 40/60 with 0.5% monthly)
+  - "sparklz" / "sparkles" / "sparkle" -> SPARKLZ by Danube (Al Furjan | Live Stock: 3-Beds from AED 2.433M | Studios & 1-Beds Sold Out | Handover: Q2-2028 | Plan: 40/60 with 0.5% monthly)
+  - "timez" / "times" / "time" -> TIMEZ by Danube (Dubai Silicon Oasis | Live Stock: Presidential Suite from AED 1.670M, 2-Bed+Pool from AED 1.926M, 3-Bed+Pool from AED 2.301M | Studios & 1-Beds Sold Out | Handover: Q2-2028 | Plan: 40/60 with 0.5% monthly)
+  - "sportz" / "sports" / "sport" -> SPORTZ by Danube (Sports City | 100% SOLD OUT | Handover: May 2027)
+  - "shahrukh" / "sharukhz" / "shahrukhz" / "srk" -> SHAHRUKHZ by Danube (Sheikh Zayed Road | Live Stock: Standard Offices from AED 2.416M, Executive Offices from AED 3.138M, Prestige Offices from AED 12.544M | Handover: 2029 | Plan: 40/60 with 0.5% monthly)
+  - "oceanz" / "oceans" / "ocean" -> OCEANZ by Danube (Dubai Maritime City | Studios from AED 1.20M, 1-Beds from AED 1.70M, 2-Beds from AED 2.40M | Handover: Q1 2027 | Plan: 40/60 with 0.5% monthly)
 
   - "river cove" / "sobha river cove" -> River Cove Residences by SOBHA (Sobha City Abu Dhabi | AED 3.94M | Handover: Q4 2027)
   - "sobha terraces" / "the terraces" -> The Terraces by SOBHA (Sobha City Abu Dhabi | Townhouses from AED 5.09M | Handover: Q3 2027)
