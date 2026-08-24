@@ -69,9 +69,11 @@ export class GoogleCalendarService {
     privateKey = privateKey.replace(/\\n/g, '\n');
 
     try {
+      const targetUser = process.env.GOOGLE_CALENDAR_TARGET_USER || 'info@thepodsrealestate.ae';
       const header = { alg: 'RS256', typ: 'JWT' };
-      const claimSet = {
+      const claimSet: any = {
         iss: clientEmail,
+        sub: targetUser,
         scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events',
         aud: 'https://oauth2.googleapis.com/token',
         exp: now + 3600,
