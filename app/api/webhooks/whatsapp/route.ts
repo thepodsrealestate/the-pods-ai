@@ -254,9 +254,9 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       await MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.AI, content: aiResult.reply });
     }
 
-    // Extract Email from user text or AI output if provided
+    // Extract Email from user text or AI output if provided (normalized to lowercase)
     const emailMatch = userText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-    const extractedEmail = emailMatch ? emailMatch[0] : (aiResult.booking_details?.email || aiResult.lead_updates?.email || undefined);
+    const extractedEmail = emailMatch ? emailMatch[0].toLowerCase().trim() : (aiResult.booking_details?.email?.toLowerCase().trim() || aiResult.lead_updates?.email?.toLowerCase().trim() || undefined);
     if (extractedEmail && (!lead.email || lead.email !== extractedEmail)) {
       await prisma.lead.update({
         where: { id: lead.id },
@@ -307,12 +307,16 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
           }
         } catch (_) { /* fallback to default */ }
       }
+
+      const bookingLocation = aiResult.booking_details?.location || 
+        (aiResult.reply.toLowerCase().includes('bluewaters') ? 'The Pods, Bluewaters Island, Dubai' : 'Google Meet');
+
       await CalendarService.createBooking({
         leadId: lead.id,
         meetingTime,
-        location: 'Google Meet',
+        location: bookingLocation,
       });
-      console.log('[BG-LOG] ✅ Meeting Booking created & Google Calendar invite dispatched to', lead.email);
+      console.log('[BG-LOG] ✅ Meeting Booking created & Google Calendar invite dispatched to', lead.email, 'at', bookingLocation);
     } else if (aiResult.action === 'HANDOFF') {
       // BUG FIX: Persist handoff state — disable AI and create Handoff record
       await prisma.lead.update({

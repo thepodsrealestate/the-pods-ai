@@ -65,8 +65,12 @@ export class GoogleCalendarService {
       return null;
     }
 
-    // Handle escaped newlines in .env
-    privateKey = privateKey.replace(/\\n/g, '\n');
+    // Handle escaped newlines and outer quotes in .env / Vercel
+    privateKey = privateKey
+      .trim()
+      .replace(/^["']|["']$/g, '')
+      .replace(/\\n/g, '\n')
+      .replace(/\r\n/g, '\n');
 
     try {
       const targetUser = process.env.GOOGLE_CALENDAR_TARGET_USER || 'info@thepodsrealestate.ae';
