@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { AIService } from '@/lib/services/aiService';
 import { prisma } from '@/lib/prisma';
 import { LeadService } from '@/lib/services/leadService';
@@ -174,10 +174,14 @@ export async function POST(req: NextRequest) {
     const latency = Date.now() - startTime;
     console.log(`[FAST] AI replied in ${latency}ms: "${aiResult.reply.substring(0, 80)}..."`);
 
-    // Await DB logging and email dispatch to ensure background jobs never get killed by Vercel serverless freeze
-    await logToDatabase(body, userText, senderName, normalizedPhone, aiResult).catch(err =>
-      console.error('[LOG] DB logging error:', err.message)
-    );
+    // Use Next.js after() to run DB logging & email dispatch in the background after returning HTTP response to ManyChat
+    after(async () => {
+      try {
+        await logToDatabase(body, userText, senderName, normalizedPhone, aiResult);
+      } catch (err: any) {
+        console.error('[BG-LOG] Async logging error:', err.message);
+      }
+    });
 
     return NextResponse.json({
       status: 'success',
