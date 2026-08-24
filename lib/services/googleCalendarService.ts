@@ -90,7 +90,7 @@ export class GoogleCalendarService {
       const signature = signer.sign(privateKey, 'base64url');
       const jwt = `${signInput}.${signature}`;
 
-      const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+      let tokenRes = await fetch('https://oauth2.googleapis.com/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
@@ -99,8 +99,33 @@ export class GoogleCalendarService {
         }),
       });
 
-      const tokenData = await tokenRes.json();
-      if (!tokenRes.ok || !tokenData.access_token) {
+      let tokenData = await tokenRes.json();
+      
+      // Fallback: If target user fails, try minesh@thepods.ae
+      if (!tokenRes.ok && targetUser !== 'minesh@thepods.ae') {
+        const fallbackClaimSet = { ...claimSet, sub: 'minesh@thepods.ae' };
+        const fbClaim = Buffer.from(JSON.stringify(fallbackClaimSet)).toString('base64url');
+        const fbSignInput = `${base64Header}.${fbClaim}`;
+        const fbSigner = crypto.createSign('RSA-SHA256');
+        fbSigner.update(fbSignInput);
+        fbSigner.end();
+        const fbJwt = `${fbSignInput}.${fbSigner.sign(privateKey, 'base64url')}`;
+        
+        const fbRes = await fetch('https://oauth2.googleapis.com/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+            assertion: fbJwt,
+          }),
+        });
+        const fbData = await fbRes.json();
+        if (fbRes.ok && fbData.access_token) {
+          tokenData = fbData;
+        }
+      }
+
+      if (!tokenData.access_token) {
         console.error('[GCAL] Failed to obtain OAuth token:', tokenData);
         return null;
       }

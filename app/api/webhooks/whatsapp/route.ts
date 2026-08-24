@@ -281,10 +281,19 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
     }
 
     // 4. Handle Meeting Bookings or Handoffs asynchronously in DB
-    if (aiResult.action === 'BOOK_MEETING') {
+    const isMeetingBooking = 
+      aiResult.action === 'BOOK_MEETING' || 
+      (extractedEmail && (
+        aiResult.reply.toLowerCase().includes('confirmed for') || 
+        aiResult.reply.toLowerCase().includes('booked for') || 
+        aiResult.reply.toLowerCase().includes("you're all set") ||
+        aiResult.reply.toLowerCase().includes('invitation has been sent')
+      ));
+
+    if (isMeetingBooking) {
       // Parse actual booking time from AI response instead of hardcoding
       let meetingTime = new Date(Date.now() + 86400000 * 2);
-      meetingTime.setHours(14, 0, 0, 0);
+      meetingTime.setHours(15, 0, 0, 0); // 3:00 PM default
       if (aiResult.booking_details?.time) {
         try {
           const timeMatch = aiResult.booking_details.time.match(/(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i);
@@ -301,9 +310,9 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       await CalendarService.createBooking({
         leadId: lead.id,
         meetingTime,
-        location: 'The Pods, Bluewaters Island, Dubai',
+        location: 'Google Meet',
       });
-      console.log('[BG-LOG] ✅ Meeting Booking created & notification sent!');
+      console.log('[BG-LOG] ✅ Meeting Booking created & Google Calendar invite dispatched to', lead.email);
     } else if (aiResult.action === 'HANDOFF') {
       // BUG FIX: Persist handoff state — disable AI and create Handoff record
       await prisma.lead.update({
