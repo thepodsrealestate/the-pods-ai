@@ -1556,12 +1556,38 @@ export default function MasterDashboardPage() {
                               )}
                             </div>
 
-                            <div className="flex items-center space-x-1.5">
-                              <span className={`text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded ${
-                                conv.lead?.aiEnabled ? "text-slate-400 bg-[#151824]" : "text-amber-400 bg-amber-500/10"
-                              }`}>
-                                {conv.lead?.aiEnabled ? "AI Active" : "Human"}
-                              </span>
+                            {/* Channel / Social Media Source Tag */}
+                            <div className="flex items-center space-x-1">
+                              {(() => {
+                                const src = (conv.lead?.leadSource || "WHATSAPP_DIRECT").toUpperCase();
+                                if (src.includes("GOOGLE")) {
+                                  return (
+                                    <span className="text-[9px] font-bold font-mono px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/30">
+                                      G-ADS
+                                    </span>
+                                  );
+                                }
+                                if (src.includes("INSTAGRAM")) {
+                                  return (
+                                    <span className="text-[9px] font-bold font-mono px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/30">
+                                      INSTA
+                                    </span>
+                                  );
+                                }
+                                if (src.includes("FACEBOOK") || src.includes("META")) {
+                                  return (
+                                    <span className="text-[9px] font-bold font-mono px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/30">
+                                      META
+                                    </span>
+                                  );
+                                }
+                                return (
+                                  <span className="text-[9px] font-bold font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                                    WA DIRECT
+                                  </span>
+                                );
+                              })()}
+
                               {conv.lead?.buyerLocation && (
                                 <span className="text-[9px] font-mono text-slate-400 bg-[#151824] px-1.5 py-0.5 rounded border border-[#1E2230]">
                                   {conv.lead.buyerLocation}
@@ -1601,10 +1627,13 @@ export default function MasterDashboardPage() {
                           <span>Back</span>
                         </button>
                         <div>
-                          <h3 className="font-bold text-white text-sm">
-                            {conversations[selectedConvIndex]?.lead.fullName || conversations[selectedConvIndex]?.lead.phone}
-                          </h3>
-                          <p className="text-xs text-[#C5A059] font-mono">
+                          <div className="flex items-center space-x-2">
+                            <h3 className="font-bold text-white text-sm">
+                              {conversations[selectedConvIndex]?.lead.fullName || conversations[selectedConvIndex]?.lead.phone}
+                            </h3>
+                            <SourceBadge source={conversations[selectedConvIndex]?.lead.leadSource} />
+                          </div>
+                          <p className="text-xs text-[#C5A059] font-mono mt-0.5">
                             {conversations[selectedConvIndex]?.lead.phone}
                           </p>
                         </div>
