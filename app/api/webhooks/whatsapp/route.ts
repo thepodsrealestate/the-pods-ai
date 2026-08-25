@@ -220,24 +220,40 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
 
     // Parse attribution details from ManyChat payload dynamically
     let leadSource = 'WHATSAPP_DIRECT';
-    let attributionObj = undefined;
+    let attributionObj: any = undefined;
 
-    const utmSource = body.utm_source || body.source || undefined;
-    const utmCampaign = body.utm_campaign || body.campaign_name || undefined;
-    const utmMedium = body.utm_medium || body.medium || undefined;
+    const utmSource = body.utm_source || body.source || body.custom_fields?.utm_source || body.custom_fields?.source || undefined;
+    const utmCampaign = body.utm_campaign || body.campaign_name || body.custom_fields?.utm_campaign || undefined;
+    const utmMedium = body.utm_medium || body.medium || body.custom_fields?.utm_medium || undefined;
 
     if (utmSource || utmCampaign || body.campaign_id || body.ad_id) {
-      leadSource = utmSource ? String(utmSource).toUpperCase() : 'FACEBOOK_ADS';
+      const srcUpper = utmSource ? String(utmSource).toUpperCase() : '';
+      leadSource = srcUpper.includes('GOOGLE') ? 'GOOGLE_ADS' : 'FACEBOOK_ADS';
       attributionObj = {
         source: leadSource,
         medium: utmMedium || 'cpc',
-        campaign: utmCampaign || 'Ad Campaign',
+        campaign: utmCampaign || (leadSource === 'GOOGLE_ADS' ? 'Google Display Campaign' : 'Meta Ad Campaign'),
         campaignId: body.campaign_id || undefined,
         adSet: body.adset_name || body.adset_id || undefined,
         adId: body.ad_id || undefined,
         utmSource: utmSource || undefined,
         utmMedium: utmMedium || undefined,
         utmCampaign: utmCampaign || undefined,
+      };
+    } else if (userText && (userText.includes('[GADS]') || userText.toLowerCase().includes('google') || userText.includes('Can I get more info on this?'))) {
+      // Heuristic detection: Display ad pre-filled message
+      leadSource = 'GOOGLE_ADS';
+      attributionObj = {
+        source: 'GOOGLE_ADS',
+        medium: 'display',
+        campaign: 'Dubai Offplan Display Campaign',
+      };
+    } else if (userText && (userText.includes('[META]') || userText.includes('[FB]') || userText.includes('[IG]') || userText.toLowerCase().includes('instagram') || userText.toLowerCase().includes('facebook'))) {
+      leadSource = 'FACEBOOK_ADS';
+      attributionObj = {
+        source: 'FACEBOOK_ADS',
+        medium: 'cpc',
+        campaign: 'Meta WhatsApp Campaign',
       };
     }
 
