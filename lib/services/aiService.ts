@@ -409,7 +409,7 @@ You MUST return your response as a valid JSON object matching this exact schema:
       ];
 
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 12000); // 12-second resilient timeout
+      const timeoutId = setTimeout(() => controller.abort(), 3800); // 3.8-second strict timeout for ManyChat 5s SLA
 
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -421,6 +421,7 @@ You MUST return your response as a valid JSON object matching this exact schema:
           model: 'gpt-4o-mini',
           messages,
           temperature: 0.5,
+          max_tokens: 300,
           response_format: { type: 'json_object' },
         }),
         signal: controller.signal,
