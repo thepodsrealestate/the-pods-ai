@@ -781,6 +781,11 @@ export default function MasterDashboardPage() {
   // Dynamic filtered conversations list based on search & mode
   const filteredConversations = conversations.filter((conv: any) => {
     const lead = conv.lead;
+    const lastMsg = conv.messages?.[conv.messages.length - 1];
+    const needsReply = lastMsg?.senderType === "LEAD" || lead?.handoffStatus === true;
+
+    if (convFilter === "NEEDS_REPLY" && !needsReply) return false;
+    if (convFilter === "RESPONDED" && needsReply) return false;
     if (convFilter === "AI" && lead && !lead.aiEnabled) return false;
     if (convFilter === "HUMAN" && lead && lead.aiEnabled) return false;
 
@@ -788,8 +793,8 @@ export default function MasterDashboardPage() {
       const q = convSearchQuery.toLowerCase();
       const name = (lead?.fullName || "").toLowerCase();
       const phone = (lead?.phone || "").toLowerCase();
-      const lastMsg = (conv.messages?.[conv.messages.length - 1]?.content || "").toLowerCase();
-      if (!name.includes(q) && !phone.includes(q) && !lastMsg.includes(q)) {
+      const lastMsgContent = (lastMsg?.content || "").toLowerCase();
+      if (!name.includes(q) && !phone.includes(q) && !lastMsgContent.includes(q)) {
         return false;
       }
     }
@@ -1473,16 +1478,18 @@ export default function MasterDashboardPage() {
                   </div>
 
                   {/* Filter Pills */}
-                  <div className="flex items-center space-x-1 bg-[#0D0F17] p-1 rounded-xl border border-[#1E2230] text-[10px] font-bold">
+                  <div className="flex flex-wrap items-center gap-1 bg-[#0D0F17] p-1 rounded-xl border border-[#1E2230] text-[10px] font-bold">
                     {[
-                      { key: "ALL", label: "All Chats" },
+                      { key: "ALL", label: "All" },
+                      { key: "NEEDS_REPLY", label: "🔴 Needs Reply" },
+                      { key: "RESPONDED", label: "🟢 Responded" },
                       { key: "AI", label: "AI Active" },
-                      { key: "HUMAN", label: "Human Paused" },
+                      { key: "HUMAN", label: "Human" },
                     ].map((btn) => (
                       <button
                         key={btn.key}
                         onClick={() => setConvFilter(btn.key)}
-                        className={`flex-1 py-1 rounded-lg transition-all text-center ${
+                        className={`flex-1 py-1 px-1.5 rounded-lg transition-all text-center whitespace-nowrap ${
                           convFilter === btn.key
                             ? "bg-[#C5A059] text-black font-extrabold shadow-sm"
                             : "text-slate-400 hover:text-white"
@@ -1505,6 +1512,8 @@ export default function MasterDashboardPage() {
                     filteredConversations.map((conv: any, idx: number) => {
                       const lastMsg = conv.messages?.[conv.messages.length - 1];
                       const isSelected = selectedConvIndex === idx;
+                      const needsReply = lastMsg?.senderType === "LEAD" || conv.lead?.handoffStatus === true;
+
                       return (
                         <div
                           key={conv.id}
@@ -1512,14 +1521,16 @@ export default function MasterDashboardPage() {
                             setSelectedConvIndex(idx);
                             setMobileShowChat(true);
                           }}
-                          className={`p-4 cursor-pointer transition-colors space-y-1.5 ${
+                          className={`p-4 cursor-pointer transition-colors space-y-1.5 relative ${
                             isSelected ? "bg-[#C5A059]/10 border-l-4 border-[#C5A059]" : "hover:bg-[#151824]/50"
-                          }`}
+                          } ${needsReply ? "bg-rose-950/10" : ""}`}
                         >
                           <div className="flex justify-between items-start">
-                            <span className="font-semibold text-white text-xs truncate max-w-[170px]">
-                              {conv.lead?.fullName || conv.lead?.phone}
-                            </span>
+                            <div className="flex items-center space-x-1.5 truncate max-w-[170px]">
+                              <span className="font-semibold text-white text-xs truncate">
+                                {conv.lead?.fullName || conv.lead?.phone}
+                              </span>
+                            </div>
                             <span className="text-[10px] text-slate-400 font-mono">
                               {formatTimeAgo(conv.updatedAt)}
                             </span>
@@ -1530,17 +1541,33 @@ export default function MasterDashboardPage() {
                           </p>
 
                           <div className="flex items-center justify-between pt-1">
+                            {/* Minesh's Red / Green Action Badge */}
                             <div className="flex items-center space-x-1.5">
-                              <span className={`w-2 h-2 rounded-full ${conv.lead?.aiEnabled ? "bg-emerald-400 animate-pulse" : "bg-rose-400"}`}></span>
-                              <span className="text-[10px] font-semibold uppercase text-slate-400">
-                                {conv.lead?.aiEnabled ? "AI Active" : "Human Paused"}
-                              </span>
+                              {needsReply ? (
+                                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-rose-400 inline-block animate-ping"></span>
+                                  <span>🔴 NEEDS REPLY</span>
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
+                                  <span>🟢 RESPONDED</span>
+                                </span>
+                              )}
                             </div>
-                            {conv.lead?.buyerLocation && (
-                              <span className="text-[9px] font-mono text-slate-400 bg-[#151824] px-1.5 py-0.5 rounded border border-[#1E2230]">
-                                {conv.lead.buyerLocation}
+
+                            <div className="flex items-center space-x-1.5">
+                              <span className={`text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded ${
+                                conv.lead?.aiEnabled ? "text-slate-400 bg-[#151824]" : "text-amber-400 bg-amber-500/10"
+                              }`}>
+                                {conv.lead?.aiEnabled ? "AI Active" : "Human"}
                               </span>
-                            )}
+                              {conv.lead?.buyerLocation && (
+                                <span className="text-[9px] font-mono text-slate-400 bg-[#151824] px-1.5 py-0.5 rounded border border-[#1E2230]">
+                                  {conv.lead.buyerLocation}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       );
@@ -1584,10 +1611,29 @@ export default function MasterDashboardPage() {
                       </div>
 
                       <div className="flex items-center space-x-2">
+                        {/* Red / Green Status Badge in Header */}
+                        {(() => {
+                          const curConv = conversations[selectedConvIndex];
+                          const curLastMsg = curConv?.messages?.[curConv.messages.length - 1];
+                          const curNeedsReply = curLastMsg?.senderType === "LEAD" || curConv?.lead?.handoffStatus === true;
+
+                          return curNeedsReply ? (
+                            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse flex items-center space-x-1.5">
+                              <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping inline-block"></span>
+                              <span>🔴 ACTION REQUIRED</span>
+                            </span>
+                          ) : (
+                            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1.5">
+                              <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>
+                              <span>🟢 UP TO DATE</span>
+                            </span>
+                          );
+                        })()}
+
                         <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${
                           conversations[selectedConvIndex]?.lead.aiEnabled
                             ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                            : "bg-rose-500/10 text-rose-400 border border-rose-500/30"
+                            : "bg-amber-500/10 text-amber-400 border border-amber-500/30"
                         }`}>
                           {conversations[selectedConvIndex]?.lead.aiEnabled ? "AI Active" : "Human Control"}
                         </span>
