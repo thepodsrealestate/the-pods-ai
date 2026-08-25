@@ -35,28 +35,32 @@ export async function POST(req: NextRequest) {
     if (manychatToken && phone && !phone.startsWith('+lead_guest')) {
       try {
         const cleanPhone = phone.replace(/[^0-9]/g, '');
-        // Dispatch to ManyChat subscriber via WhatsApp API
-        await fetch('https://api.manychat.com/fb/sending/sendContentByUserRef', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${manychatToken}`,
-          },
-          body: JSON.stringify({
-            phone: cleanPhone,
-            data: {
-              version: 'v2',
-              content: {
-                messages: [
-                  {
-                    type: 'text',
-                    text: text.trim(),
-                  },
-                ],
-              },
-            },
-          }),
+        
+        // First, check if we can find subscriber by phone or subscriber ID
+        const findRes = await fetch(`https://api.manychat.com/fb/subscriber/findByName?name=${encodeURIComponent(conversation.lead.fullName || cleanPhone)}`, {
+          headers: { Authorization: `Bearer ${manychatToken}` },
         });
+        const findData = await findRes.json();
+        const subId = findData?.data?.[0]?.id;
+
+        if (subId) {
+          await fetch('https://api.manychat.com/fb/sending/sendContent', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${manychatToken}`,
+            },
+            body: JSON.stringify({
+              subscriber_id: subId,
+              data: {
+                version: 'v2',
+                content: {
+                  messages: [{ type: 'text', text: text.trim() }],
+                },
+              },
+            }),
+          });
+        }
       } catch (waErr: any) {
         console.error('ManyChat outbound send error:', waErr.message);
       }
