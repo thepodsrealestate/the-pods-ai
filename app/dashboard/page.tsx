@@ -300,7 +300,7 @@ export default function MasterDashboardPage() {
     const p = periodToFetch || adPeriod;
     setLoadingAdMetrics(true);
     try {
-      const res = await fetch(`/api/integrations/ad-metrics?period=${p}`);
+      const res = await fetch(`/api/integrations/ad-metrics?period=${p}`, { cache: "no-store" });
       const json = await res.json();
       if (json.success && json.data) {
         setAdMetrics(json.data);
@@ -2703,12 +2703,14 @@ export default function MasterDashboardPage() {
                     <div className="flex justify-between text-xs font-semibold">
                       <span className="text-[#C5A059] flex items-center space-x-1">
                         <span className="w-2 h-2 rounded-full bg-[#C5A059] inline-block"></span>
-                        <span>Google Search Ads</span>
+                        <span>Google Ads (Display & Search)</span>
                       </span>
-                      <span className="text-slate-300 font-mono">CPL: AED {adMetrics.google.cplAed} ({adMetrics.google.leads} leads)</span>
+                      <span className="text-slate-300 font-mono">
+                        {adMetrics.google.spendAed > 0 ? `AED ${adMetrics.google.spendAed.toLocaleString()} · ${adMetrics.google.clicks} clicks (CPC: AED ${adMetrics.google.cplAed})` : `CPL: AED ${adMetrics.google.cplAed} (${adMetrics.google.leads} leads)`}
+                      </span>
                     </div>
                     <div className="w-full bg-[#151824] rounded-full h-3.5 overflow-hidden border border-[#C5A059]/30 p-0.5">
-                      <div className="h-full bg-gradient-to-r from-[#C5A059] to-[#D4B06A] rounded-full" style={{ width: `${Math.min(100, Math.round((adMetrics.google.leads / (adMetrics.summary.totalLeads || 1)) * 100))}%` }}></div>
+                      <div className="h-full bg-gradient-to-r from-[#C5A059] to-[#D4B06A] rounded-full transition-all duration-500" style={{ width: `${adMetrics.google.spendAed > 0 ? 100 : (adMetrics.google.leads > 0 ? Math.min(100, Math.round((adMetrics.google.leads / (adMetrics.summary.totalLeads || 1)) * 100)) : 0)}%` }}></div>
                     </div>
                   </div>
                 </div>

@@ -26,7 +26,7 @@ export class GoogleAdsService {
     const clientId = process.env.GOOGLE_ADS_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_ADS_CLIENT_SECRET;
     const developerToken = process.env.GOOGLE_ADS_DEVELOPER_TOKEN;
-    const customerId = (process.env.GOOGLE_ADS_CUSTOMER_ID || '8043425498').replace(/-/g, '');
+    const customerId = (process.env.GOOGLE_ADS_CUSTOMER_ID || '1670553891').replace(/-/g, '');
     const refreshToken = process.env.GOOGLE_ADS_REFRESH_TOKEN;
 
     if (clientId && clientSecret && developerToken && refreshToken && customerId) {
