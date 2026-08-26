@@ -2706,7 +2706,7 @@ export default function MasterDashboardPage() {
                         <span>Google Ads (Display & Search)</span>
                       </span>
                       <span className="text-slate-300 font-mono">
-                        {adMetrics.google.spendAed > 0 ? `AED ${adMetrics.google.spendAed.toLocaleString()} · ${adMetrics.google.clicks} clicks (CPC: AED ${adMetrics.google.cplAed})` : `CPL: AED ${adMetrics.google.cplAed} (${adMetrics.google.leads} leads)`}
+                        {adMetrics.google.spendAed > 0 ? `AED ${adMetrics.google.spendAed.toLocaleString()} · ${adMetrics.google.clicks} clicks (CPC: AED ${adMetrics.google.cpcAed ?? adMetrics.google.cplAed})` : `CPL: AED ${adMetrics.google.cplAed} (${adMetrics.google.leads} leads)`}
                       </span>
                     </div>
                     <div className="w-full bg-[#151824] rounded-full h-3.5 overflow-hidden border border-[#C5A059]/30 p-0.5">

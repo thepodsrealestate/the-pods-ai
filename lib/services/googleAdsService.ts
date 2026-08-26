@@ -7,12 +7,14 @@ export interface GoogleAdsMetrics {
   ctr: number;
   leads: number;
   cplAed: number;
+  cpcAed: number;
   isLive: boolean;
   errorMessage?: string;
 }
 
 export class GoogleAdsService {
   private static instance: GoogleAdsService;
+  private client: GoogleAdsApi | null = null;
 
   private constructor() {}
 
@@ -21,6 +23,23 @@ export class GoogleAdsService {
       GoogleAdsService.instance = new GoogleAdsService();
     }
     return GoogleAdsService.instance;
+  }
+
+  private getClient(): GoogleAdsApi {
+    if (!this.client) {
+      const clientId = process.env.GOOGLE_ADS_CLIENT_ID;
+      const clientSecret = process.env.GOOGLE_ADS_CLIENT_SECRET;
+      const developerToken = process.env.GOOGLE_ADS_DEVELOPER_TOKEN;
+      if (!clientId || !clientSecret || !developerToken) {
+        throw new Error('Missing Google Ads API credentials');
+      }
+      this.client = new GoogleAdsApi({
+        client_id: clientId,
+        client_secret: clientSecret,
+        developer_token: developerToken,
+      });
+    }
+    return this.client;
   }
 
   public async getMetrics(period: string = 'last_30d'): Promise<GoogleAdsMetrics> {
@@ -32,11 +51,7 @@ export class GoogleAdsService {
 
     if (clientId && clientSecret && developerToken && refreshToken && customerId) {
       try {
-        const client = new GoogleAdsApi({
-          client_id: clientId,
-          client_secret: clientSecret,
-          developer_token: developerToken,
-        });
+        const client = this.getClient();
 
         const loginCustomerId = process.env.GOOGLE_ADS_LOGIN_CUSTOMER_ID?.replace(/-/g, '') || undefined;
         const customer = client.Customer({
@@ -80,7 +95,8 @@ export class GoogleAdsService {
           const clicks = Number(m.clicks ?? 0);
           const conversions = Math.round(Number(m.conversions ?? 0));
           const ctr = impressions > 0 ? parseFloat(((clicks / impressions) * 100).toFixed(2)) : 0;
-          const cplAed = conversions > 0 ? parseFloat((spendAed / conversions).toFixed(2)) : (clicks > 0 ? parseFloat((spendAed / clicks).toFixed(2)) : 0);
+          const cplAed = conversions > 0 ? parseFloat((spendAed / conversions).toFixed(2)) : 0;
+          const cpcAed = clicks > 0 ? parseFloat((spendAed / clicks).toFixed(2)) : 0;
 
           return {
             spendAed,
@@ -89,6 +105,7 @@ export class GoogleAdsService {
             ctr,
             leads: conversions,
             cplAed,
+            cpcAed,
             isLive: true,
           };
         }
@@ -101,6 +118,7 @@ export class GoogleAdsService {
           ctr: 0,
           leads: 0,
           cplAed: 0,
+          cpcAed: 0,
           isLive: false,
           errorMessage: error?.message || String(error),
         };
@@ -114,6 +132,7 @@ export class GoogleAdsService {
       ctr: 0,
       leads: 0,
       cplAed: 0,
+      cpcAed: 0,
       isLive: false,
       errorMessage: 'Missing Google Ads API environment variables',
     };

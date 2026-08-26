@@ -5,7 +5,9 @@ export interface MetaAdsMetrics {
   ctr: number;
   leads: number;
   cplAed: number;
+  cpcAed: number;
   isLive: boolean;
+  errorMessage?: string;
 }
 
 export class MetaAdsService {
@@ -60,7 +62,8 @@ export class MetaAdsService {
             }
           }
 
-          const cplAed = leads > 0 ? parseFloat((spend / leads).toFixed(2)) : (clicks > 0 ? parseFloat((spend / clicks).toFixed(2)) : 0);
+          const cplAed = leads > 0 ? parseFloat((spend / leads).toFixed(2)) : 0;
+          const cpcAed = clicks > 0 ? parseFloat((spend / clicks).toFixed(2)) : 0;
 
           return {
             spendAed: parseFloat(spend.toFixed(2)),
@@ -69,11 +72,23 @@ export class MetaAdsService {
             ctr,
             leads,
             cplAed,
+            cpcAed,
             isLive: true,
           };
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching live Meta Ads metrics:', error);
+        return {
+          spendAed: 0,
+          impressions: 0,
+          clicks: 0,
+          ctr: 0,
+          leads: 0,
+          cplAed: 0,
+          cpcAed: 0,
+          isLive: false,
+          errorMessage: error?.message || String(error),
+        };
       }
     }
 
@@ -84,7 +99,9 @@ export class MetaAdsService {
       ctr: 0,
       leads: 0,
       cplAed: 0,
+      cpcAed: 0,
       isLive: false,
+      errorMessage: 'Missing Meta Ads API environment variables',
     };
   }
 }

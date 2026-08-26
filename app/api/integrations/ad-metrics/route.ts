@@ -18,7 +18,9 @@ export async function GET(req: Request) {
 
     const totalSpendAed = parseFloat((meta.spendAed + google.spendAed).toFixed(2));
     const totalLeads = meta.leads + google.leads;
-    const overallCplAed = totalLeads > 0 ? parseFloat((totalSpendAed / totalLeads).toFixed(2)) : (meta.clicks + google.clicks > 0 ? parseFloat((totalSpendAed / (meta.clicks + google.clicks)).toFixed(2)) : 0);
+    const totalClicks = meta.clicks + google.clicks;
+    const overallCplAed = totalLeads > 0 ? parseFloat((totalSpendAed / totalLeads).toFixed(2)) : 0;
+    const overallCpcAed = totalClicks > 0 ? parseFloat((totalSpendAed / totalClicks).toFixed(2)) : 0;
 
     return NextResponse.json({
       success: true,
@@ -26,7 +28,9 @@ export async function GET(req: Request) {
         summary: {
           totalSpendAed,
           totalLeads,
+          totalClicks,
           overallCplAed,
+          overallCpcAed,
         },
         meta,
         google,
