@@ -75,7 +75,7 @@ export class GoogleAdsService {
         if (res && res.length > 0 && res[0].metrics) {
           const m: any = res[0].metrics;
           const costMicros = Number(m.cost_micros ?? 0);
-          const spendAed = parseFloat(((costMicros / 1000000) * 3.67).toFixed(2));
+          const spendAed = parseFloat((costMicros / 1000000).toFixed(2));
           const impressions = Number(m.impressions ?? 0);
           const clicks = Number(m.clicks ?? 0);
           const conversions = Math.round(Number(m.conversions ?? 0));
