@@ -1,3 +1,5 @@
+import { GoogleAdsApi } from 'google-ads-api';
+
 export interface GoogleAdsMetrics {
   spendAed: number;
   impressions: number;
@@ -20,51 +22,41 @@ export class GoogleAdsService {
     return GoogleAdsService.instance;
   }
 
-  private async getAccessToken(): Promise<string | null> {
-    if (process.env.GOOGLE_ADS_ACCESS_TOKEN && !process.env.GOOGLE_ADS_ACCESS_TOKEN.includes('placeholder')) {
-      return process.env.GOOGLE_ADS_ACCESS_TOKEN;
-    }
-
-    const refreshToken = process.env.GOOGLE_ADS_REFRESH_TOKEN;
+  public async getMetrics(period: string = 'last_30d'): Promise<GoogleAdsMetrics> {
     const clientId = process.env.GOOGLE_ADS_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_ADS_CLIENT_SECRET;
-
-    if (refreshToken && clientId && clientSecret) {
-      try {
-        const res = await fetch('https://oauth2.googleapis.com/token', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams({
-            client_id: clientId,
-            client_secret: clientSecret,
-            refresh_token: refreshToken,
-            grant_type: 'refresh_token',
-          }),
-        });
-        const data = await res.json();
-        if (data.access_token) return data.access_token;
-        console.error('[GOOGLE ADS] Token response failed:', data);
-      } catch (err: any) {
-        console.error('[GOOGLE ADS] Token exchange error:', err?.message || err);
-      }
-    }
-    return null;
-  }
-
-  public async getMetrics(period: string = 'last_30d'): Promise<GoogleAdsMetrics> {
     const developerToken = process.env.GOOGLE_ADS_DEVELOPER_TOKEN;
-    const customerId = process.env.GOOGLE_ADS_CUSTOMER_ID;
+    const customerId = (process.env.GOOGLE_ADS_CUSTOMER_ID || '8043425498').replace(/-/g, '');
+    const refreshToken = process.env.GOOGLE_ADS_REFRESH_TOKEN;
 
-    // If live credentials are set up, fetch from Google Ads API
-    if (developerToken && customerId) {
+    if (clientId && clientSecret && developerToken && refreshToken && customerId) {
       try {
-        const accessToken = await this.getAccessToken();
-        if (!accessToken) {
-          console.warn('[GOOGLE ADS] No access token available yet');
-          return this.getFallbackMetrics();
+        const client = new GoogleAdsApi({
+          client_id: clientId,
+          client_secret: clientSecret,
+          developer_token: developerToken,
+        });
+
+        const customer = client.Customer({
+          customer_id: customerId,
+          refresh_token: refreshToken,
+        });
+
+        let dateClause = 'DURING THIS_MONTH';
+        const p = period.toLowerCase();
+        if (p === 'today' || p === '1d') {
+          dateClause = 'DURING TODAY';
+        } else if (p === 'last_7d' || p === '7d' || p === 'week') {
+          dateClause = 'DURING LAST_7_DAYS';
+        } else if (p === 'last_30d' || p === '30d') {
+          dateClause = 'DURING LAST_30_DAYS';
+        } else if (p === 'this_month' || p === 'month') {
+          dateClause = 'DURING THIS_MONTH';
+        } else if (p === 'maximum' || p === 'all' || p === 'all_time') {
+          dateClause = '';
         }
 
-        const cleanCustomerId = customerId.replace(/-/g, '');
+        const whereClause = dateClause ? `WHERE segments.date ${dateClause}` : '';
         const query = `
           SELECT 
             metrics.cost_micros, 
@@ -73,80 +65,44 @@ export class GoogleAdsService {
             metrics.ctr, 
             metrics.conversions 
           FROM customer 
-          WHERE segments.date DURING THIS_MONTH
+          ${whereClause}
         `;
 
-        const res = await fetch(
-          `https://googleads.googleapis.com/v17/customers/${cleanCustomerId}/googleAds:searchStream`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'developer-token': developerToken,
-              Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({ query }),
-            cache: 'no-store',
-          }
-        );
+        const res = await customer.query(query);
+        if (res && res.length > 0 && res[0].metrics) {
+          const m: any = res[0].metrics;
+          const costMicros = Number(m.cost_micros ?? 0);
+          const spendAed = parseFloat(((costMicros / 1000000) * 3.67).toFixed(2));
+          const impressions = Number(m.impressions ?? 0);
+          const clicks = Number(m.clicks ?? 0);
+          const conversions = Math.round(Number(m.conversions ?? 0));
+          const ctr = impressions > 0 ? parseFloat(((clicks / impressions) * 100).toFixed(2)) : 0;
+          const cplAed = conversions > 0 ? parseFloat((spendAed / conversions).toFixed(2)) : (clicks > 0 ? parseFloat((spendAed / clicks).toFixed(2)) : 0);
 
-        if (res.ok) {
-          const json = await res.json();
-          if (Array.isArray(json) && json.length > 0 && json[0].results) {
-            const metrics = json[0].results[0].metrics;
-            const spend = (parseFloat(metrics.cost_micros || '0') / 1000000) * 3.67;
-            const impressions = parseInt(metrics.impressions || '0', 10);
-            const clicks = parseInt(metrics.clicks || '0', 10);
-            const ctr = parseFloat((parseFloat(metrics.ctr || '0') * 100).toFixed(2));
-            const leads = Math.round(parseFloat(metrics.conversions || '0'));
-            const cplAed = leads > 0 ? parseFloat((spend / leads).toFixed(2)) : 0;
-
-            return {
-              spendAed: Math.round(spend),
-              impressions,
-              clicks,
-              ctr,
-              leads,
-              cplAed,
-              isLive: true,
-            };
-          }
+          return {
+            spendAed,
+            impressions,
+            clicks,
+            ctr,
+            leads: conversions,
+            cplAed,
+            isLive: true,
+          };
         }
       } catch (error) {
-        console.error('Error fetching live Google Ads metrics:', error);
+        console.error('Error querying live Google Ads API:', error);
       }
     }
 
-    return await this.getFallbackMetrics();
-  }
-
-  private async getFallbackMetrics(): Promise<GoogleAdsMetrics> {
-    try {
-      const { prisma } = await import('@/lib/prisma');
-      const dbLeads = await prisma.lead.count({
-        where: { leadSource: 'GOOGLE_ADS' }
-      });
-
-      return {
-        spendAed: 0,
-        impressions: dbLeads > 0 ? dbLeads * 45 : 0,
-        clicks: dbLeads > 0 ? dbLeads * 3 : 0,
-        ctr: dbLeads > 0 ? 6.7 : 0,
-        leads: dbLeads,
-        cplAed: 0,
-        isLive: dbLeads > 0,
-      };
-    } catch {
-      return {
-        spendAed: 0,
-        impressions: 0,
-        clicks: 0,
-        ctr: 0,
-        leads: 0,
-        cplAed: 0,
-        isLive: false,
-      };
-    }
+    return {
+      spendAed: 0,
+      impressions: 0,
+      clicks: 0,
+      ctr: 0,
+      leads: 0,
+      cplAed: 0,
+      isLive: false,
+    };
   }
 }
 

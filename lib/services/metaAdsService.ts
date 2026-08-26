@@ -77,36 +77,15 @@ export class MetaAdsService {
       }
     }
 
-    return await this.getFallbackMetrics();
-  }
-
-  private async getFallbackMetrics(): Promise<MetaAdsMetrics> {
-    try {
-      const { prisma } = await import('@/lib/prisma');
-      const dbLeads = await prisma.lead.count({
-        where: { leadSource: { in: ['FACEBOOK_ADS', 'INSTAGRAM_ADS', 'META_ADS'] } }
-      });
-
-      return {
-        spendAed: 0,
-        impressions: dbLeads > 0 ? dbLeads * 50 : 0,
-        clicks: dbLeads > 0 ? dbLeads * 4 : 0,
-        ctr: dbLeads > 0 ? 8.0 : 0,
-        leads: dbLeads,
-        cplAed: 0,
-        isLive: dbLeads > 0,
-      };
-    } catch {
-      return {
-        spendAed: 0,
-        impressions: 0,
-        clicks: 0,
-        ctr: 0,
-        leads: 0,
-        cplAed: 0,
-        isLive: false,
-      };
-    }
+    return {
+      spendAed: 0,
+      impressions: 0,
+      clicks: 0,
+      ctr: 0,
+      leads: 0,
+      cplAed: 0,
+      isLive: false,
+    };
   }
 }
 
