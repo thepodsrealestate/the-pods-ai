@@ -26,6 +26,7 @@ export async function GET() {
         include: { attributions: true }
       }),
       prisma.conversation.findMany({
+        take: 100,
         orderBy: { updatedAt: "desc" },
         include: {
           lead: {

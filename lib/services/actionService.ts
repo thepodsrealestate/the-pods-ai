@@ -9,7 +9,7 @@ export type AIAction =
 
 export interface AIStructuredOutput {
   reply: string;
-  language: 'en' | 'ar' | 'ru';
+  language: string;
   action: AIAction;
   lead_updates?: {
     buyer_location?: string;

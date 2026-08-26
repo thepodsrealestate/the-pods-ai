@@ -159,7 +159,27 @@ export async function POST(req: NextRequest) {
       console.warn('[CONTEXT] History lookup warning:', histErr);
     }
 
-    // Generate AI Response with full dynamic lead memory
+    // Detect ad source BEFORE AI call so Aria knows the lead's origin
+    let adSource = 'ORGANIC';
+    let campaignName = '';
+    const utmSource = body.utm_source || body.source || body.custom_fields?.utm_source || body.custom_fields?.source;
+    const utmCampaign = body.utm_campaign || body.campaign_name || body.custom_fields?.utm_campaign;
+    if (utmSource) {
+      const srcUpper = String(utmSource).toUpperCase();
+      adSource = srcUpper.includes('GOOGLE') ? 'GOOGLE_ADS' : (srcUpper.includes('FACEBOOK') || srcUpper.includes('INSTAGRAM') || srcUpper.includes('META')) ? 'META_ADS' : 'ORGANIC';
+      campaignName = utmCampaign || '';
+    } else if (body.campaign_id || body.ad_id) {
+      adSource = 'FACEBOOK_ADS';
+      campaignName = utmCampaign || 'Meta Ad Campaign';
+    } else if (userText.includes('[GADS]') || userText === 'Can I get more info on this?' || userText === 'Hello! Can I get more info on this?' || (userText.toLowerCase().includes('can i get more info') && conversationHistory.length === 0)) {
+      adSource = 'GOOGLE_ADS';
+      campaignName = 'Google Display Campaign';
+    } else if (userText.includes('[META]') || userText.includes('[FB]') || userText.includes('[IG]')) {
+      adSource = 'META_ADS';
+      campaignName = 'Meta Campaign';
+    }
+
+    // Generate AI Response with full dynamic lead memory + ad source context
     const aiResult = await AIService.generateResponse({
       leadName: senderName || existingLead?.fullName || undefined,
       buyerLocation: existingLead?.buyerLocation || undefined,
@@ -167,6 +187,8 @@ export async function POST(req: NextRequest) {
       budgetMin: existingLead?.budgetMin || undefined,
       budgetMax: existingLead?.budgetMax || undefined,
       timeline: existingLead?.timeline || undefined,
+      adSource,
+      campaignName,
       conversationHistory,
       userMessage: userText,
     });
