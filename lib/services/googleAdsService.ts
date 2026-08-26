@@ -37,8 +37,10 @@ export class GoogleAdsService {
           developer_token: developerToken,
         });
 
+        const loginCustomerId = process.env.GOOGLE_ADS_LOGIN_CUSTOMER_ID?.replace(/-/g, '') || undefined;
         const customer = client.Customer({
           customer_id: customerId,
+          login_customer_id: loginCustomerId,
           refresh_token: refreshToken,
         });
 
