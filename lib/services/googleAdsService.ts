@@ -8,6 +8,7 @@ export interface GoogleAdsMetrics {
   leads: number;
   cplAed: number;
   isLive: boolean;
+  errorMessage?: string;
 }
 
 export class GoogleAdsService {
@@ -91,8 +92,18 @@ export class GoogleAdsService {
             isLive: true,
           };
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error querying live Google Ads API:', error);
+        return {
+          spendAed: 0,
+          impressions: 0,
+          clicks: 0,
+          ctr: 0,
+          leads: 0,
+          cplAed: 0,
+          isLive: false,
+          errorMessage: error?.message || String(error),
+        };
       }
     }
 
@@ -104,6 +115,7 @@ export class GoogleAdsService {
       leads: 0,
       cplAed: 0,
       isLive: false,
+      errorMessage: 'Missing Google Ads API environment variables',
     };
   }
 }
