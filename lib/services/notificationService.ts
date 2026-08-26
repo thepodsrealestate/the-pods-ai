@@ -93,16 +93,23 @@ export class NotificationService {
       console.error('Failed to dispatch live email:', emailErr?.message || emailErr);
     }
 
+    // 3. Dispatch Live WhatsApp Message to Minesh Patel & Reshma Patel
+    try {
+      await this.sendWhatsAppAlert(alertMessage);
+    } catch (waErr: any) {
+      console.error('Failed to dispatch WhatsApp alert:', waErr?.message || waErr);
+    }
+
     return { success: true, alertMessage };
   }
 
   /**
-   * Send Human Handoff Alert to Minesh Patel
+   * Send Human Handoff Alert to Minesh Patel & Reshma Patel
    */
   static async notifyMineshHandoff(leadName: string, phone: string, reason: string) {
     const alertMessage = `⚠️ HUMAN TAKEOVER REQUIRED: Lead ${leadName} (${phone}) requested human agent. Reason: ${reason}. Live Dashboard: https://the-pods-ai.vercel.app/dashboard`;
 
-    console.log(`[HANDOFF -> MINESH PATEL (+971523666495)]: ${alertMessage}`);
+    console.log(`[HANDOFF -> MINESH PATEL (+971523666495) & RESHMA PATEL (+971523999502)]: ${alertMessage}`);
 
     try {
       await prisma.systemEvent.create({
@@ -115,7 +122,7 @@ export class NotificationService {
       console.error('Failed to log handoff event:', e.message);
     }
 
-    // Dispatch Live Resend Email for Human Takeover
+    // 1. Dispatch Live Resend Email for Human Takeover
     try {
       const settings = await prisma.systemEvent.findFirst({
         where: { eventType: 'ADMIN_NOTIFY_SETTINGS' },
@@ -164,7 +171,101 @@ export class NotificationService {
       console.error('Failed to dispatch handoff email:', emailErr?.message || emailErr);
     }
 
+    // 2. Dispatch Live WhatsApp Message to Minesh Patel & Reshma Patel
+    try {
+      await this.sendWhatsAppAlert(alertMessage);
+    } catch (waErr: any) {
+      console.error('Failed to dispatch WhatsApp alert:', waErr?.message || waErr);
+    }
+
     return { success: true, alertMessage };
+  }
+
+  /**
+   * Dispatch Live Outbound WhatsApp Alert to Minesh Patel & Reshma Patel
+   */
+  private static async sendWhatsAppAlert(messageText: string) {
+    const adminPhones = [
+      (process.env.ADMIN_PHONE_MINESH || '+971523666495').replace(/[^0-9]/g, ''),
+      (process.env.ADMIN_PHONE_RESHMA || '+971523999502').replace(/[^0-9]/g, ''),
+    ];
+
+    // Method 1: ManyChat Send Content API
+    const manychatToken = process.env.MANYCHAT_API_TOKEN;
+    if (manychatToken) {
+      for (const phone of adminPhones) {
+        try {
+          // Look up subscriber by phone in ManyChat
+          const findRes = await fetch(`https://api.manychat.com/fb/subscriber/findBySystemField?phone=%2B${phone}`, {
+            headers: { Authorization: `Bearer ${manychatToken}` },
+          });
+          const findData = await findRes.json();
+          let subscriberId = findData?.data?.id || findData?.data?.[0]?.id;
+
+          // If not found by phone, try searching by name or direct custom field
+          if (!subscriberId) {
+            const nameSearch = phone.includes('523666495') ? 'Minesh' : 'Reshma';
+            const nameRes = await fetch(`https://api.manychat.com/fb/subscriber/findByName?name=${encodeURIComponent(nameSearch)}`, {
+              headers: { Authorization: `Bearer ${manychatToken}` },
+            });
+            const nameData = await nameRes.json();
+            subscriberId = nameData?.data?.[0]?.id;
+          }
+
+          if (subscriberId) {
+            const sendRes = await fetch('https://api.manychat.com/fb/sending/sendContent', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${manychatToken}`,
+              },
+              body: JSON.stringify({
+                subscriber_id: subscriberId,
+                data: {
+                  version: 'v2',
+                  content: {
+                    messages: [{ type: 'text', text: messageText }],
+                  },
+                },
+              }),
+            });
+            const sendData = await sendRes.json();
+            console.log(`[WHATSAPP ALERT SENT via ManyChat to ${phone}]:`, sendData?.status || 'dispatched');
+          } else {
+            console.warn(`[WHATSAPP ALERT] Admin phone +${phone} not found as subscriber in ManyChat.`);
+          }
+        } catch (err: any) {
+          console.error(`[WHATSAPP ALERT ERROR] Failed sending to ${phone}:`, err.message);
+        }
+      }
+    }
+
+    // Method 2: Meta WhatsApp Cloud API Direct Dispatch (if configured)
+    const waPhoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+    const waAccessToken = process.env.WHATSAPP_ACCESS_TOKEN || process.env.META_SYSTEM_USER_TOKEN;
+    if (waPhoneNumberId && waAccessToken) {
+      for (const phone of adminPhones) {
+        try {
+          const cloudRes = await fetch(`https://graph.facebook.com/v21.0/${waPhoneNumberId}/messages`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${waAccessToken}`,
+            },
+            body: JSON.stringify({
+              messaging_product: 'whatsapp',
+              to: phone,
+              type: 'text',
+              text: { body: messageText },
+            }),
+          });
+          const cloudData = await cloudRes.json();
+          console.log(`[WHATSAPP ALERT SENT via Meta Cloud API to ${phone}]:`, cloudData?.messages?.[0]?.id || 'dispatched');
+        } catch (cErr: any) {
+          console.error(`[WHATSAPP META CLOUD API ERROR] Failed sending to ${phone}:`, cErr.message);
+        }
+      }
+    }
   }
 
 }
