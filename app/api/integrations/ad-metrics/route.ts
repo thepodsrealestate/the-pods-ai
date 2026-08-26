@@ -30,13 +30,6 @@ export async function GET(req: Request) {
         },
         meta,
         google,
-        debug: {
-          hasClientId: Boolean(process.env.GOOGLE_ADS_CLIENT_ID),
-          hasClientSecret: Boolean(process.env.GOOGLE_ADS_CLIENT_SECRET),
-          hasDevToken: Boolean(process.env.GOOGLE_ADS_DEVELOPER_TOKEN),
-          hasRefreshToken: Boolean(process.env.GOOGLE_ADS_REFRESH_TOKEN),
-          customerId: process.env.GOOGLE_ADS_CUSTOMER_ID || '1670553891',
-        }
       },
     });
   } catch (error: any) {
