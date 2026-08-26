@@ -188,6 +188,7 @@ export class NotificationService {
     const adminPhones = [
       (process.env.ADMIN_PHONE_MINESH || '+971523666495').replace(/[^0-9]/g, ''),
       (process.env.ADMIN_PHONE_RESHMA || '+971523999502').replace(/[^0-9]/g, ''),
+      '971545866094',
     ];
 
     // Method 1: ManyChat Send Content API
