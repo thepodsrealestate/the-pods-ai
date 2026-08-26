@@ -491,18 +491,34 @@ You MUST return your response as a valid JSON object matching this exact schema:
       };
     }
 
-    if (text.includes('danube') || text.includes('bayz') || text.includes('1%') || text.includes('2%')) {
+    // Ad-lead template messages — respond like a human
+    if ((text.includes('can i get more info') || text === 'hi' || text === 'hello') && (options.adSource === 'GOOGLE_ADS' || options.adSource === 'META_ADS' || options.adSource === 'FACEBOOK_ADS')) {
       return {
-        reply: "Bayz 101 by Danube in Business Bay starts from AED 1.18M with a 0% downpayment, 2% monthly plan. Are you looking at this for investment or personal use?",
+        reply: "Hey! Yeah for sure — are you based in Dubai or coming from overseas?",
         language: 'en',
-        action: 'UPDATE_LEAD',
-        lead_updates: { purchase_purpose: 'Investment ROI' },
+        action: 'NONE',
       };
     }
 
-    if (text.includes('sobha') || text.includes('hartland') || text.includes('sanctuary') || text.includes('siniya')) {
+    if (text.includes('danube') || text.includes('bayz') || text.includes('aspirz') || text.includes('serenz') || text.includes('breez') || text.includes('diamondz')) {
       return {
-        reply: "Sobha offers prime options across Abu Dhabi, Dubai, and Siniya Island. Are you interested in apartments, townhouses, or villas?",
+        reply: "Danube has some great live options right now. Aspirz in Sports City starts from AED 874K for studios and AED 1.119M for 1-beds, with the 40/60 payment plan at 0.5% monthly. Are you looking at this for investment or personal use?",
+        language: 'en',
+        action: 'UPDATE_LEAD',
+      };
+    }
+
+    if (text.includes('binghatti') || text.includes('wraith') || text.includes('skyflame') || text.includes('skyterrace') || text.includes('titania') || text.includes('mercedes')) {
+      return {
+        reply: "Binghatti has some iconic projects right now. Wraith in Al Jaddaf starts from AED 799K for studios, Skyflame in Majan from AED 585K, and SkyTerraces in Motor City from AED 680K. Which area interests you most?",
+        language: 'en',
+        action: 'UPDATE_LEAD',
+      };
+    }
+
+    if (text.includes('sobha') || text.includes('hartland') || text.includes('sanctuary') || text.includes('siniya') || text.includes('pinnacle') || text.includes('eden')) {
+      return {
+        reply: "Sobha has premium options across Dubai. The Pinnacle at Sobha Central starts from AED 1.78M for 1-beds, and 330 Riverside Crescent at Hartland II from AED 1.63M. Are you looking for apartments or villas?",
         language: 'en',
         action: 'UPDATE_LEAD',
       };
