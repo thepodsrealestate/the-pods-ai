@@ -5,6 +5,7 @@ import { googleAdsService } from '@/lib/services/googleAdsService';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+// Production API route for live multi-channel ad metrics
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
