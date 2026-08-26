@@ -532,10 +532,10 @@ You MUST return your response as a valid JSON object matching this exact schema:
       };
     }
 
-    const leadGreeting = options.leadName && options.leadName !== 'Guest' && options.leadName !== 'Unknown' ? `Hey ${options.leadName}!` : 'Hey!';
+    const leadGreeting = options.leadName && options.leadName !== 'Guest' && options.leadName !== 'Unknown' && options.leadName !== 'VIP Client' ? `Hey ${options.leadName}!` : 'Hey!';
 
     return {
-      reply: `${leadGreeting} Are you exploring Dubai properties for investment or a personal home?`,
+      reply: `${leadGreeting} How's it going? Looking at off-plan options in Dubai?`,
       language: 'en',
       action: 'NONE',
     };
