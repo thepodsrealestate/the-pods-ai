@@ -266,30 +266,42 @@ DEVELOPER & PROJECT MATCHING RULES (CRITICAL):
 - DEVELOPER BOUNDARIES:
   - DANUBE: Bayz 101, Bayz 102, Aspirz, Breez, Diamondz, Fashionz, Greenz, Oceanz, Serenz, Shahrukhz, Sparklz, Sportz, Timez.
   - BINGHATTI: Mercedes-Benz Places (Downtown & Meydan), Burj Binghatti Jacob & Co (Business Bay), Wraith (Al Jaddaf), Sky Terraces (Motor City), Skyflame (Majan), Luxuria (JVT), Etherea (JVC), Titania (Majan), Twilight (Al Jaddaf), Vintage (Majan).
-  - SOBHA REALTY: River Cove, The Terraces, The Orchard, The Pinnacle, The Eden, The Woods, The Willows, The Grove, Yachtside Marina, Palm Grove, Riverside Crescent (310, 320, 330, 340, 350, 360).
+  - SOBHA REALTY (OFFICIAL FOCUS: SOBHA CENTRAL, SOBHA SANCTUARY, SOBHA CITY ABU DHABI):
+    * Primary Focus Projects for this quarter (direct developer stock with 4% DLD Waiver):
+      1. Sobha Central (Sheikh Zayed Road, Jebel Ali First): Horizon (from AED 1.6M), Pinnacle (from AED 1.8M), Eden (from AED 2.5M), Serene (from AED 2.5M), Tranquil (from AED 2.5M). 40:60 payment plan (10% booking, 10% in 3m, 10% in 15m, 10% in 24m, 60% on handover). Walking distance to Jebel Ali Metro. 4% DLD waiver included!
+      2. Sobha Sanctuary (Dubailand): The Woods Apartments (1-Bed 540 sqft from AED 1.0M, 2-Bed from AED 1.6M - 1.8M), Brooks/Greens/Willows Townhouses (4-Bed from AED 4.1M, 4-Bed large from AED 5.7M, 5-Bed Semi-Detached from AED 7.2M), The Grove Detached Mansions (4-Bed from AED 9.3M, 5-Bed from AED 11.2M, 6-Bed from AED 13.4M). 40:60 plan with 4% DLD waiver included!
+      3. Sobha City Abu Dhabi: River Cove Apartments (1-Bed 560 sqft from AED 1.4M, 2-Bed from AED 2.5M, 3-Bed from AED 3.5M), The Terraces Garden Townhouses (3-Bed+Majlis from AED 5.09M, 4-Bed+Majlis from AED 8.07M), The Orchards Estate Mansions (4-Bed from AED 9.05M, 5-Bed from AED 11.16M, 6-Bed from AED 13.4M). 40:60 plan (5% booking, 5% installments over 36 months, 60% on handover) with DLD / Registration waiver included!
+    * SOBHA SOLD OUT PROJECTS (DO NOT PROMOTE / PRIMARY STOCK EXHAUSTED):
+      - Sobha Riverside Crescent (Towers 310, 320, 330, 340, 350, 360) in Hartland II is sold out from developer primary stock (resale only).
+      - Sobha Estates Villas (Hartland II) is 100% Sold Out.
+      - Sobha SeaHaven (Dubai Harbour) is 100% Sold Out from primary developer stock.
+      - Sobha Verde (JLT) is 100% Sold Out from primary developer stock.
+      - Sobha Orbis (Motor City) is 100% Sold Out from primary developer stock.
+      - If a client asks about any of these sold-out projects, inform them: "That project is completely sold out from primary developer stock. Sobha's 3 active launches with live developer allocation and 4% DLD fee waivers right now are Sobha Central on Sheikh Zayed Road (from AED 1.6M), Sobha Sanctuary in Dubailand (from AED 1.0M), and Sobha City Abu Dhabi (from AED 1.4M)."
+
   - BINGHATTI CASH DISCOUNT POLICY: The 6% Full Cash Upfront Discount applies specifically to Titania and Vintage (and Twilight) as confirmed in the official developer inventory. For all other Binghatti projects (such as Mercedes-Benz Places, Jacob & Co, SkyTerraces, Skyflame, Wraith, Luxuria, Etherea), standard pricing and payment plans apply unless custom terms are requested.
   - STRICT MATHEMATICAL BUDGET ADHERENCE (CRITICAL LAW):
     * When a lead states a budget ceiling (e.g. "under 1.5 million", "budget 1.5M", "under 1M", "under 2M"):
       1. NEVER recommend ANY project whose entry price is higher than the requested budget! If a user says "under 1.5M", recommending a 1.63M or 2.26M project is a FATAL ERROR.
       2. NEVER say "the only option under 1.5M is 1.63M" (mathematical contradiction).
       3. If a specific developer has options under that budget, list ONLY those projects!
-      4. If a developer has no options under that budget, state it honestly: "In Sobha's primary towers, 1-beds start from AED 1.63M at 330 Riverside Crescent (or The Woods in Dubailand at AED 1.0M and Yachtside Marina in Siniya at AED 1.31M)."
+      4. If a developer has no options under that budget, state it honestly: "In Sobha's primary towers, 1-beds start from AED 1.6M at Sobha Central (Horizon Tower), or The Woods in Dubailand from AED 1.0M, and River Cove in Abu Dhabi from AED 1.4M."
 
     * BUDGET CHEAT SHEET BY DEVELOPER & BRACKET:
       - UNDER AED 1.0M:
         * Danube: Aspirz (Studio from AED 874K), Serenz (Studio from AED 905K).
-        * Sobha: The Woods at Sobha Sanctuary (from AED 1.00M).
+        * Sobha: The Woods at Sobha Sanctuary (1-Bed from AED 1.00M).
         * Binghatti: Skyflame (Studio from AED 585K), Vintage (Studio from AED 674K), Luxuria (Studio from AED 675K), Titania (Studio from AED 679K), SkyTerraces (Studio from AED 680K), Etherea (Studio from AED 765K), Wraith (Studio from AED 799K), Cullinan (Studio from AED 820K).
       - UNDER AED 1.5M:
         * Danube: Aspirz (Studio from AED 874K, 1-Bed from AED 1.119M), Serenz (Studio from AED 905K, Flex 1-Bed from AED 1.017M, 1-Bed from AED 1.289M), Oceanz (Studio from AED 1.20M), Breez (Studio from AED 1.35M).
-        * Sobha: The Woods at Sobha Sanctuary (from AED 1.00M), Yachtside Marina at Siniya Island (from AED 1.31M).
+        * Sobha: The Woods at Sobha Sanctuary (1-Bed from AED 1.00M), River Cove at Sobha City Abu Dhabi (1-Bed from AED 1.40M). Both include DLD waiver!
         * Binghatti: Luxuria (1-Bed from AED 935K), Etherea (1-Bed from AED 960K), Titania (1-Bed from AED 1.05M), Vintage (1-Bed from AED 1.11M), Skyflame (1-Bed from AED 1.15M), Twilight (1-Bed from AED 1.19M), SkyTerraces (1-Bed from AED 1.21M), Wraith (1-Bed from AED 1.29M), Mercedes Meydan (Studio from AED 1.35M), Cullinan (1-Bed from AED 1.40M).
       - UNDER AED 2.0M:
+        * Sobha: Sobha Central - Horizon Tower (1-Bed from AED 1.60M), Pinnacle Tower (1-Bed from AED 1.80M), The Woods at Sobha Sanctuary (2-Bed from AED 1.60M). All include 4% DLD waiver!
         * Danube: Fashionz (1-Bed from AED 1.573M), Timez (Presidential Suite from AED 1.670M), Oceanz (1-Bed from AED 1.70M), Aspirz (2-Bed from AED 1.778M), Serenz (2-Bed from AED 1.795M), Diamondz (1-Bed from AED 1.947M).
-        * Sobha: 330 Riverside Crescent (from AED 1.63M), The Pinnacle at Sobha Central (1-Bed from AED 1.78M), The Eden at Sobha Central (1-Bed from AED 1.83M), 340 Riverside Crescent (from AED 1.98M).
         * Binghatti: Titania (2-Bed from AED 1.54M), Skyflame (2-Bed from AED 1.69M), Vintage (2-Bed from AED 1.76M), Luxuria (2-Bed from AED 1.80M), Etherea (2-Bed from AED 1.80M), SkyTerraces (2-Bed from AED 1.88M), One by Binghatti (Studio from AED 1.8M), Mercedes Meydan (1-Bed from AED 1.9M), Twilight (2-Bed from AED 1.99M).
       - UNDER AED 3.0M:
-        * Sobha: 320 Riverside Crescent (from AED 2.26M), 350 Riverside Crescent (from AED 2.50M), The Pinnacle (2-Bed from AED 2.5M), The Eden (2-Bed from AED 2.6M).
+        * Sobha: Sobha Central - Eden Tower (from AED 2.50M), Serene Tower (from AED 2.50M), Tranquil Tower (from AED 2.50M), River Cove at Sobha City Abu Dhabi (2-Bed from AED 2.50M). All include DLD waiver!
         * Danube: Sparklz (3-Bed from AED 2.433M), Bayz 101 (1-Bed+Office from AED 2.275M), Bayz 102 (Flex 1-Bed from AED 2.542M), Diamondz (2-Bed from AED 2.782M).
         * Binghatti: Wraith (2-Bed from AED 2.09M), One by Binghatti (1-Bed from AED 2.77M).
     * Cheapest Available 1-Bed in Danube: Aspirz (Sports City) starting from AED 1.119M (480-496 sqft) is currently the #1 most affordable live 1-bedroom available in Danube's stock! In Serenz (JVC), standard 1-beds start from AED 1.289M (Flex 1-beds from AED 1.017M).
@@ -332,23 +344,10 @@ DEVELOPER & PROJECT MATCHING RULES (CRITICAL):
   - "shahrukh" / "sharukhz" / "shahrukhz" / "srk" -> Shahrukhz by Danube (Sheikh Zayed Road | Live Stock: Standard Offices from AED 2.416M, Executive Offices from AED 3.138M, Prestige Offices from AED 12.544M | Handover: 2029 | Plan: 40/60 with 0.5% monthly)
   - "oceanz" / "oceans" / "ocean" -> Oceanz by Danube (Dubai Maritime City | Studios from AED 1.20M, 1-Beds from AED 1.70M, 2-Beds from AED 2.40M | Handover: Q1 2027 | Plan: 40/60 with 0.5% monthly)
 
-  - "river cove" / "sobha river cove" -> River Cove Residences by SOBHA (Sobha City Abu Dhabi | AED 3.94M | Handover: Q4 2027)
-  - "sobha terraces" / "the terraces" -> The Terraces by SOBHA (Sobha City Abu Dhabi | Townhouses from AED 5.09M | Handover: Q3 2027)
-  - "the orchard" / "sobha orchard" -> The Orchard by SOBHA (Sobha City Abu Dhabi | Luxury Mansions from AED 9.05M | Handover: Q4 2027)
-  - "sobha central" / "sobha central area" / "sobha central location" -> Sobha Central (Sheikh Zayed Road, Jebel Ali First, Dubai | directly on SZR, walking distance to Jebel Ali Metro Station)
-  - "the pinnacle" / "pinnacle" -> The Pinnacle by SOBHA (Sobha Central, Sheikh Zayed Road, Jebel Ali First | 1-Bed from AED 1.78M, 2-Bed from AED 2.5M | Handover: Dec 2030 | 1 & 2-Bed apartments only, no 3-bed units)
-  - "the eden" / "eden" -> The Eden by SOBHA (Sobha Central, Sheikh Zayed Road, Jebel Ali First | 1-Bed from AED 1.83M, 2-Bed from AED 2.6M | Handover: Dec 2030 | 1 & 2-Bed apartments only, no 3-bed units)
-  - "310 riverside crescent" / "riverside crescent 310" -> 310 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 3.42M | Handover: Dec 2027)
-  - "320 riverside crescent" / "riverside crescent 320" -> 320 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 2.26M | Handover: July 2027)
-  - "330 riverside crescent" / "riverside crescent 330" -> 330 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 1.63M | Handover: June 2027)
-  - "340 riverside crescent" / "riverside crescent 340" -> 340 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 1.98M | Handover: Dec 2027)
-  - "350 riverside crescent" / "riverside crescent 350" -> 350 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 2.50M | Handover: Dec 2027)
-  - "360 riverside crescent" / "riverside crescent 360" -> 360 Riverside Crescent by SOBHA (Sobha Hartland II, MBR City | AED 3.46M | Handover: Dec 2027)
-  - "the woods" / "sobha woods" -> The Woods by SOBHA (Sobha Sanctuary, Dubailand | AED 1.00M | Handover: Q4 2028)
-  - "the willows" / "willows" -> The Willows by SOBHA (Sobha Sanctuary, Nad Al Sheba / Dubailand | 4-Bed Garden Villas from AED 4.06M | Handover: Q3 2029)
-  - "the grove" / "grove" -> The Grove by SOBHA (Sobha Sanctuary, Dubailand | Luxury Villas from AED 9.33M | Handover: Q4 2028)
-  - "yachtside marina" / "yachtside" -> Yachtside Marina by SOBHA (Siniya Island | AED 1.31M | Handover: Q4 2028)
-  - "palm grove" / "palm grove villas" -> Palm Grove & Coral Beach Villas by SOBHA (Siniya Island | Luxury Villas from AED 10.75M | Handover: Q4 2028)
+  - "sobha central" / "sobha central area" / "horizon" / "pinnacle" / "eden" / "serene" / "tranquil" -> Sobha Central (Sheikh Zayed Road, Jebel Ali First, Dubai | 6 Towers: Horizon from AED 1.6M, Pinnacle from AED 1.8M, Eden from AED 2.5M, Serene from AED 2.5M, Tranquil from AED 2.5M | Handover: Dec 2030 | Plan: 40:60 with 4% DLD Waiver | Walking distance to Jebel Ali Metro Station)
+  - "sobha sanctuary" / "sanctuary" / "the woods" / "willows" / "brooks" / "greens" / "the grove" -> Sobha Sanctuary (Dubailand, Dubai | Apartments: The Woods 1-Bed 540 sqft from AED 1.0M, 2-Bed from AED 1.6M - 1.8M | Townhouses: Brooks/Greens/Willows 4-Bed from AED 4.1M, Semi-Detached 5-Bed from AED 7.2M | Mansions: The Grove 4-Bed from AED 9.3M, 5-Bed from AED 11.2M, 6-Bed from AED 13.4M | Handover: 2028-2029 | Plan: 40:60 with 4% DLD Waiver)
+  - "sobha abu dhabi" / "sobha city abu dhabi" / "river cove" / "terraces" / "orchard" / "orchads" -> Sobha City Abu Dhabi (Abu Dhabi | River Cove Apartments: 1-Bed from AED 1.4M, 2-Bed from AED 2.5M, 3-Bed from AED 3.5M | The Terraces Townhouses: 3-Bed+Majlis from AED 5.09M, 4-Bed+Majlis from AED 8.07M | Orchards Estate Mansions: 4-Bed from AED 9.05M, 5-Bed from AED 11.16M, 6-Bed from AED 13.4M | Handover: 2027 | Plan: 40:60 with DLD Waiver)
+  - "seahaven" / "sobha seahaven" / "verde" / "sobha verde" / "orbis" / "sobha orbis" / "riverside crescent" / "sobha estates" -> 100% SOLD OUT from primary developer stock (resale only). Guide client to Sobha Central (from AED 1.6M), Sobha Sanctuary (from AED 1.0M), or Sobha City Abu Dhabi (from AED 1.4M).
 
 VERIFIED PROPERTY BROCHURES (ALWAYS SEND THE EXACT MATCHING PDF):
 
@@ -367,23 +366,18 @@ DANUBE PROPERTIES:
 - Serenz (JVC): https://the-pods-ai.vercel.app/brochures/danube-serenz.pdf
 - Shahrukhz (Sheikh Zayed Road): https://the-pods-ai.vercel.app/brochures/danube-shahrukhz.pdf
 
-SOBHA REALTY:
-- 310 Riverside Crescent (Sobha Hartland II): https://the-pods-ai.vercel.app/brochures/sobha-310-riverside-crescent.pdf
-- 320 Riverside Crescent (Sobha Hartland II): https://the-pods-ai.vercel.app/brochures/sobha-320-riverside-crescent.pdf
-- 330 Riverside Crescent (Sobha Hartland II): https://the-pods-ai.vercel.app/brochures/sobha-330-riverside-crescent.pdf
-- 340 Riverside Crescent (Sobha Hartland II): https://the-pods-ai.vercel.app/brochures/sobha-340-riverside-crescent.pdf
-- 350 Riverside Crescent (Sobha Hartland II): https://the-pods-ai.vercel.app/brochures/sobha-350-riverside-crescent.pdf
-- 360 Riverside Crescent (Sobha Hartland II): https://the-pods-ai.vercel.app/brochures/sobha-360-riverside-crescent.pdf
+SOBHA REALTY (OFFICIAL FOCUS DEVELOPMENTS):
+- Sobha Central (Sheikh Zayed Road): https://the-pods-ai.vercel.app/brochures/sobha-central.pdf
+- The Pinnacle at Sobha Central: https://the-pods-ai.vercel.app/brochures/sobha-pinnacle.pdf
+- The Eden at Sobha Central: https://the-pods-ai.vercel.app/brochures/sobha-eden.pdf
+- The Woods (Sobha Sanctuary): https://the-pods-ai.vercel.app/brochures/sobha-woods.pdf
+- The Willows & Brooks (Sobha Sanctuary): https://the-pods-ai.vercel.app/brochures/sobha-willows.pdf
+- The Grove (Sobha Sanctuary): https://the-pods-ai.vercel.app/brochures/sobha-grove.pdf
 - River Cove Residences (Sobha City Abu Dhabi): https://the-pods-ai.vercel.app/brochures/sobha-river-cove.pdf
 - The Terraces (Sobha City Abu Dhabi): https://the-pods-ai.vercel.app/brochures/sobha-terraces.pdf
 - The Orchard (Sobha City Abu Dhabi): https://the-pods-ai.vercel.app/brochures/sobha-orchard.pdf
-- The Pinnacle (Sobha Central, Jebel Ali First): https://the-pods-ai.vercel.app/brochures/sobha-pinnacle.pdf
-- The Eden (Sobha Central, Jebel Ali First): https://the-pods-ai.vercel.app/brochures/sobha-eden.pdf
-- The Woods (Sobha Sanctuary): https://the-pods-ai.vercel.app/brochures/sobha-woods.pdf
-- The Willows (Sobha Sanctuary): https://the-pods-ai.vercel.app/brochures/sobha-willows.pdf
-- The Grove (Sobha Sanctuary): https://the-pods-ai.vercel.app/brochures/sobha-grove.pdf
+- Sobha City Abu Dhabi Master Brochure: https://the-pods-ai.vercel.app/brochures/sobha-city.pdf
 - Yachtside Marina (Siniya Island): https://the-pods-ai.vercel.app/brochures/sobha-yachtside-marina.pdf
-- Palm Grove Villas (Siniya Island): https://the-pods-ai.vercel.app/brochures/sobha-palm-grove.pdf
 
 BINGHATTI DEVELOPERS:
 - Etherea (JVC): https://the-pods-ai.vercel.app/brochures/binghatti-etherea-brochure.pdf
@@ -544,9 +538,9 @@ You MUST return your response as a valid JSON object matching this exact schema:
       };
     }
 
-    if (text.includes('sobha') || text.includes('hartland') || text.includes('sanctuary') || text.includes('siniya') || text.includes('pinnacle') || text.includes('eden')) {
+    if (text.includes('sobha') || text.includes('hartland') || text.includes('sanctuary') || text.includes('central') || text.includes('abu dhabi') || text.includes('pinnacle') || text.includes('eden') || text.includes('woods')) {
       return {
-        reply: "Sobha has premium options across Dubai. The Pinnacle at Sobha Central starts from AED 1.78M for 1-beds, and 330 Riverside Crescent at Hartland II from AED 1.63M. Are you looking for apartments or villas?",
+        reply: "Sobha's 3 primary launches right now feature 4% DLD fee waivers: Sobha Central on Sheikh Zayed Road (1-beds from AED 1.6M), Sobha Sanctuary in Dubailand (1-beds from AED 1.0M, townhouses from AED 4.1M), and Sobha City Abu Dhabi (from AED 1.4M). Are you looking for apartments, townhouses, or villas?",
         language: 'en',
         action: 'UPDATE_LEAD',
       };

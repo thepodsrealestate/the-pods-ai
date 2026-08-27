@@ -776,52 +776,74 @@
           "projectName": "River Cove Residences at Sobha City Abu Dhabi",
           "location": "Sobha City, Abu Dhabi",
           "type": "Apartments",
-          "startingPriceAed": 3940000,
-          "paymentPlan": "40/60 flexible payment plan (10% down payment, 30% during construction, 60% on handover)",
+          "startingPriceAed": 1400000,
+          "paymentPlan": "Special 40:60 Payment Plan (5% on booking, 5% in 9m, 5% in 15m, 5% in 20m, 5% in 27m, 5% in 30m, 5% in 33m, 5% in 36m, 60% on handover) with DLD / Registration Fee Waiver",
           "handover": "Q4 2027",
           "unitsAvailable": [
-            "1-Bed",
-            "2-Bed",
-            "3-Bed"
+            "1-Bed (560 sqft | AED 1.4M)",
+            "2-Bed (1020 sqft | AED 2.5M)",
+            "3-Bed (1377 sqft | AED 3.5M)"
           ],
           "keyFacts": [
-            "Premium riverfront apartments within Sobha City Abu Dhabi master community",
-            "Lush landscaped gardens, waterfront promenades, and world-class amenities",
-            "Part of Gopeshwar/Gopesh (Head of Sobha UK) joint marketing with Minesh Patel"
+            "Luxury waterfront apartments within Sobha City Abu Dhabi master development",
+            "Starting from AED 1.4M with low 5% booking and 5% installments over 36 months",
+            "Includes DLD / Registration fee waiver promotion"
           ]
         },
         {
           "id": "sobha-terraces",
           "projectName": "The Terraces at Sobha City Abu Dhabi",
           "location": "Sobha City, Abu Dhabi",
-          "type": "Townhouses",
+          "type": "Garden Villas / Townhouses",
           "startingPriceAed": 5090000,
-          "paymentPlan": "40/60 flexible payment plan",
+          "paymentPlan": "Special 40:60 Payment Plan (5% on booking, 5% installments across 36 months, 60% on handover) with DLD / Registration Fee Waiver",
           "handover": "Q3 2027",
           "unitsAvailable": [
-            "3-Bed Townhouse",
-            "4-Bed Townhouse"
+            "3-Bed + Majlis Townhouse (2577 sqft | AED 5.09M)",
+            "4-Bed + Majlis Townhouse (4125 sqft | AED 8.07M)"
           ],
           "keyFacts": [
-            "Ultra-luxury terrace townhouses with private gardens and waterfront views",
-            "Premium community within Sobha City Abu Dhabi master development"
+            "Ultra-luxury terrace townhouses with private gardens and majlis in Sobha City Abu Dhabi",
+            "Built-up areas from 2,577 sqft to 4,125 sqft with DLD waiver included"
           ]
         },
         {
           "id": "sobha-orchard",
           "projectName": "The Orchard at Sobha City Abu Dhabi",
           "location": "Sobha City, Abu Dhabi",
-          "type": "Villas",
+          "type": "Estate Villas / Mansions",
           "startingPriceAed": 9050000,
-          "paymentPlan": "40/60 flexible payment plan",
+          "paymentPlan": "Special 40:60 Payment Plan (5% on booking, 5% installments across 36 months, 60% on handover) with DLD / Registration Fee Waiver",
           "handover": "Q4 2027",
           "unitsAvailable": [
-            "4-Bed Villa",
-            "5-Bed Villa"
+            "4-Bed Villa (4309 sqft | AED 9.05M)",
+            "5-Bed Villa (5317 sqft | AED 11.16M)",
+            "6-Bed Villa (6383 sqft | AED 13.4M)"
           ],
           "keyFacts": [
-            "Exclusive luxury villas with private gardens and premium finishes within Sobha City Abu Dhabi",
-            "Surrounded by lush orchards and green landscapes"
+            "Palatial estate villas surrounded by lush green landscapes in Sobha City Abu Dhabi",
+            "Sizes from 4,309 sqft up to 6,383 sqft with private pools and DLD waiver included"
+          ]
+        },
+        {
+          "id": "sobha-central",
+          "projectName": "Sobha Central (6 Towers on Sheikh Zayed Road)",
+          "location": "Sheikh Zayed Road, Jebel Ali First, Dubai",
+          "type": "Apartments",
+          "startingPriceAed": 1600000,
+          "paymentPlan": "40:60 Payment Plan (10% on booking, 10% in 3m, 10% in 15m, 10% in 24m, 60% on handover) with 4% DLD Fee Waiver",
+          "handover": "Dec 2030",
+          "unitsAvailable": [
+            "Horizon Tower (1-Bed 588-782 sqft from AED 1.6M | 2-Bed 932-1200 sqft | 2.5-Bed 1344 sqft up to AED 3.5M)",
+            "Pinnacle Tower (1-Bed 565 sqft from AED 1.8M | 2-Bed 990-1100 sqft up to AED 3.5M)",
+            "Eden Tower (1-Bed 588-782 sqft from AED 2.5M | 2-Bed 932-1200 sqft | 2.5-Bed 1344 sqft up to AED 3.5M)",
+            "Serene Tower (1-Bed & 2-Bed from AED 2.5M - 3.0M)",
+            "Tranquil Tower (1-Bed & 2-Bed from AED 2.5M - 3.0M)"
+          ],
+          "keyFacts": [
+            "Flagship 6-tower master development directly on Sheikh Zayed Road in Jebel Ali First",
+            "Walking distance to Jebel Ali Metro Station with seamless connectivity to Dubai Marina and Expo City",
+            "Special promotion: 40:60 payment plan and 4% DLD fee waiver included"
           ]
         },
         {
@@ -829,17 +851,16 @@
           "projectName": "The Pinnacle at Sobha Central",
           "location": "Sheikh Zayed Road, Jebel Ali First, Dubai",
           "type": "Apartments",
-          "startingPriceAed": 1780000,
-          "paymentPlan": "40/60 flexible payment plan",
+          "startingPriceAed": 1800000,
+          "paymentPlan": "40:60 Payment Plan (10% booking, 10% in 3m, 10% in 15m, 10% in 24m, 60% on handover) with 4% DLD Fee Waiver",
           "handover": "Dec 2030",
           "unitsAvailable": [
-            "1-Bed",
-            "2-Bed"
+            "1-Bed (565 sqft | from AED 1.8M)",
+            "2-Bed (990-1100 sqft | up to AED 3.5M)"
           ],
           "keyFacts": [
-            "Ultra-premium tower located directly on Sheikh Zayed Road in Jebel Ali First, within walking distance to Jebel Ali Metro Station",
-            "Iconic skyline views, close to Dubai Marina, JBR, Expo City, and DWC Airport",
-            "Offers 1 and 2-Bedroom luxury apartments only"
+            "Ultra-premium tower directly on Sheikh Zayed Road, walking distance to Jebel Ali Metro Station",
+            "Includes 4% DLD fee waiver and 40:60 payment structure"
           ]
         },
         {
@@ -847,71 +868,129 @@
           "projectName": "The Eden at Sobha Central",
           "location": "Sheikh Zayed Road, Jebel Ali First, Dubai",
           "type": "Apartments",
-          "startingPriceAed": 1830000,
-          "paymentPlan": "40/60 flexible payment plan",
+          "startingPriceAed": 2500000,
+          "paymentPlan": "40:60 Payment Plan (10% booking, 10% in 3m, 10% in 15m, 10% in 24m, 60% on handover) with 4% DLD Fee Waiver",
           "handover": "Dec 2030",
           "unitsAvailable": [
-            "1-Bed",
-            "2-Bed"
+            "1-Bed (588-782 sqft | from AED 2.5M)",
+            "2-Bed (932-1200 sqft | from AED 2.5M - 3.5M)",
+            "2.5-Bed (1344 sqft | up to AED 3.5M)"
           ],
           "keyFacts": [
-            "Garden-inspired luxury living directly on Sheikh Zayed Road in Jebel Ali First, walking distance to Jebel Ali Metro Station",
-            "Offers 1 and 2-Bedroom luxury apartments only",
-            "Serene green landscapes with premium interior finishes and instant highway connectivity"
+            "Garden-inspired luxury tower in Sobha Central on Sheikh Zayed Road",
+            "Includes 4% DLD fee waiver and 40:60 payment structure"
           ]
         },
         {
           "id": "sobha-woods",
-          "projectName": "The Woods Abode at Sobha Sanctuary",
+          "projectName": "The Woods at Sobha Sanctuary",
           "location": "Sobha Sanctuary, Dubailand, Dubai",
           "type": "Apartments",
           "startingPriceAed": 1000000,
-          "paymentPlan": "40/60 flexible payment plan",
+          "paymentPlan": "40:60 Payment Plan (10% booking, 10% in 3m, 10% in 15m, 10% in 24m, 60% on handover) with 4% DLD Fee Waiver",
           "handover": "Q4 2028",
           "unitsAvailable": [
-            "1-Bed",
-            "2-Bed",
-            "3-Bed"
+            "1-Bed (540 sqft | from AED 1.0M)",
+            "2-Bed (864 - 961 sqft | from AED 1.6M - 1.8M)"
           ],
           "keyFacts": [
-            "Nature-immersed luxury apartments within Sobha Sanctuary master community",
-            "Forest-themed landscaping with premium wellness and leisure amenities"
+            "Nature-immersed luxury apartments within Sobha Sanctuary master community in Dubailand",
+            "Entry price from AED 1.0M with 4% DLD waiver and 40:60 payment plan"
           ]
         },
         {
           "id": "sobha-willows",
-          "projectName": "The Willows at Sobha Sanctuary",
-          "location": "Sobha Sanctuary, Nad Al Sheba / Dubailand, Dubai",
-          "type": "Villas & Townhouses",
-          "startingPriceAed": 4060000,
-          "paymentPlan": "60/40 structural payment plan (60% during construction, 40% on completion)",
+          "projectName": "The Willows / Brooks / Greens at Sobha Sanctuary",
+          "location": "Sobha Sanctuary, Dubailand, Dubai",
+          "type": "Townhouses & Semi-Detached Villas",
+          "startingPriceAed": 4100000,
+          "paymentPlan": "40:60 Payment Plan (10% booking, 10% in 3m, 10% in 15m, 10% in 24m, 60% on handover) with 4% DLD Fee Waiver",
           "handover": "Q3 2029",
           "unitsAvailable": [
-            "4-Bedroom Garden Villas (Type A, B, C, D from 2,459 to 3,430 sq.ft.)"
+            "4-Bed Townhouse (2520 sqft built-up / 1947 sqft plot | from AED 4.1M)",
+            "4-Bed Townhouse (3430 sqft built-up / 3430 sqft plot | from AED 5.7M)",
+            "5-Bed Semi-Detached Villa (4154 sqft built-up / 3800 sqft plot | from AED 7.2M)"
           ],
           "keyFacts": [
-            "Exclusive collection of modern 4-bedroom garden villas and townhouses in Sobha Sanctuary",
-            "Starting Price from AED 3.99 Million with built-up areas from 1,870 to 3,430 sq.ft.",
-            "Located along Dubai-Al Ain Road corridor in Nad Al Sheba / Dubailand",
-            "Handover: Q3 2029 (August 2029) | Payment Plan: 60/40"
+            "Exclusive collection of modern townhouses and semi-detached villas in Sobha Sanctuary",
+            "Includes 4% DLD fee waiver and 40:60 payment plan"
           ]
         },
         {
           "id": "sobha-grove",
           "projectName": "The Grove at Sobha Sanctuary",
           "location": "Sobha Sanctuary, Dubailand, Dubai",
-          "type": "Villas",
-          "startingPriceAed": 9330000,
-          "paymentPlan": "40/60 flexible payment plan",
+          "type": "Detached Luxury Villas",
+          "startingPriceAed": 9300000,
+          "paymentPlan": "40:60 Payment Plan (10% booking, 10% in 3m, 10% in 15m, 10% in 24m, 60% on handover) with 4% DLD Fee Waiver",
           "handover": "Q4 2028",
           "unitsAvailable": [
-            "4-Bed Villa",
-            "5-Bed Villa",
-            "6-Bed Villa"
+            "4-Bed Detached Villa (4905 sqft built-up / 5789 sqft plot | from AED 9.3M)",
+            "5-Bed Detached Villa (5812 sqft built-up / 5818 sqft plot | from AED 11.2M)",
+            "6-Bed Detached Villa (7219 sqft built-up / 7104 sqft plot | from AED 13.4M)"
           ],
           "keyFacts": [
-            "Exclusive luxury villas within Sobha Sanctuary with private pools and gardens",
-            "Ultra-premium finishes with expansive living spaces"
+            "Flagship detached mansions in Sobha Sanctuary with private pools, expansive plots, and 4% DLD fee waiver"
+          ]
+        },
+        {
+          "id": "sobha-seahaven",
+          "projectName": "Sobha SeaHaven",
+          "location": "Dubai Harbour, Dubai",
+          "type": "Apartments",
+          "startingPriceAed": 3200000,
+          "paymentPlan": "Sold Out from Developer Primary Inventory",
+          "handover": "Dec 2026",
+          "status": "SOLD OUT",
+          "unitsAvailable": [],
+          "soldOutUnits": ["1 Bedroom", "2 Bedroom", "3 Bedroom", "4 Bedroom"],
+          "keyFacts": [
+            "100% Sold Out from primary developer stock (resale only). Guide clients to Sobha Central, Sobha Sanctuary, or Sobha City Abu Dhabi."
+          ]
+        },
+        {
+          "id": "sobha-verde",
+          "projectName": "Sobha Verde",
+          "location": "Jumeirah Lake Towers (JLT), Dubai",
+          "type": "Apartments",
+          "startingPriceAed": 2000000,
+          "paymentPlan": "Sold Out from Developer Primary Inventory",
+          "handover": "Q4 2026",
+          "status": "SOLD OUT",
+          "unitsAvailable": [],
+          "soldOutUnits": ["1 Bedroom", "2 Bedroom", "3 Bedroom"],
+          "keyFacts": [
+            "100% Sold Out from primary developer stock (resale only). Guide clients to Sobha Central, Sobha Sanctuary, or Sobha City Abu Dhabi."
+          ]
+        },
+        {
+          "id": "sobha-orbis",
+          "projectName": "Sobha Orbis",
+          "location": "Motor City, Dubai",
+          "type": "Apartments",
+          "startingPriceAed": 1000000,
+          "paymentPlan": "Sold Out from Developer Primary Inventory",
+          "handover": "2027",
+          "status": "SOLD OUT",
+          "unitsAvailable": [],
+          "soldOutUnits": ["1 Bedroom", "1.5 Bedroom", "2 Bedroom"],
+          "keyFacts": [
+            "100% Sold Out from primary developer stock (resale only). Guide clients to Sobha Central, Sobha Sanctuary, or Sobha City Abu Dhabi."
+          ]
+        },
+        {
+          "id": "sobha-estates-villas",
+          "projectName": "Sobha Estates Villas",
+          "location": "Sobha Hartland II, MBR City, Dubai",
+          "type": "Villas",
+          "startingPriceAed": 22000000,
+          "paymentPlan": "Sold Out from Developer Primary Inventory",
+          "handover": "2026",
+          "status": "SOLD OUT",
+          "unitsAvailable": [],
+          "soldOutUnits": ["5-Bed Villa", "6-Bed Villa"],
+          "keyFacts": [
+            "100% Sold Out from primary developer stock. Guide villa buyers to The Grove at Sobha Sanctuary or Orchards at Sobha City Abu Dhabi."
           ]
         },
         {

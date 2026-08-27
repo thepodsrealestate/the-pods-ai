@@ -75,12 +75,11 @@ The AI is natively equipped with verified pricing, handovers, payment plans, and
 * **Breez & Oceanz (Maritime City):** Waterfront residences from AED 1.20M (Oceanz) and AED 1.35M (Breez).
 * **Diamondz (JLT), Fashionz (JVT), Timez (DSO), Greenz (Academic City), Shahrukhz (SZR), Sparklz (Al Furjan), Sportz (Sports City - Sold Out).**
 
-#### 2. Sobha Realty (16 Projects)
-* **The Pinnacle & The Eden at Sobha Central (SZR / Jebel Ali First):** 1-Beds from AED 1.78M, 2-Beds from AED 2.5M (Walking distance to Jebel Ali Metro).
-* **Riverside Crescent (Sobha Hartland II):** Towers 310, 320, 330 (from AED 1.63M), 340, 350, 360.
-* **The Woods, The Willows & The Grove (Sobha Sanctuary, Dubailand):** Entry from AED 1.00M up to luxury villas.
-* **Siniya Island (UAQ):** Yachtside Marina Residences (AED 1.31M) and Palm Grove Beach Villas (AED 10.75M).
-* **Sobha City Abu Dhabi:** River Cove, The Terraces, The Orchard.
+#### 2. Sobha Realty (Q3/Q4 Active Master Developments — Gopeshwar / Sobha UK Allocation)
+* **Sobha Central (Sheikh Zayed Road, Jebel Ali First — 6 Towers):** 1-Beds from AED 1.6M (Horizon) / AED 1.8M (Pinnacle) / AED 2.5M (Eden); 2-Beds up to AED 3.5M. Walking distance to Jebel Ali Metro. **40:60 payment plan with 4% DLD Fee Waiver Included!**
+* **Sobha Sanctuary (Dubailand):** The Woods Apartments (1-Bed from AED 1.0M, 2-Bed from AED 1.6M); Townhouses Brooks/Greens/Willows (4-Bed from AED 4.1M, Semi-Detached 5-Bed from AED 7.2M); The Grove Mansions (4-Bed from AED 9.3M up to 6-Bed at AED 13.4M). **40:60 plan with 4% DLD Fee Waiver Included!**
+* **Sobha City Abu Dhabi:** River Cove Waterfront Apartments (1-Bed from AED 1.4M, 2-Bed from AED 2.5M, 3-Bed from AED 3.5M); The Terraces Townhouses (from AED 5.09M); The Orchards Estate Mansions (from AED 9.05M). **Special 40:60 plan with DLD / Registration Waiver!**
+* **Developer Sold Out Projects (Exhausted Primary Inventory):** Sobha Riverside Crescent (Towers 310-360), Sobha Estates Villas, Sobha SeaHaven (Dubai Harbour), Sobha Verde (JLT), and Sobha Orbis (Motor City) are 100% sold out from primary developer stock; AI automatically redirects leads to the 3 active launches above.
 
 #### 3. Binghatti Developers (11 Projects)
 * **Iconic Partnerships:** Mercedes-Benz Places (Downtown AED 8.88M / Meydan AED 1.35M), Burj Binghatti Jacob & Co (AED 8.2M).
