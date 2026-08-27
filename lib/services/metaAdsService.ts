@@ -104,6 +104,41 @@ export class MetaAdsService {
       errorMessage: 'Missing Meta Ads API environment variables',
     };
   }
+  public async getCampaigns(period: string = 'last_30d'): Promise<any[]> {
+    const accessToken = process.env.META_ADS_ACCESS_TOKEN;
+    const adAccountId = process.env.META_AD_ACCOUNT_ID;
+    if (!accessToken || !adAccountId) return [];
+    try {
+      const cleanAccount = adAccountId.startsWith('act_') ? adAccountId : `act_${adAccountId}`;
+      const url = `https://graph.facebook.com/v19.0/${cleanAccount}/insights?fields=campaign_name,campaign_id,spend,impressions,clicks,ctr,actions&level=campaign&date_preset=${encodeURIComponent(period)}&limit=50&access_token=${accessToken}`;
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) return [];
+      const json = await res.json();
+      if (!json?.data) return [];
+      return json.data.map((d: any) => {
+        const spend = parseFloat(d.spend || '0');
+        const clicks = parseInt(d.clicks || '0', 10);
+        const impressions = parseInt(d.impressions || '0', 10);
+        let leads = 0;
+        if (Array.isArray(d.actions)) {
+          const la = d.actions.find((a: any) => a.action_type === 'lead' || a.action_type === 'onsite_conversion.lead_grouped');
+          if (la) leads = parseInt(la.value || '0', 10);
+        }
+        return {
+          platform: 'meta',
+          campaignName: d.campaign_name,
+          campaignId: d.campaign_id,
+          spend: parseFloat(spend.toFixed(2)),
+          clicks,
+          impressions,
+          ctr: parseFloat((parseFloat(d.ctr || '0')).toFixed(2)),
+          leads,
+          cpc: clicks > 0 ? parseFloat((spend / clicks).toFixed(2)) : 0,
+          cpl: leads > 0 ? parseFloat((spend / leads).toFixed(2)) : 0,
+        };
+      });
+    } catch { return []; }
+  }
 }
 
 export const metaAdsService = MetaAdsService.getInstance();

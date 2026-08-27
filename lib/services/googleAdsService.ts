@@ -137,6 +137,49 @@ export class GoogleAdsService {
       errorMessage: 'Missing Google Ads API environment variables',
     };
   }
+  public async getCampaigns(period: string = 'last_30d'): Promise<any[]> {
+    const clientId = process.env.GOOGLE_ADS_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_ADS_CLIENT_SECRET;
+    const developerToken = process.env.GOOGLE_ADS_DEVELOPER_TOKEN;
+    const customerId = (process.env.GOOGLE_ADS_CUSTOMER_ID || '').replace(/-/g, '');
+    const refreshToken = process.env.GOOGLE_ADS_REFRESH_TOKEN;
+    if (!clientId || !clientSecret || !developerToken || !refreshToken || !customerId) return [];
+    try {
+      const client = this.getClient();
+      const loginCustomerId = process.env.GOOGLE_ADS_LOGIN_CUSTOMER_ID?.replace(/-/g, '') || undefined;
+      const customer = client.Customer({ customer_id: customerId, login_customer_id: loginCustomerId, refresh_token: refreshToken });
+      let dateClause = 'DURING LAST_30_DAYS';
+      const p = period.toLowerCase();
+      if (p === 'today' || p === '1d') dateClause = 'DURING TODAY';
+      else if (p === 'last_7d' || p === '7d') dateClause = 'DURING LAST_7_DAYS';
+      else if (p === 'this_month' || p === 'month') dateClause = 'DURING THIS_MONTH';
+      else if (p === 'maximum' || p === 'all') dateClause = '';
+      const whereClause = dateClause ? `WHERE segments.date ${dateClause}` : '';
+      const query = `SELECT campaign.name, campaign.id, campaign.status, metrics.cost_micros, metrics.impressions, metrics.clicks, metrics.ctr, metrics.conversions FROM campaign ${whereClause} ORDER BY metrics.cost_micros DESC LIMIT 20`;
+      const res = await customer.query(query);
+      return (res || []).map((r: any) => {
+        const costMicros = Number(r.metrics?.cost_micros ?? 0);
+        const spend = parseFloat((costMicros / 1000000).toFixed(2));
+        const clicks = Number(r.metrics?.clicks ?? 0);
+        const impressions = Number(r.metrics?.impressions ?? 0);
+        const conversions = Math.round(Number(r.metrics?.conversions ?? 0));
+        const statusMap: any = { 2: 'Active', 3: 'Paused', 4: 'Removed' };
+        return {
+          platform: 'google',
+          campaignName: r.campaign?.name || 'Unknown',
+          campaignId: String(r.campaign?.id || ''),
+          status: statusMap[r.campaign?.status] || String(r.campaign?.status || 'Unknown'),
+          spend,
+          clicks,
+          impressions,
+          ctr: impressions > 0 ? parseFloat(((clicks / impressions) * 100).toFixed(2)) : 0,
+          leads: conversions,
+          cpc: clicks > 0 ? parseFloat((spend / clicks).toFixed(2)) : 0,
+          cpl: conversions > 0 ? parseFloat((spend / conversions).toFixed(2)) : 0,
+        };
+      });
+    } catch { return []; }
+  }
 }
 
 export const googleAdsService = GoogleAdsService.getInstance();

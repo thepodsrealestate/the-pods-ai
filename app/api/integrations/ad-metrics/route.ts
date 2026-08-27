@@ -10,6 +10,7 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const period = searchParams.get('period') || 'last_30d';
+    const includeCampaigns = searchParams.get('campaigns') === '1';
 
     const [meta, google] = await Promise.all([
       metaAdsService.getMetrics(period),
@@ -22,20 +23,24 @@ export async function GET(req: Request) {
     const overallCplAed = totalLeads > 0 ? parseFloat((totalSpendAed / totalLeads).toFixed(2)) : 0;
     const overallCpcAed = totalClicks > 0 ? parseFloat((totalSpendAed / totalClicks).toFixed(2)) : 0;
 
-    return NextResponse.json({
+    const result: any = {
       success: true,
       data: {
-        summary: {
-          totalSpendAed,
-          totalLeads,
-          totalClicks,
-          overallCplAed,
-          overallCpcAed,
-        },
+        summary: { totalSpendAed, totalLeads, totalClicks, overallCplAed, overallCpcAed },
         meta,
         google,
       },
-    });
+    };
+
+    if (includeCampaigns) {
+      const [metaCampaigns, googleCampaigns] = await Promise.all([
+        metaAdsService.getCampaigns(period),
+        googleAdsService.getCampaigns(period),
+      ]);
+      result.data.campaigns = [...metaCampaigns, ...googleCampaigns];
+    }
+
+    return NextResponse.json(result);
   } catch (error: any) {
     console.error('Error fetching combined ad metrics:', error);
     return NextResponse.json(

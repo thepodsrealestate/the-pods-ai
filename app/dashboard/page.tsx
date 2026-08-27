@@ -291,6 +291,7 @@ export default function MasterDashboardPage() {
     meta: { spendAed: 0, impressions: 0, clicks: 0, ctr: 0, leads: 0, cplAed: 0, isLive: false },
     google: { spendAed: 0, impressions: 0, clicks: 0, ctr: 0, leads: 0, cplAed: 0, isLive: false }
   });
+  const [adCampaigns, setAdCampaigns] = useState<any[]>([]);
 
   useEffect(() => {
     fetchAdMetrics("last_30d");
@@ -300,10 +301,11 @@ export default function MasterDashboardPage() {
     const p = periodToFetch || adPeriod;
     setLoadingAdMetrics(true);
     try {
-      const res = await fetch(`/api/integrations/ad-metrics?period=${p}`, { cache: "no-store" });
+      const res = await fetch(`/api/integrations/ad-metrics?period=${p}&campaigns=1`, { cache: "no-store" });
       const json = await res.json();
       if (json.success && json.data) {
         setAdMetrics(json.data);
+        setAdCampaigns(json.data.campaigns || []);
       }
     } catch (e) {
       console.error("Ad Metrics fetch error:", e);
@@ -2176,6 +2178,65 @@ export default function MasterDashboardPage() {
                   })}
                 </div>
               </div>
+
+                {/* Campaign-Level Breakdown Table */}
+                {adCampaigns.length > 0 && (
+                <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-6 shadow-xl space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-base font-bold text-white flex items-center space-x-2">
+                        <Megaphone className="w-4 h-4 text-[#C5A059]" />
+                        <span>Individual Campaign Performance</span>
+                      </h3>
+                      <p className="text-xs text-slate-400 mt-1">Live per-campaign breakdown from Meta &amp; Google Ads APIs</p>
+                    </div>
+                    <span className="text-[9px] font-mono bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold uppercase">Live API</span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-[#1E2230] text-[10px] text-slate-400 uppercase tracking-wider">
+                          <th className="text-left py-3 px-3">Platform</th>
+                          <th className="text-left py-3 px-3">Campaign Name</th>
+                          <th className="text-right py-3 px-3">Spend (AED)</th>
+                          <th className="text-right py-3 px-3">Clicks</th>
+                          <th className="text-right py-3 px-3">Impressions</th>
+                          <th className="text-right py-3 px-3">CTR</th>
+                          <th className="text-right py-3 px-3">CPC (AED)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {adCampaigns
+                          .sort((a: any, b: any) => b.spend - a.spend)
+                          .map((c: any, idx: number) => (
+                          <tr key={`${c.platform}-${c.campaignId}-${idx}`} className="border-b border-[#1E2230]/50 hover:bg-[#151824] transition-colors">
+                            <td className="py-3 px-3">
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
+                                c.platform === 'meta'
+                                  ? 'bg-purple-500/10 text-purple-400 border border-purple-500/30'
+                                  : 'bg-red-500/10 text-red-400 border border-red-500/30'
+                              }`}>
+                                {c.platform === 'meta' ? 'Meta' : 'Google'}
+                              </span>
+                            </td>
+                            <td className="py-3 px-3 text-white font-medium max-w-[250px] truncate" title={c.campaignName}>
+                              {c.campaignName}
+                              {c.status && c.status !== 'Active' && (
+                                <span className="ml-2 text-[9px] text-amber-400 font-mono">({c.status})</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-3 text-right font-mono text-white">{c.spend.toLocaleString()}</td>
+                            <td className="py-3 px-3 text-right font-mono text-slate-300">{c.clicks.toLocaleString()}</td>
+                            <td className="py-3 px-3 text-right font-mono text-slate-300">{c.impressions.toLocaleString()}</td>
+                            <td className="py-3 px-3 text-right font-mono text-emerald-400">{c.ctr}%</td>
+                            <td className="py-3 px-3 text-right font-mono text-[#C5A059]">{c.cpc > 0 ? c.cpc : '\u2014'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                )}
             </div>
           )}
 
