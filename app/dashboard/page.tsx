@@ -2083,12 +2083,13 @@ export default function MasterDashboardPage() {
                           <p className="text-lg font-mono font-bold text-white">AED {adMetrics.meta.spendAed.toLocaleString()}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] text-slate-400 uppercase">Cost Per Lead (CPL)</p>
-                          <p className="text-lg font-mono font-bold text-purple-400">AED {adMetrics.meta.cplAed}</p>
+                          <p className="text-[10px] text-slate-400 uppercase">{adMetrics.meta.leads > 0 ? "Cost Per Lead (CPL)" : "Cost Per Click (CPC)"}</p>
+                          <p className="text-lg font-mono font-bold text-purple-400">AED {adMetrics.meta.leads > 0 ? adMetrics.meta.cplAed : adMetrics.meta.cpcAed}</p>
                         </div>
                       </div>
                       <div className="flex justify-between text-[11px] text-slate-400 border-t border-[#1E2230] pt-2 font-mono">
-                        <span>Leads: <strong className="text-white">{adMetrics.meta.leads}</strong></span>
+                        <span>Clicks: <strong className="text-white">{adMetrics.meta.clicks.toLocaleString()}</strong></span>
+                        <span>Impr: <strong className="text-white">{adMetrics.meta.impressions.toLocaleString()}</strong></span>
                         <span>CTR: <strong className="text-emerald-400">{adMetrics.meta.ctr}%</strong></span>
                       </div>
                     </div>
@@ -2109,12 +2110,13 @@ export default function MasterDashboardPage() {
                           <p className="text-lg font-mono font-bold text-white">AED {adMetrics.google.spendAed.toLocaleString()}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] text-slate-400 uppercase">Cost Per Lead (CPL)</p>
-                          <p className="text-lg font-mono font-bold text-red-400">AED {adMetrics.google.cplAed}</p>
+                          <p className="text-[10px] text-slate-400 uppercase">{adMetrics.google.leads > 0 ? "Cost Per Lead (CPL)" : "Cost Per Click (CPC)"}</p>
+                          <p className="text-lg font-mono font-bold text-red-400">AED {adMetrics.google.leads > 0 ? adMetrics.google.cplAed : adMetrics.google.cpcAed}</p>
                         </div>
                       </div>
                       <div className="flex justify-between text-[11px] text-slate-400 border-t border-[#1E2230] pt-2 font-mono">
-                        <span>Leads: <strong className="text-white">{adMetrics.google.leads}</strong></span>
+                        <span>Clicks: <strong className="text-white">{adMetrics.google.clicks.toLocaleString()}</strong></span>
+                        <span>Impr: <strong className="text-white">{adMetrics.google.impressions.toLocaleString()}</strong></span>
                         <span>CTR: <strong className="text-emerald-400">{adMetrics.google.ctr}%</strong></span>
                       </div>
                     </div>
@@ -2133,12 +2135,12 @@ export default function MasterDashboardPage() {
                           <p className="text-lg font-mono font-bold text-[#C5A059]">AED {adMetrics.summary.totalSpendAed.toLocaleString()}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] text-slate-400 uppercase">Overall CPL</p>
-                          <p className="text-lg font-mono font-bold text-white">AED {adMetrics.summary.overallCplAed}</p>
+                          <p className="text-[10px] text-slate-400 uppercase">{adMetrics.summary.totalLeads > 0 ? "Overall CPL" : "Overall CPC"}</p>
+                          <p className="text-lg font-mono font-bold text-white">AED {adMetrics.summary.totalLeads > 0 ? adMetrics.summary.overallCplAed : adMetrics.summary.overallCpcAed}</p>
                         </div>
                       </div>
                       <div className="flex justify-between text-[11px] text-slate-400 border-t border-[#1E2230] pt-2 font-mono">
-                        <span>Total Leads: <strong className="text-emerald-400">{adMetrics.summary.totalLeads}</strong></span>
+                        <span>Total Clicks: <strong className="text-emerald-400">{adMetrics.summary.totalClicks?.toLocaleString() || 0}</strong></span>
                         <span>SLA: <strong className="text-[#C5A059]">Sub-10s</strong></span>
                       </div>
                     </div>
@@ -2733,8 +2735,8 @@ export default function MasterDashboardPage() {
                     <p className="text-sm font-mono font-bold text-white">AED {adMetrics.summary.totalSpendAed.toLocaleString()}</p>
                   </div>
                   <div className="bg-[#0D0F17] p-3 rounded-xl border border-[#1E2230]">
-                    <span className="text-[10px] text-slate-400 uppercase">Overall CPL</span>
-                    <p className="text-sm font-mono font-bold text-emerald-400">AED {adMetrics.summary.overallCplAed}</p>
+                    <span className="text-[10px] text-slate-400 uppercase">{adMetrics.summary.totalLeads > 0 ? "Overall CPL" : "Overall CPC"}</span>
+                    <p className="text-sm font-mono font-bold text-emerald-400">AED {adMetrics.summary.totalLeads > 0 ? adMetrics.summary.overallCplAed : adMetrics.summary.overallCpcAed}</p>
                   </div>
                 </div>
               </div>
