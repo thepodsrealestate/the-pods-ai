@@ -333,32 +333,64 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       ));
 
     if (isMeetingBooking) {
-      // Parse actual booking time from AI response instead of hardcoding
+      // Parse actual booking date + time from AI response
       let meetingTime = new Date(Date.now() + 86400000 * 2);
       meetingTime.setHours(15, 0, 0, 0); // 3:00 PM default
+
+      // Try to parse date from booking_details (e.g. "3 PM on September 3rd", "2026-09-03 15:00")
       if (aiResult.booking_details?.time) {
         try {
-          const timeMatch = aiResult.booking_details.time.match(/(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i);
-          if (timeMatch) {
-            let hours = parseInt(timeMatch[1]);
-            const mins = parseInt(timeMatch[2] || '0');
-            const ampm = timeMatch[3]?.toUpperCase();
-            if (ampm === 'PM' && hours < 12) hours += 12;
-            if (ampm === 'AM' && hours === 12) hours = 0;
-            meetingTime.setHours(hours, mins, 0, 0);
+          // Try parsing as a full date string first
+          const parsed = new Date(aiResult.booking_details.time);
+          if (!isNaN(parsed.getTime()) && parsed.getFullYear() >= 2026) {
+            meetingTime = parsed;
+          } else {
+            // Extract time component
+            const timeMatch = aiResult.booking_details.time.match(/(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i);
+            if (timeMatch) {
+              let hours = parseInt(timeMatch[1]);
+              const mins = parseInt(timeMatch[2] || '0');
+              const ampm = timeMatch[3]?.toUpperCase();
+              if (ampm === 'PM' && hours < 12) hours += 12;
+              if (ampm === 'AM' && hours === 12) hours = 0;
+              meetingTime.setHours(hours, mins, 0, 0);
+            }
+          }
+
+          // Extract date component (e.g. "September 3", "Sep 3", "3rd September")
+          const dateInReply = (aiResult.booking_details.time + ' ' + (aiResult.booking_details.date || '')).toLowerCase();
+          const monthMatch = dateInReply.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+(\d{1,2})/i) ||
+                             dateInReply.match(/(\d{1,2})\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i);
+          if (monthMatch) {
+            const months: any = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
+            const m1 = monthMatch[1].toLowerCase().slice(0,3);
+            const m2 = monthMatch[2]?.toLowerCase().slice(0,3);
+            const monthIdx = months[m1] ?? months[m2];
+            const day = parseInt(months[m1] !== undefined ? monthMatch[2] : monthMatch[1]);
+            if (monthIdx !== undefined && day) {
+              meetingTime.setMonth(monthIdx, day);
+              if (meetingTime < new Date()) meetingTime.setFullYear(meetingTime.getFullYear() + 1);
+            }
           }
         } catch (_) { /* fallback to default */ }
       }
 
-      const bookingLocation = aiResult.booking_details?.location || 
-        (aiResult.reply.toLowerCase().includes('bluewaters') ? 'The Pods, Bluewaters Island, Dubai' : 'Google Meet');
+      // Detect location — London event or Dubai/Google Meet
+      const replyLower = aiResult.reply.toLowerCase();
+      const bookingLocationRaw = aiResult.booking_details?.location || '';
+      let bookingLocation = 'Google Meet';
+      if (replyLower.includes('london') || replyLower.includes('brompton') || replyLower.includes('knightsbridge') || bookingLocationRaw.toLowerCase().includes('london')) {
+        bookingLocation = 'Danube Properties, 44 Brompton Rd, Knightsbridge, London SW3 1BW, UK';
+      } else if (replyLower.includes('bluewaters') || replyLower.includes('pods') || bookingLocationRaw.toLowerCase().includes('bluewaters')) {
+        bookingLocation = 'The Pods, Bluewaters Island, Dubai';
+      }
 
       await CalendarService.createBooking({
         leadId: lead.id,
         meetingTime,
         location: bookingLocation,
       });
-      console.log('[BG-LOG] ✅ Meeting Booking created & Google Calendar invite dispatched to', lead.email, 'at', bookingLocation);
+      console.log('[BG-LOG] ✅ Meeting Booking created & Google Calendar invite dispatched to', lead.email, 'at', bookingLocation, 'on', meetingTime.toISOString());
     } else if (aiResult.action === 'HANDOFF') {
       // BUG FIX: Persist handoff state — disable AI and create Handoff record
       await prisma.lead.update({
