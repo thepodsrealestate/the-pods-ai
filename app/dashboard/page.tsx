@@ -2691,10 +2691,17 @@ export default function MasterDashboardPage() {
                         <span className="w-2 h-2 rounded-full bg-purple-400 inline-block"></span>
                         <span>Meta Ads (FB / IG)</span>
                       </span>
-                      <span className="text-slate-300 font-mono">CPL: AED {adMetrics.meta.cplAed} ({adMetrics.meta.leads} leads)</span>
+                      <span className="text-slate-300 font-mono">
+                        {adMetrics.meta.spendAed > 0 
+                          ? `AED ${adMetrics.meta.spendAed.toLocaleString()} · ${adMetrics.meta.clicks} clicks (${adMetrics.meta.impressions.toLocaleString()} impr)` 
+                          : `CPL: AED ${adMetrics.meta.cplAed} (${adMetrics.meta.leads} leads)`}
+                      </span>
                     </div>
                     <div className="w-full bg-[#151824] rounded-full h-3.5 overflow-hidden border border-purple-500/30 p-0.5">
-                      <div className="h-full bg-gradient-to-r from-purple-600 to-purple-400 rounded-full" style={{ width: `${Math.min(100, Math.round((adMetrics.meta.leads / (adMetrics.summary.totalLeads || 1)) * 100))}%` }}></div>
+                      <div 
+                        className="h-full bg-gradient-to-r from-purple-600 to-purple-400 rounded-full transition-all duration-500" 
+                        style={{ width: `${adMetrics.summary.totalSpendAed > 0 ? Math.max(5, Math.round((adMetrics.meta.spendAed / adMetrics.summary.totalSpendAed) * 100)) : 0}%` }}
+                      ></div>
                     </div>
                   </div>
 
@@ -2706,11 +2713,16 @@ export default function MasterDashboardPage() {
                         <span>Google Ads (Display & Search)</span>
                       </span>
                       <span className="text-slate-300 font-mono">
-                        {adMetrics.google.spendAed > 0 ? `AED ${adMetrics.google.spendAed.toLocaleString()} · ${adMetrics.google.clicks} clicks (CPC: AED ${adMetrics.google.cpcAed ?? adMetrics.google.cplAed})` : `CPL: AED ${adMetrics.google.cplAed} (${adMetrics.google.leads} leads)`}
+                        {adMetrics.google.spendAed > 0 
+                          ? `AED ${adMetrics.google.spendAed.toLocaleString()} · ${adMetrics.google.clicks} clicks (CPC: AED ${adMetrics.google.cpcAed ?? adMetrics.google.cplAed})` 
+                          : `CPL: AED ${adMetrics.google.cplAed} (${adMetrics.google.leads} leads)`}
                       </span>
                     </div>
                     <div className="w-full bg-[#151824] rounded-full h-3.5 overflow-hidden border border-[#C5A059]/30 p-0.5">
-                      <div className="h-full bg-gradient-to-r from-[#C5A059] to-[#D4B06A] rounded-full transition-all duration-500" style={{ width: `${adMetrics.google.spendAed > 0 ? 100 : (adMetrics.google.leads > 0 ? Math.min(100, Math.round((adMetrics.google.leads / (adMetrics.summary.totalLeads || 1)) * 100)) : 0)}%` }}></div>
+                      <div 
+                        className="h-full bg-gradient-to-r from-[#C5A059] to-[#D4B06A] rounded-full transition-all duration-500" 
+                        style={{ width: `${adMetrics.summary.totalSpendAed > 0 ? Math.max(5, Math.round((adMetrics.google.spendAed / adMetrics.summary.totalSpendAed) * 100)) : 0}%` }}
+                      ></div>
                     </div>
                   </div>
                 </div>
