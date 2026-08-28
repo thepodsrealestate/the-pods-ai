@@ -24,20 +24,79 @@ function checkRateLimit(identifier: string, limit: number = 10, windowMs: number
   return true;
 }
 
-// Ultra-fast webhook — skips DB, responds to ManyChat within timeout
-// DB logging happens in background after response is sent
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
   try {
-    // 1. Webhook Secret Verification (if MANYCHAT_WEBHOOK_SECRET is set)
+    const body = await req.json();
+
+    // 1. Check if this is a direct Meta Lead Ad Webhook Event
+    if (body.object === 'page' || body.entry?.[0]?.changes?.[0]?.field === 'leadgen') {
+      const leadgenChange = body.entry?.[0]?.changes?.[0]?.value;
+      const leadgenId = leadgenChange?.leadgen_id;
+      const formId = leadgenChange?.form_id;
+
+      console.log(`[META LEADGEN EVENT RECEIVED] Leadgen ID: ${leadgenId}, Form ID: ${formId}`);
+
+      // Process Meta Lead in background and return 200 immediately to Meta
+      after(async () => {
+        if (!leadgenId) return;
+        try {
+          const pageToken = process.env.META_PAGE_ACCESS_TOKEN || process.env.META_ACCESS_TOKEN;
+          if (pageToken) {
+            const res = await fetch(`https://graph.facebook.com/v26.0/${leadgenId}?access_token=${pageToken}`);
+            const leadData = await res.json();
+            
+            if (leadData?.field_data) {
+              let fullName = 'Meta Lead';
+              let phone = '';
+              let email = '';
+
+              leadData.field_data.forEach((field: { name: string; values: string[] }) => {
+                const val = field.values?.[0] || '';
+                if (field.name.includes('name')) fullName = val;
+                if (field.name.includes('phone')) phone = val;
+                if (field.name.includes('email')) email = val.toLowerCase().trim();
+              });
+
+              if (phone) {
+                const lead = await LeadService.findOrCreateLead({
+                  phone,
+                  fullName,
+                  leadSource: 'FACEBOOK_ADS',
+                  attribution: {
+                    source: 'FACEBOOK_ADS',
+                    medium: 'cpc',
+                    campaign: 'Meta London Event Form',
+                    formId,
+                    leadgenId,
+                  },
+                });
+
+                if (email && lead.id) {
+                  await prisma.lead.update({
+                    where: { id: lead.id },
+                    data: { email },
+                  });
+                }
+                console.log(`[META LEAD SAVED] Successfully captured ${fullName} (${phone})`);
+              }
+            }
+          }
+        } catch (leadFetchErr: any) {
+          console.error('[META LEADGEN ERROR]', leadFetchErr?.message || leadFetchErr);
+        }
+      });
+
+      return NextResponse.json({ status: 'success', event: 'meta_leadgen_received' }, { status: 200 });
+    }
+
+    // 2. ManyChat Webhook Secret Verification (if MANYCHAT_WEBHOOK_SECRET is set)
     const secretHeader = req.headers.get('x-manychat-secret') || req.headers.get('authorization');
     const expectedSecret = process.env.MANYCHAT_WEBHOOK_SECRET;
     if (expectedSecret && secretHeader !== expectedSecret && secretHeader !== `Bearer ${expectedSecret}`) {
       console.warn('[SECURITY] Webhook signature mismatch');
       return NextResponse.json({ status: 'unauthorized', error: 'Invalid webhook authorization' }, { status: 401 });
     }
-
-    const body = await req.json();
 
     let rawPhone = body.opt_in_phone || body.whatsapp_phone || body.phone || body.phone_number || body.user_phone || body.contact_phone || body.from || body.custom_fields?.phone || body.custom_fields?.whatsapp_phone;
     if (typeof rawPhone === 'string' && (rawPhone.includes('{{') || rawPhone.trim() === '' || rawPhone === 'unknown')) {
@@ -51,7 +110,7 @@ export async function POST(req: NextRequest) {
         trimmed.includes('{{') || 
         trimmed.includes('}}') || 
         trimmed.toLowerCase() === 'undefined' || 
-        trimmed.toLowerCase() === 'null' ||
+        trimmed.toLowerCase() === 'null' || 
         trimmed.toLowerCase() === 'unknown'
       ) {
         return '';
@@ -77,7 +136,6 @@ export async function POST(req: NextRequest) {
     const phone = rawPhone || (subscriberId ? `+mc_${subscriberId}` : (nameSlug && nameSlug !== 'vipclient' ? `+lead_${nameSlug}` : `+lead_guest`));
     let userText = body.last_input_text || body.payload?.text || body.text || body.message || "";
 
-
     // Audio / Voice Note Detection & Automatic OpenAI Whisper Transcription
     const audioUrl = body.voice_url || body.audio_url || body.media_url || body.file_url || body.last_media_url || body.last_input_url || body.last_media || body.media || body.payload?.url || body.custom_fields?.voice_url || body.custom_fields?.audio_url;
     if (audioUrl && typeof audioUrl === 'string' && audioUrl.startsWith('http') && (!userText || userText === "Hi" || userText.toLowerCase().includes("voice") || userText.toLowerCase().includes("audio") || userText.toLowerCase().includes("media") || userText.trim().length < 5)) {
@@ -102,8 +160,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ status: 'error', reply: 'Welcome to The Pods Real Estate! How can I help?' });
     }
 
-
-    // 2. Rate Limiting (max 10 requests per minute per phone number)
+    // Rate Limiting (max 10 requests per minute per phone number)
     if (!checkRateLimit(phone, 10, 60000)) {
       console.warn(`[RATE LIMIT] Throttled ${phone}`);
       return NextResponse.json({
@@ -112,13 +169,11 @@ export async function POST(req: NextRequest) {
       }, { status: 429 });
     }
 
-    // 3. Normalize phone for consistent database lookups
     let normalizedPhone = phone;
     try {
       normalizedPhone = LeadService.normalizePhone(phone, senderName);
     } catch (_) { /* fallback to raw phone */ }
 
-    // 4. Fetch past conversation history & dynamic lead profile for 100% memory retention
     let conversationHistory: { sender: string; text: string }[] = [];
     let existingLead: any = null;
     try {
@@ -147,7 +202,6 @@ export async function POST(req: NextRequest) {
       });
 
       if (existingLead && existingLead.conversations.length > 0) {
-        // Use the last 10 recent messages for immediate conversational context so model does not anchor on previous topics
         const recentMsgs = existingLead.conversations[0].messages.slice(0, 10);
         const rawMsgs = [...recentMsgs].reverse();
         conversationHistory = rawMsgs.map((m: any) => ({
@@ -159,7 +213,6 @@ export async function POST(req: NextRequest) {
       console.warn('[CONTEXT] History lookup warning:', histErr);
     }
 
-    // Detect ad source BEFORE AI call so Aria knows the lead's origin
     let adSource = 'ORGANIC';
     let campaignName = '';
     const utmSource = body.utm_source || body.source || body.custom_fields?.utm_source || body.custom_fields?.source;
@@ -179,16 +232,15 @@ export async function POST(req: NextRequest) {
     } else if (
       userText.includes('[META]') || 
       userText.includes('[FB]') || 
-      userText.includes('[IG]') ||
-      userTextLower.includes('filled in your form') ||
-      userTextLower.includes('filled out your form') ||
+      userText.includes('[IG]') || 
+      userTextLower.includes('filled in your form') || 
+      userTextLower.includes('filled out your form') || 
       userTextLower.includes('looking to invest in dubai property')
     ) {
       adSource = 'META_ADS';
       campaignName = 'Meta London Event Form';
     }
 
-    // Generate AI Response with full dynamic lead memory + ad source context
     const aiResult = await AIService.generateResponse({
       leadName: senderName || existingLead?.fullName || undefined,
       buyerLocation: existingLead?.buyerLocation || undefined,
@@ -205,7 +257,6 @@ export async function POST(req: NextRequest) {
     const latency = Date.now() - startTime;
     console.log(`[FAST] AI replied in ${latency}ms: "${aiResult.reply.substring(0, 80)}..."`);
 
-    // Use Next.js after() to run DB logging & email dispatch in the background after returning HTTP response to ManyChat
     after(async () => {
       try {
         await logToDatabase(body, userText, senderName, normalizedPhone, aiResult);
@@ -232,7 +283,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// Background DB logging — runs AFTER response is sent to ManyChat
 async function logToDatabase(body: any, userText: string, senderName: string, phone: string, aiResult: any) {
   try {
     const { prisma } = await import('@/lib/prisma');
@@ -240,7 +290,6 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
     const { MessageService } = await import('@/lib/services/messageService');
     const { SenderType } = await import('@prisma/client');
 
-    // Idempotency
     const eventId = body.event_id || body.message_id || `evt_${Date.now()}_${Math.random()}`;
     const existing = await prisma.webhookEvent.findUnique({ where: { eventId } });
     if (existing) return;
@@ -249,7 +298,6 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       data: { eventId, eventType: 'inbound_whatsapp', payload: body },
     });
 
-    // Parse attribution details from ManyChat payload dynamically
     let leadSource = 'WHATSAPP_DIRECT';
     let attributionObj: any = undefined;
 
@@ -272,22 +320,21 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         utmCampaign: utmCampaign || undefined,
       };
     } else if (userText && (userText.includes('[GADS]') || userText.toLowerCase().includes('google') || userText.includes('Can I get more info on this?'))) {
-      // Heuristic detection: Display ad pre-filled message
       leadSource = 'GOOGLE_ADS';
       attributionObj = {
         source: 'GOOGLE_ADS',
         medium: 'display',
         campaign: 'Dubai Offplan Display Campaign',
       };
-  } else if (
+    } else if (
       userText && (
         userText.includes('[META]') || 
         userText.includes('[FB]') || 
         userText.includes('[IG]') || 
         userText.toLowerCase().includes('instagram') || 
-        userText.toLowerCase().includes('facebook') ||
-        userText.toLowerCase().includes('filled in your form') ||
-        userText.toLowerCase().includes('filled out your form') ||
+        userText.toLowerCase().includes('facebook') || 
+        userText.toLowerCase().includes('filled in your form') || 
+        userText.toLowerCase().includes('filled out your form') || 
         userText.toLowerCase().includes('looking to invest in dubai property')
       )
     ) {
@@ -308,7 +355,6 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
 
     const conversation = await LeadService.getOrCreateConversation(lead.id);
 
-    // Only store messages if there's actual content
     if (userText && userText.trim()) {
       await MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.LEAD, content: userText, externalId: undefined });
     }
@@ -316,7 +362,6 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       await MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.AI, content: aiResult.reply });
     }
 
-    // Extract Email from user text or AI output if provided (normalized to lowercase)
     const emailMatch = userText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
     const extractedEmail = emailMatch ? emailMatch[0].toLowerCase().trim() : (aiResult.booking_details?.email?.toLowerCase().trim() || aiResult.lead_updates?.email?.toLowerCase().trim() || undefined);
     if (extractedEmail && (!lead.email || lead.email !== extractedEmail)) {
@@ -327,7 +372,6 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       lead.email = extractedEmail;
     }
 
-    // Save lead_updates from AI (budget, purpose, timeline, location, meeting preference)
     if (aiResult.lead_updates) {
       const updates: any = {};
       if (aiResult.lead_updates.buyer_location) updates.buyerLocation = aiResult.lead_updates.buyer_location;
@@ -342,30 +386,25 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       }
     }
 
-    // 4. Handle Meeting Bookings or Handoffs asynchronously in DB
     const isMeetingBooking = 
       aiResult.action === 'BOOK_MEETING' || 
       (extractedEmail && (
         aiResult.reply.toLowerCase().includes('confirmed for') || 
         aiResult.reply.toLowerCase().includes('booked for') || 
-        aiResult.reply.toLowerCase().includes("you're all set") ||
+        aiResult.reply.toLowerCase().includes("you're all set") || 
         aiResult.reply.toLowerCase().includes('invitation has been sent')
       ));
 
     if (isMeetingBooking) {
-      // Parse actual booking date + time from AI response
       let meetingTime = new Date(Date.now() + 86400000 * 2);
-      meetingTime.setHours(15, 0, 0, 0); // 3:00 PM default
+      meetingTime.setHours(15, 0, 0, 0);
 
-      // Try to parse date from booking_details (e.g. "3 PM on September 3rd", "2026-09-03 15:00")
       if (aiResult.booking_details?.time) {
         try {
-          // Try parsing as a full date string first
           const parsed = new Date(aiResult.booking_details.time);
           if (!isNaN(parsed.getTime()) && parsed.getFullYear() >= 2026) {
             meetingTime = parsed;
           } else {
-            // Extract time component
             const timeMatch = aiResult.booking_details.time.match(/(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i);
             if (timeMatch) {
               let hours = parseInt(timeMatch[1]);
@@ -377,9 +416,8 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
             }
           }
 
-          // Extract date component (e.g. "September 3", "Sep 3", "3rd September")
           const dateInReply = (aiResult.booking_details.time + ' ' + (aiResult.booking_details.date || '')).toLowerCase();
-          const monthMatch = dateInReply.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+(\d{1,2})/i) ||
+          const monthMatch = dateInReply.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+(\d{1,2})/i) || 
                              dateInReply.match(/(\d{1,2})\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i);
           if (monthMatch) {
             const months: any = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
@@ -395,7 +433,6 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         } catch (_) { /* fallback to default */ }
       }
 
-      // Detect location — London event or Dubai/Google Meet
       const replyLower = aiResult.reply.toLowerCase();
       const bookingLocationRaw = aiResult.booking_details?.location || '';
       let bookingLocation = 'Google Meet';
@@ -412,7 +449,6 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       });
       console.log('[BG-LOG] ✅ Meeting Booking created & Google Calendar invite dispatched to', lead.email, 'at', bookingLocation, 'on', meetingTime.toISOString());
     } else if (aiResult.action === 'HANDOFF') {
-      // BUG FIX: Persist handoff state — disable AI and create Handoff record
       await prisma.lead.update({
         where: { id: lead.id },
         data: { aiEnabled: false, handoffStatus: true },
@@ -435,7 +471,6 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
   }
 }
 
-
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const mode = searchParams.get('hub.mode');
@@ -444,7 +479,6 @@ export async function GET(req: NextRequest) {
 
   const verifyToken = process.env.META_WEBHOOK_VERIFY_TOKEN || 'pods_leadgen_secret_2026';
 
-  // Meta Webhook Verification Handshake
   if (mode === 'subscribe' && token === verifyToken) {
     console.log('[META/WHATSAPP WEBHOOK] Handshake verified successfully with challenge:', challenge);
     return new Response(challenge || '', {
