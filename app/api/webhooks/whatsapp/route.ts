@@ -164,6 +164,8 @@ export async function POST(req: NextRequest) {
     let campaignName = '';
     const utmSource = body.utm_source || body.source || body.custom_fields?.utm_source || body.custom_fields?.source;
     const utmCampaign = body.utm_campaign || body.campaign_name || body.custom_fields?.utm_campaign;
+    const userTextLower = userText.toLowerCase();
+
     if (utmSource) {
       const srcUpper = String(utmSource).toUpperCase();
       adSource = srcUpper.includes('GOOGLE') ? 'GOOGLE_ADS' : (srcUpper.includes('FACEBOOK') || srcUpper.includes('INSTAGRAM') || srcUpper.includes('META')) ? 'META_ADS' : 'ORGANIC';
@@ -171,12 +173,19 @@ export async function POST(req: NextRequest) {
     } else if (body.campaign_id || body.ad_id) {
       adSource = 'FACEBOOK_ADS';
       campaignName = utmCampaign || 'Meta Ad Campaign';
-    } else if (userText.includes('[GADS]') || userText === 'Can I get more info on this?' || userText === 'Hello! Can I get more info on this?' || (userText.toLowerCase().includes('can i get more info') && conversationHistory.length === 0)) {
+    } else if (userText.includes('[GADS]') || userText === 'Can I get more info on this?' || userText === 'Hello! Can I get more info on this?' || (userTextLower.includes('can i get more info') && conversationHistory.length === 0)) {
       adSource = 'GOOGLE_ADS';
       campaignName = 'Google Display Campaign';
-    } else if (userText.includes('[META]') || userText.includes('[FB]') || userText.includes('[IG]')) {
+    } else if (
+      userText.includes('[META]') || 
+      userText.includes('[FB]') || 
+      userText.includes('[IG]') ||
+      userTextLower.includes('filled in your form') ||
+      userTextLower.includes('filled out your form') ||
+      userTextLower.includes('looking to invest in dubai property')
+    ) {
       adSource = 'META_ADS';
-      campaignName = 'Meta Campaign';
+      campaignName = 'Meta London Event Form';
     }
 
     // Generate AI Response with full dynamic lead memory + ad source context
@@ -270,12 +279,23 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         medium: 'display',
         campaign: 'Dubai Offplan Display Campaign',
       };
-    } else if (userText && (userText.includes('[META]') || userText.includes('[FB]') || userText.includes('[IG]') || userText.toLowerCase().includes('instagram') || userText.toLowerCase().includes('facebook'))) {
+  } else if (
+      userText && (
+        userText.includes('[META]') || 
+        userText.includes('[FB]') || 
+        userText.includes('[IG]') || 
+        userText.toLowerCase().includes('instagram') || 
+        userText.toLowerCase().includes('facebook') ||
+        userText.toLowerCase().includes('filled in your form') ||
+        userText.toLowerCase().includes('filled out your form') ||
+        userText.toLowerCase().includes('looking to invest in dubai property')
+      )
+    ) {
       leadSource = 'FACEBOOK_ADS';
       attributionObj = {
         source: 'FACEBOOK_ADS',
         medium: 'cpc',
-        campaign: 'Meta WhatsApp Campaign',
+        campaign: 'Meta London Event Form',
       };
     }
 
