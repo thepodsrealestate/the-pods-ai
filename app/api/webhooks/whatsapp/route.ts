@@ -436,7 +436,25 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
 }
 
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const mode = searchParams.get('hub.mode');
+  const token = searchParams.get('hub.verify_token');
+  const challenge = searchParams.get('hub.challenge');
+
+  const verifyToken = process.env.META_WEBHOOK_VERIFY_TOKEN || 'pods_leadgen_secret_2026';
+
+  // Meta Webhook Verification Handshake
+  if (mode === 'subscribe' && token === verifyToken) {
+    console.log('[META/WHATSAPP WEBHOOK] Handshake verified successfully with challenge:', challenge);
+    return new Response(challenge || '', {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+    });
+  }
+
   return NextResponse.json({
     status: 'online',
     service: 'The Pods Real Estate WhatsApp AI Concierge',
