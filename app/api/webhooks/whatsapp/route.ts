@@ -67,8 +67,7 @@ export async function POST(req: NextRequest) {
                     source: 'FACEBOOK_ADS',
                     medium: 'cpc',
                     campaign: 'Meta London Event Form',
-                    formId,
-                    leadgenId,
+                    adId: String(formId || leadgenId || ''),
                   },
                 });
 
