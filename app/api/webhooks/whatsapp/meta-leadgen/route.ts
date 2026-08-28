@@ -5,7 +5,7 @@ import { LeadService } from '@/lib/services/leadService';
 const VERIFY_TOKEN = process.env.META_WEBHOOK_VERIFY_TOKEN || 'pods_leadgen_secret_2026';
 const META_ACCESS_TOKEN = process.env.META_ACCESS_TOKEN || process.env.META_PAGE_ACCESS_TOKEN;
 
-// 1. Meta Webhook Verification (Strict plain text response for Meta handshake)
+// 1. Meta Webhook Verification
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const mode = searchParams.get('hub.mode');
@@ -13,8 +13,7 @@ export async function GET(req: NextRequest) {
   const challenge = searchParams.get('hub.challenge');
 
   if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-    console.log('[META LEADGEN] Webhook verified successfully with challenge:', challenge);
-    return new Response(challenge, {
+    return new Response(challenge || '', {
       status: 200,
       headers: {
         'Content-Type': 'text/plain',
@@ -38,10 +37,10 @@ export async function POST(req: NextRequest) {
       for (const change of entry.changes || []) {
         if (change.field === 'leadgen') {
           const leadgenId = change.value?.leadgen_id;
-          const formId = change.value?.form_id;
 
           if (!leadgenId) continue;
 
+          // Fetch full lead details using Meta Graph API
           const metaRes = await fetch(
             `https://graph.facebook.com/v21.0/${leadgenId}?access_token=${META_ACCESS_TOKEN}`
           );
@@ -58,7 +57,7 @@ export async function POST(req: NextRequest) {
           let budgetMax = 600000;
 
           for (const field of leadData.field_data || []) {
-            const name = field.name?.toLowerCase();
+            const name = field.name?.toLowerCase() || '';
             const val = field.values?.[0] || '';
 
             if (name.includes('full_name') || name.includes('name')) fullName = val;
@@ -74,6 +73,7 @@ export async function POST(req: NextRequest) {
             phone = `+meta_${leadgenId}`;
           }
 
+          // Save / Upsert Lead in Supabase using valid schema keys
           const lead = await LeadService.findOrCreateLead({
             phone,
             fullName,
@@ -82,11 +82,11 @@ export async function POST(req: NextRequest) {
               source: 'FACEBOOK_ADS',
               medium: 'cpc',
               campaign: 'Meta Instant Form',
-              formId,
-              leadgenId,
+              adId: String(leadgenId),
             },
           });
 
+          // Update Email & Budget Details if available
           if (email || budgetMax) {
             await prisma.lead.update({
               where: { id: lead.id },
@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ status: 'success' }, { status: 200 });
   } catch (err: any) {
-    console.error('[META LEADGEN ERROR]', err.message);
-    return NextResponse.json({ status: 'error', error: err.message }, { status: 500 });
+    console.error('[META LEADGEN ERROR]', err?.message || err);
+    return NextResponse.json({ status: 'error', error: err?.message || 'Internal error' }, { status: 500 });
   }
 }
