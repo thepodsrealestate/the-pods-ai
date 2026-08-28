@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       after(async () => {
         if (!leadgenId) return;
         try {
-          const pageToken = process.env.META_PAGE_ACCESS_TOKEN || process.env.META_ACCESS_TOKEN;
+          const pageToken = process.env.META_ADS_ACCESS_TOKEN || process.env.META_PAGE_ACCESS_TOKEN || process.env.META_ACCESS_TOKEN;
           if (pageToken) {
             const res = await fetch(`https://graph.facebook.com/v26.0/${leadgenId}?access_token=${pageToken}`);
             const leadData = await res.json();
