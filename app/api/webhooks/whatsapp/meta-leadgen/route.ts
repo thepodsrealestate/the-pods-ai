@@ -5,7 +5,7 @@ import { LeadService } from '@/lib/services/leadService';
 const VERIFY_TOKEN = process.env.META_WEBHOOK_VERIFY_TOKEN || 'pods_leadgen_secret_2026';
 const META_ACCESS_TOKEN = process.env.META_ACCESS_TOKEN || process.env.META_PAGE_ACCESS_TOKEN;
 
-// 1. Meta Webhook Verification (GET request when setting up URL in Meta App)
+// 1. Meta Webhook Verification (Strict plain text response for Meta handshake)
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const mode = searchParams.get('hub.mode');
@@ -13,14 +13,19 @@ export async function GET(req: NextRequest) {
   const challenge = searchParams.get('hub.challenge');
 
   if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-    console.log('[META LEADGEN] Webhook verified successfully');
-    return new Response(challenge, { status: 200 });
+    console.log('[META LEADGEN] Webhook verified successfully with challenge:', challenge);
+    return new Response(challenge, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+    });
   }
 
-  return NextResponse.json({ error: 'Verification token mismatch' }, { status: 403 });
+  return new Response('Verification failed', { status: 403 });
 }
 
-// 2. Meta Inbound Lead Ingestion (POST request on form submission)
+// 2. Meta Inbound Lead Ingestion
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -37,7 +42,6 @@ export async function POST(req: NextRequest) {
 
           if (!leadgenId) continue;
 
-          // Fetch full lead details using Meta Graph API
           const metaRes = await fetch(
             `https://graph.facebook.com/v21.0/${leadgenId}?access_token=${META_ACCESS_TOKEN}`
           );
@@ -70,7 +74,6 @@ export async function POST(req: NextRequest) {
             phone = `+meta_${leadgenId}`;
           }
 
-          // Save / Upsert Lead in Supabase
           const lead = await LeadService.findOrCreateLead({
             phone,
             fullName,
