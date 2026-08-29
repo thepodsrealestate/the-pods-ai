@@ -814,9 +814,12 @@ export default function MasterDashboardPage() {
     }
   }, [selectedConvIndex, currentMsgsLength]);
 
-  // Calculate Lead Source Distribution dynamically from DB leads
+  // Calculate Lead Source Distribution dynamically from DB leads (normalized to prevent duplicates)
   const sourceCounts = leads.reduce((acc: Record<string, number>, lead: any) => {
-    const source = lead.leadSource || "DIRECT";
+    let source = (lead.leadSource || "DIRECT").toUpperCase().replace(/\s+/g, "_");
+    if (source.includes("FACEBOOK") || source.includes("META")) source = "FACEBOOK_ADS";
+    else if (source.includes("GOOGLE")) source = "GOOGLE_ADS";
+    else if (source.includes("WHATSAPP")) source = "WHATSAPP_DIRECT";
     acc[source] = (acc[source] || 0) + 1;
     return acc;
   }, {});
