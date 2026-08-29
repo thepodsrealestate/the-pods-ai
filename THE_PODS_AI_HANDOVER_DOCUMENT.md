@@ -21,10 +21,9 @@
 4. [Master Off-Plan Property Knowledge Portfolio](#4-master-off-plan-property-knowledge-portfolio)
 5. [Multi-Channel Advertising & Live Telemetry Engine](#5-multi-channel-advertising--live-telemetry-engine)
 6. [Executive Command Center & CRM Platform](#6-executive-command-center--crm-platform)
-7. [Standard Operating Procedures (SOPs) for Agency Teams](#7-standard-operating-procedures-sops-for-agency-teams)
-8. [Event Operations: Danube London Open House](#8-event-operations-danube-london-open-house)
-9. [Enterprise Redundancy, Security & Data Protection](#9-enterprise-redundancy-security--data-protection)
-10. [Production Handover Certification](#10-production-handover-certification)
+7. [Event Operations: Danube London Open House](#7-event-operations-danube-london-open-house)
+8. [Enterprise Redundancy, Security & Data Protection](#8-enterprise-redundancy-security--data-protection)
+9. [Production Handover Certification](#9-production-handover-certification)
 
 ---
 
@@ -227,29 +226,7 @@ The Command Center provides executive visibility over advertising capital deploy
 
 ---
 
-## 7. STANDARD OPERATING PROCEDURES (SOPS) FOR AGENCY TEAMS
-
-```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                             DAILY SALES OPERATIONS ROUTINE                             │
-├────────────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                        │
-│   09:00 AM ───►  Open Command Center (the-pods-ai.vercel.app/dashboard)                │
-│   09:15 AM ───►  Review 'Lead Matrix' (Filter by 'NEW' & 'HOT' statuses)               │
-│   09:30 AM ───►  Check 'VIP Bookings' Tab (Review upcoming London & Dubai slots)       │
-│   DAYTIME  ───►  Monitor 'Conversations' (Toggle AI to Paused for custom negotiations) │
-│   06:00 PM ───►  Click 'Export Full CSV' for daily record archiving                    │
-│                                                                                        │
-└────────────────────────────────────────────────────────────────────────────────────────┘
-```
-
-### Token Renewal Protocol (Every 60 Days):
-* The active Meta Ads token is valid through **October 26, 2026**.
-* Chetan Sharma and Reshma Patel have been assigned Administrator roles on `The Pods Live Ads` app to refresh tokens seamlessly via the Meta Developer Portal and update Vercel settings in under 60 seconds.
-
----
-
-## 8. EVENT OPERATIONS: DANUBE LONDON OPEN HOUSE
+## 7. EVENT OPERATIONS: DANUBE LONDON OPEN HOUSE
 
 * **Event Title:** Danube Properties London Open House with The Pods Real Estate
 * **Date & Time:** Thursday, 3rd September 2026 | 12:00 PM – 8:00 PM BST
@@ -266,7 +243,7 @@ The Command Center provides executive visibility over advertising capital deploy
 
 ---
 
-## 9. ENTERPRISE REDUNDANCY, SECURITY & DATA PROTECTION
+## 8. ENTERPRISE REDUNDANCY, SECURITY & DATA PROTECTION
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
@@ -287,7 +264,7 @@ The Command Center provides executive visibility over advertising capital deploy
 
 ---
 
-## 10. PRODUCTION HANDOVER CERTIFICATION
+## 9. PRODUCTION HANDOVER CERTIFICATION
 
 All systems, integrations, conversational workflows, advertising telemetry bridges, and calendar automation engines have been deployed, load-tested, and verified in live production.
 
