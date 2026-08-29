@@ -11,44 +11,39 @@ export async function POST(req: NextRequest) {
     let location = "Dubai Prime Locations";
     let budget = "AED 5,000,000";
 
+    let purpose = "property investment";
+    let isLondonEvent = false;
+
     if (leadId) {
-      const lead = await prisma.lead.findUnique({ where: { id: leadId } });
+      const lead = await prisma.lead.findUnique({
+        where: { id: leadId },
+        include: { attributions: true }
+      });
       if (lead) {
-        leadName = lead.fullName || "Valued Client";
-        location = lead.buyerLocation || "Dubai Prime Locations";
-        budget = lead.budgetMax ? `AED ${lead.budgetMax.toLocaleString()}` : "AED 5,000,000";
+        leadName = lead.fullName || "there";
+        location = lead.buyerLocation || "Dubai";
+        budget = lead.budgetMax ? `AED ${lead.budgetMax.toLocaleString()}` : "AED 1.5M";
+        purpose = lead.purchasePurpose || "property investment";
+        isLondonEvent = Boolean(
+          lead.meetingPreference?.toLowerCase().includes("london") ||
+          lead.meetingPreference?.toLowerCase().includes("3rd sept") ||
+          lead.attributions.some(a => a.campaign?.toLowerCase().includes("london"))
+        );
       }
     }
 
-    const prompt = `You are Minesh Patel, Director at The Pods Real Estate. Draft a 48-hour follow-up WhatsApp message for a client who went silent after inquiring about luxury properties in ${location} with a budget of ${budget}.
+    const firstName = leadName.split(" ")[0] || "there";
 
-CLIENT NAME: ${leadName}
-
-GUIDELINES:
-- Luxury tone, high urgency, exclusive offer.
-- Mentions a limited release unit or exclusive payment plan offer.
-- Asks for a brief 2-minute phone chat or presentation booking at Bluewaters Island desk.
-- Keep under 60 words.
-
-Return JSON: { "nudgeMessage": "..." }`;
-
-    const aiRes = await AIService.generateResponse({
-      leadName,
-      conversationHistory: [],
-      userMessage: prompt,
-    });
-
-    try {
-      const jsonMatch = aiRes.reply.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const result = JSON.parse(jsonMatch[0]);
-        return NextResponse.json({ success: true, nudge: result.nudgeMessage });
-      }
-    } catch (e) {}
+    if (isLondonEvent) {
+      return NextResponse.json({
+        success: true,
+        nudge: `Hey ${firstName}! Minesh here from The Pods. We're finalizing the VIP attendee list for the Danube London Open House this Thursday (Sept 3rd @ Knightsbridge). Were you planning to join us in person, or should I send the exclusive event floor plans over WhatsApp?`,
+      });
+    }
 
     return NextResponse.json({
       success: true,
-      nudge: `Good day ${leadName}! A limited penthouse inventory just opened up in ${location} with an attractive 1% monthly payment plan and Golden Visa eligibility. Would you like me to reserve details for your presentation?`,
+      nudge: `Hey ${firstName}! Minesh Patel here from The Pods Real Estate. Just wanted to check in regarding your Dubai property inquiry. Would you prefer me to send over the latest 1% monthly payment plan options on WhatsApp, or set up a quick 5-minute call?`,
     });
   } catch (error: any) {
     return NextResponse.json(
