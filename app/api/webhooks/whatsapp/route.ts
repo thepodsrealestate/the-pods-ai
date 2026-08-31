@@ -177,17 +177,17 @@ export async function POST(req: NextRequest) {
       normalizedPhone = LeadService.normalizePhone(phone, senderName);
     } catch (_) { /* fallback to raw phone */ }
 
-    const dedupKey = `${normalizedPhone}_${userText.trim().toLowerCase().substring(0, 60)}`;
+    const dedupKey = normalizedPhone;
     const now = Date.now();
 
-    // 1. Check if identical request completed in the last 4 seconds (suppress duplicate webhook)
+    // 1. Check if a request for this phone completed in the last 4 seconds (suppress duplicate webhook)
     const recent = recentCompletedResponses.get(dedupKey);
     if (recent && now - recent.timestamp < 4000) {
       console.log(`[DEDUP] Duplicate request from ${normalizedPhone} within 4s — returning cached response`);
       return NextResponse.json(recent.response);
     }
 
-    // 2. Check if identical request is currently in-flight (wait for single execution)
+    // 2. Check if a request for this phone is currently in-flight (wait for single execution)
     const inFlight = inFlightRequests.get(dedupKey);
     if (inFlight && now - inFlight.timestamp < 6000) {
       console.log(`[DEDUP] Concurrent in-flight request from ${normalizedPhone} — awaiting single execution`);
@@ -411,10 +411,30 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
     const conversation = await LeadService.getOrCreateConversation(lead.id);
 
     if (userText && userText.trim()) {
-      await MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.LEAD, content: userText, externalId: undefined });
+      const recentLeadMsg = await prisma.message.findFirst({
+        where: {
+          conversationId: conversation.id,
+          senderType: SenderType.LEAD,
+          createdAt: { gte: new Date(Date.now() - 8000) },
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (!recentLeadMsg) {
+        await MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.LEAD, content: userText, externalId: undefined });
+      }
     }
     if (aiResult.reply && aiResult.reply.trim()) {
-      await MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.AI, content: aiResult.reply });
+      const recentAiMsg = await prisma.message.findFirst({
+        where: {
+          conversationId: conversation.id,
+          senderType: SenderType.AI,
+          createdAt: { gte: new Date(Date.now() - 8000) },
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (!recentAiMsg) {
+        await MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.AI, content: aiResult.reply });
+      }
     }
 
     const emailMatch = userText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
