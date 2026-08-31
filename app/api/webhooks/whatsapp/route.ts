@@ -153,8 +153,25 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    if (!userText || userText.trim() === "") {
-      userText = "Hi";
+    // Form field extraction from WhatsApp text payload
+    let extractedFormName: string | undefined = undefined;
+    let extractedFormEmail: string | undefined = undefined;
+    let extractedFormPhone: string | undefined = undefined;
+
+    const nameMatch = userText.match(/(?:full\s*name|name):\s*([^\n\r,]+)/i);
+    if (nameMatch && nameMatch[1] && nameMatch[1].trim().length > 1) {
+      extractedFormName = nameMatch[1].trim();
+      senderName = nameMatch[1].trim();
+    }
+
+    const emailMatch = userText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+    if (emailMatch && emailMatch[0]) {
+      extractedFormEmail = emailMatch[0].toLowerCase().trim();
+    }
+
+    const phoneMatch = userText.match(/(?:phone\s*number|phone|mobile):\s*([+\d\s()-]{7,})/i);
+    if (phoneMatch && phoneMatch[1] && phoneMatch[1].trim().length > 6) {
+      extractedFormPhone = phoneMatch[1].replace(/[^\d+]/g, '').trim();
     }
 
     console.log(`[FAST] ${senderName} (${phone}): "${userText}"`);
@@ -201,16 +218,19 @@ export async function POST(req: NextRequest) {
       let conversationHistory: { sender: string; text: string }[] = [];
       let existingLead: any = null;
       try {
+        const searchConditions: any[] = [{ phone: normalizedPhone }, { phone }];
+        if (extractedFormPhone) {
+          searchConditions.push({ phone: extractedFormPhone });
+        }
+        if (extractedFormEmail) {
+          searchConditions.push({ email: { equals: extractedFormEmail, mode: 'insensitive' } });
+        }
+        if (senderName && senderName !== 'VIP Client' && senderName !== 'Guest') {
+          searchConditions.push({ fullName: { equals: senderName, mode: 'insensitive' } });
+        }
+
         existingLead = await prisma.lead.findFirst({
-          where: {
-            OR: [
-              { phone: normalizedPhone },
-              { phone },
-              senderName && senderName !== 'VIP Client' && senderName !== 'Guest'
-                ? { fullName: { equals: senderName, mode: 'insensitive' } }
-                : { phone: normalizedPhone },
-            ],
-          },
+          where: { OR: searchConditions },
           include: {
             conversations: {
               orderBy: { updatedAt: 'desc' },
@@ -401,9 +421,19 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       };
     }
 
+    const emailMatch = userText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+    const extractedEmail = emailMatch ? emailMatch[0].toLowerCase().trim() : (aiResult.booking_details?.email?.toLowerCase().trim() || aiResult.lead_updates?.email?.toLowerCase().trim() || undefined);
+
+    const nameMatch = userText.match(/(?:full\s*name|name):\s*([^\n\r,]+)/i);
+    const extractedName = nameMatch && nameMatch[1].trim().length > 1 ? nameMatch[1].trim() : senderName;
+
+    const phoneMatch = userText.match(/(?:phone\s*number|phone|mobile):\s*([+\d\s()-]{7,})/i);
+    const extractedFormPhone = phoneMatch && phoneMatch[1].trim().length > 6 ? phoneMatch[1].replace(/[^\d+]/g, '').trim() : phone;
+
     const lead = await LeadService.findOrCreateLead({
-      phone,
-      fullName: senderName,
+      phone: extractedFormPhone,
+      fullName: extractedName,
+      email: extractedEmail,
       leadSource,
       attribution: attributionObj,
     });
@@ -437,8 +467,6 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       }
     }
 
-    const emailMatch = userText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-    const extractedEmail = emailMatch ? emailMatch[0].toLowerCase().trim() : (aiResult.booking_details?.email?.toLowerCase().trim() || aiResult.lead_updates?.email?.toLowerCase().trim() || undefined);
     if (extractedEmail && (!lead.email || lead.email !== extractedEmail)) {
       await prisma.lead.update({
         where: { id: lead.id },
