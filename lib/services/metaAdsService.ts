@@ -110,33 +110,68 @@ export class MetaAdsService {
     if (!accessToken || !adAccountId) return [];
     try {
       const cleanAccount = adAccountId.startsWith('act_') ? adAccountId : `act_${adAccountId}`;
-      const url = `https://graph.facebook.com/v19.0/${cleanAccount}/insights?fields=campaign_name,campaign_id,spend,impressions,clicks,ctr,actions&level=campaign&date_preset=${encodeURIComponent(period)}&limit=50&access_token=${accessToken}`;
-      const res = await fetch(url, { cache: 'no-store' });
-      if (!res.ok) return [];
-      const json = await res.json();
-      if (!json?.data) return [];
-      return json.data.map((d: any) => {
-        const spend = parseFloat(d.spend || '0');
-        const clicks = parseInt(d.clicks || '0', 10);
-        const impressions = parseInt(d.impressions || '0', 10);
-        let leads = 0;
-        if (Array.isArray(d.actions)) {
-          const la = d.actions.find((a: any) => a.action_type === 'lead' || a.action_type === 'onsite_conversion.lead_grouped');
-          if (la) leads = parseInt(la.value || '0', 10);
-        }
-        return {
-          platform: 'meta',
-          campaignName: d.campaign_name,
-          campaignId: d.campaign_id,
-          spend: parseFloat(spend.toFixed(2)),
-          clicks,
-          impressions,
-          ctr: parseFloat((parseFloat(d.ctr || '0')).toFixed(2)),
-          leads,
-          cpc: clicks > 0 ? parseFloat((spend / clicks).toFixed(2)) : 0,
-          cpl: leads > 0 ? parseFloat((spend / leads).toFixed(2)) : 0,
-        };
-      });
+      
+      // 1. Fetch insights metrics
+      const insightsUrl = `https://graph.facebook.com/v19.0/${cleanAccount}/insights?fields=campaign_name,campaign_id,spend,impressions,clicks,ctr,actions&level=campaign&date_preset=${encodeURIComponent(period)}&limit=50&access_token=${accessToken}`;
+      // 2. Fetch active campaign metadata
+      const rawCampaignsUrl = `https://graph.facebook.com/v19.0/${cleanAccount}/campaigns?fields=id,name,status,effective_status&effective_status=['ACTIVE']&limit=50&access_token=${accessToken}`;
+
+      const [insightsRes, campaignsRes] = await Promise.all([
+        fetch(insightsUrl, { cache: 'no-store' }),
+        fetch(rawCampaignsUrl, { cache: 'no-store' }).catch(() => null),
+      ]);
+
+      const insightsJson = insightsRes.ok ? await insightsRes.json() : { data: [] };
+      const campaignsJson = campaignsRes && campaignsRes.ok ? await campaignsRes.json() : { data: [] };
+
+      const campaignMap = new Map<string, any>();
+
+      if (Array.isArray(insightsJson?.data)) {
+        insightsJson.data.forEach((d: any) => {
+          const spend = parseFloat(d.spend || '0');
+          const clicks = parseInt(d.clicks || '0', 10);
+          const impressions = parseInt(d.impressions || '0', 10);
+          let leads = 0;
+          if (Array.isArray(d.actions)) {
+            const la = d.actions.find((a: any) => a.action_type === 'lead' || a.action_type === 'onsite_conversion.lead_grouped');
+            if (la) leads = parseInt(la.value || '0', 10);
+          }
+          campaignMap.set(d.campaign_id, {
+            platform: 'meta',
+            campaignName: d.campaign_name,
+            campaignId: d.campaign_id,
+            spend: parseFloat(spend.toFixed(2)),
+            clicks,
+            impressions,
+            ctr: parseFloat((parseFloat(d.ctr || '0')).toFixed(2)),
+            leads,
+            cpc: clicks > 0 ? parseFloat((spend / clicks).toFixed(2)) : 0,
+            cpl: leads > 0 ? parseFloat((spend / leads).toFixed(2)) : 0,
+          });
+        });
+      }
+
+      // Merge any newly published ACTIVE campaigns that haven't generated insights yet
+      if (Array.isArray(campaignsJson?.data)) {
+        campaignsJson.data.forEach((c: any) => {
+          if (!campaignMap.has(c.id)) {
+            campaignMap.set(c.id, {
+              platform: 'meta',
+              campaignName: c.name,
+              campaignId: c.id,
+              spend: 0,
+              clicks: 0,
+              impressions: 0,
+              ctr: 0,
+              leads: 0,
+              cpc: 0,
+              cpl: 0,
+            });
+          }
+        });
+      }
+
+      return Array.from(campaignMap.values());
     } catch { return []; }
   }
 }
