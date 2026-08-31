@@ -145,18 +145,25 @@ export class LeadService {
   static async getOrCreateConversation(leadId: string) {
     let conversation = await prisma.conversation.findFirst({
       where: { leadId },
-      orderBy: { updatedAt: 'desc' },
+      orderBy: { createdAt: 'asc' },
     });
 
     if (!conversation) {
-      conversation = await prisma.conversation.create({
-        data: {
-          leadId,
-          active: true,
-        },
-      });
+      try {
+        conversation = await prisma.conversation.create({
+          data: {
+            leadId,
+            active: true,
+          },
+        });
+      } catch (_) {
+        conversation = await prisma.conversation.findFirst({
+          where: { leadId },
+          orderBy: { createdAt: 'asc' },
+        });
+      }
     }
 
-    return conversation;
+    return conversation!;
   }
 }

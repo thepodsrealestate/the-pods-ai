@@ -50,10 +50,27 @@ export async function GET() {
     for (const c of conversations) {
       const key = c.leadId || c.id;
       if (!uniqueConvMap.has(key)) {
-        uniqueConvMap.set(key, { ...c, messages: [...c.messages] });
+        // Deduplicate messages within the single conversation
+        const seenMsg = new Set<string>();
+        const cleanMsgs: any[] = [];
+        for (const m of c.messages) {
+          const mKey = `${m.senderType}_${m.content.trim().toLowerCase().substring(0, 80)}`;
+          if (!seenMsg.has(mKey)) {
+            seenMsg.add(mKey);
+            cleanMsgs.push(m);
+          }
+        }
+        uniqueConvMap.set(key, { ...c, messages: cleanMsgs });
       } else {
         const existing = uniqueConvMap.get(key);
-        existing.messages.push(...c.messages);
+        const seenMsg = new Set<string>(existing.messages.map((m: any) => `${m.senderType}_${m.content.trim().toLowerCase().substring(0, 80)}`));
+        for (const m of c.messages) {
+          const mKey = `${m.senderType}_${m.content.trim().toLowerCase().substring(0, 80)}`;
+          if (!seenMsg.has(mKey)) {
+            seenMsg.add(mKey);
+            existing.messages.push(m);
+          }
+        }
         existing.messages.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
       }
     }
