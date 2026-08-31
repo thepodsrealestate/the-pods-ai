@@ -194,13 +194,13 @@ export async function POST(req: NextRequest) {
       normalizedPhone = LeadService.normalizePhone(phone, senderName);
     } catch (_) { /* fallback to raw phone */ }
 
-    const dedupKey = normalizedPhone;
     const now = Date.now();
+    const textSnippet = userText.trim().toLowerCase().substring(0, 30).replace(/[^a-z0-9]/g, '');
+    const dedupKey = `${normalizedPhone}_${textSnippet}`;
 
     // 1. Distributed Database-Level Atomic Idempotency Lock (PostgreSQL ACID)
-    // Prevents parallel Vercel Serverless Lambdas from ever processing the same message concurrently
+    // Prevents parallel Vercel Serverless Lambdas from ever processing the exact same message concurrently
     const timeBucket = Math.floor(Date.now() / 8000); // 8-second idempotency window
-    const textSnippet = userText.trim().toLowerCase().substring(0, 30).replace(/[^a-z0-9]/g, '');
     const distributedLockKey = `LOCK_${normalizedPhone}_${textSnippet}_${timeBucket}`;
 
     try {
