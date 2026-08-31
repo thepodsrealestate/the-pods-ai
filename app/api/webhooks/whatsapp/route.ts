@@ -197,21 +197,37 @@ export async function POST(req: NextRequest) {
     const dedupKey = normalizedPhone;
     const now = Date.now();
 
-    // 1. Check if a request for this phone completed in the last 4 seconds (suppress duplicate webhook)
-    const recent = recentCompletedResponses.get(dedupKey);
-    if (recent && now - recent.timestamp < 4000) {
-      console.log(`[DEDUP] Duplicate request from ${normalizedPhone} within 4s — returning cached response`);
-      return NextResponse.json(recent.response);
+    // 1. Distributed Database-Level Atomic Idempotency Lock (PostgreSQL ACID)
+    // Prevents parallel Vercel Serverless Lambdas from ever processing the same message concurrently
+    const timeBucket = Math.floor(Date.now() / 8000); // 8-second idempotency window
+    const textSnippet = userText.trim().toLowerCase().substring(0, 30).replace(/[^a-z0-9]/g, '');
+    const distributedLockKey = `LOCK_${normalizedPhone}_${textSnippet}_${timeBucket}`;
+
+    try {
+      await prisma.webhookEvent.create({
+        data: {
+          eventId: distributedLockKey,
+          eventType: 'INBOUND_WHATSAPP_LOCK',
+          payload: { phone: normalizedPhone, textSnippet, timeBucket },
+        }
+      });
+      // Fire-and-forget async cleanup of old locks (>2 hours)
+      prisma.webhookEvent.deleteMany({
+        where: { createdAt: { lt: new Date(Date.now() - 7200000) } }
+      }).catch(() => {});
+    } catch (lockErr: any) {
+      console.log(`[DISTRIBUTED DB LOCK BLOCKED] Duplicate concurrent webhook call rejected for ${distributedLockKey}`);
+      return NextResponse.json({
+        status: 'dedup_suppressed',
+        reply: '', // Strictly send empty reply to prevent duplicate outbound messages
+      });
     }
 
-    // 2. Check if a request for this phone is currently in-flight (wait for single execution)
-    const inFlight = inFlightRequests.get(dedupKey);
-    if (inFlight && now - inFlight.timestamp < 6000) {
-      console.log(`[DEDUP] Concurrent in-flight request from ${normalizedPhone} — awaiting single execution`);
-      try {
-        const cachedRes = await inFlight.responsePromise;
-        return NextResponse.json(cachedRes);
-      } catch (_) {}
+    // 2. In-Memory Level Fast Cache
+    const recent = recentCompletedResponses.get(dedupKey);
+    if (recent && now - recent.timestamp < 6000) {
+      console.log(`[DEDUP] In-memory duplicate request from ${normalizedPhone} within 6s — returning cached response`);
+      return NextResponse.json(recent.response);
     }
 
     const processExecution = async () => {

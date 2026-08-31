@@ -1693,30 +1693,40 @@ export default function MasterDashboardPage() {
 
                     {/* Messages */}
                     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-[#07080C]/60 h-0 min-h-0">
-                      {conversations[selectedConvIndex]?.messages.map((msg: any) => (
-                        <div
-                          key={msg.id}
-                          className={`flex ${msg.senderType === "AI" ? "justify-end" : "justify-start"}`}
-                        >
+                      {(() => {
+                        const rawMsgs = conversations[selectedConvIndex]?.messages || [];
+                        const seenMsgKeys = new Set<string>();
+                        const uniqueMsgs = rawMsgs.filter((msg: any) => {
+                          const key = `${msg.senderType}_${(msg.content || '').trim().toLowerCase().substring(0, 80)}`;
+                          if (seenMsgKeys.has(key)) return false;
+                          seenMsgKeys.add(key);
+                          return true;
+                        });
+                        return uniqueMsgs.map((msg: any) => (
                           <div
-                            className={`max-w-[85%] md:max-w-md p-3.5 md:p-4 rounded-2xl shadow-lg space-y-1 ${
-                              msg.senderType === "AI"
-                                ? "bg-[#151824] border border-[#C5A059]/40 text-white rounded-br-none"
-                                : "bg-[#1E2230] text-slate-200 rounded-bl-none"
-                            }`}
+                            key={msg.id}
+                            className={`flex ${msg.senderType === "AI" ? "justify-end" : "justify-start"}`}
                           >
-                            <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1 space-x-4">
-                              <span className="font-bold tracking-wider uppercase text-[#C5A059]">
-                                {msg.senderType === "AI" ? "AI Concierge" : "Lead"}
-                              </span>
-                              <span className="font-mono">
-                                {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                              </span>
+                            <div
+                              className={`max-w-[85%] md:max-w-md p-3.5 md:p-4 rounded-2xl shadow-lg space-y-1 ${
+                                msg.senderType === "AI"
+                                  ? "bg-[#151824] border border-[#C5A059]/40 text-white rounded-br-none"
+                                  : "bg-[#1E2230] text-slate-200 rounded-bl-none"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1 space-x-4">
+                                <span className="font-bold tracking-wider uppercase text-[#C5A059]">
+                                  {msg.senderType === "AI" ? "AI Concierge" : "Lead"}
+                                </span>
+                                <span className="font-mono">
+                                  {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
+                              <p className="text-xs leading-relaxed whitespace-pre-line">{msg.content}</p>
                             </div>
-                            <p className="text-xs leading-relaxed whitespace-pre-line">{msg.content}</p>
                           </div>
-                        </div>
-                      ))}
+                        ));
+                      })()}
                       <div ref={chatScrollEndRef} />
                     </div>
 
