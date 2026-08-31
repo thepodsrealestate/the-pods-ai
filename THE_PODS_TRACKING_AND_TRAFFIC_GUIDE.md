@@ -2,6 +2,7 @@
 **Prepared for:** Chetan Sharma (Media Buying & Ad Operations)  
 **Company:** The Pods Real Estate x Danube Properties  
 **System:** The Pods AI Real Estate Operating System  
+**Official WhatsApp AI Number:** +44 7404 097586  
 **Date:** August 31, 2026  
 
 ---
@@ -19,6 +20,7 @@ The Pods AI platform uses a **dual-layer tracking architecture** to capture and 
 
 ### Campaign Type 1: Click-to-WhatsApp Ads (CTWA / Messaging Objective)
 * **Objective in Meta Ads Manager:** Engagement -> Messaging Apps -> WhatsApp
+* **Destination WhatsApp Business Number:** +44 7404 097586
 * **Target Audience:** UK / Greater London (Radius 25km around Knightsbridge)
 * **Creative Asset:** Rizwan Sajan & Minesh Patel Video Reel
 
@@ -26,7 +28,7 @@ The Pods AI platform uses a **dual-layer tracking architecture** to capture and 
 Copy and paste this exact link into your ad\'s destination / action button:
 
 `	ext
-https://wa.me/971545866094?text=Hi%20Aria%2C%20I%20saw%20the%20Danube%20London%20Open%20House%20ad%20with%20Rizwan%20Sajan%20and%20Minesh%20Patel.%20I%20want%20to%20reserve%20a%20VIP%20slot%20for%20Sept%203rd%20[META_CTWA_LONDON]
+https://wa.me/447404097586?text=Hi%20Aria%2C%20I%20saw%20the%20Danube%20London%20Open%20House%20ad%20with%20Rizwan%20Sajan%20and%20Minesh%20Patel.%20I%20want%20to%20reserve%20a%20VIP%20slot%20for%20Sept%203rd%20[META_CTWA_LONDON]
 `
 
 ---
@@ -37,7 +39,7 @@ https://wa.me/971545866094?text=Hi%20Aria%2C%20I%20saw%20the%20Danube%20London%2
 
 #### Form Completion Button URL:
 `	ext
-https://wa.me/971545866094?text=Hello!%20I%20just%20filled%20in%20your%20form%20for%20the%20London%20Danube%20Open%20House%20[META_LEAD_FORM]
+https://wa.me/447404097586?text=Hello!%20I%20just%20filled%20in%20your%20form%20for%20the%20London%20Danube%20Open%20House%20[META_LEAD_FORM]
 `
 
 ---
@@ -67,7 +69,7 @@ utm_source=google&utm_medium=cpc&utm_campaign={campaignid}&utm_content={creative
 
 #### Sitelink Final URL:
 `	ext
-https://wa.me/971545866094?text=Hello%20Aria%2C%20I%20found%20The%20Pods%20Real%20Estate%20on%20Google.%20I%20want%20more%20details%20on%20Dubai%20off-plan%20properties%20[GADS_SEARCH]
+https://wa.me/447404097586?text=Hello%20Aria%2C%20I%20found%20The%20Pods%20Real%20Estate%20on%20Google.%20I%20want%20more%20details%20on%20Dubai%20off-plan%20properties%20[GADS_SEARCH]
 `
 
 ---
@@ -85,7 +87,7 @@ utm_source=tiktok&utm_medium=cpc&utm_campaign=__CAMPAIGN_NAME__&utm_content=__AI
 
 ### Option B: Direct WhatsApp Destination Link (Bio & In-Feed Ads)
 `	ext
-https://wa.me/971545866094?text=Hi%20Aria%2C%20I%20saw%20your%20video%20on%20TikTok%20about%20the%20London%20Danube%20Event%20[TIKTOK_EVENT]
+https://wa.me/447404097586?text=Hi%20Aria%2C%20I%20saw%20your%20video%20on%20TikTok%20about%20the%20London%20Danube%20Event%20[TIKTOK_EVENT]
 `
 
 ---
@@ -94,18 +96,18 @@ https://wa.me/971545866094?text=Hi%20Aria%2C%20I%20saw%20your%20video%20on%20Tik
 
 | Platform | Campaign Objective | Destination / Placement | Tracking URL / Parameter |
 |---|---|---|---|
-| Meta (Instagram/FB) | Click-to-WhatsApp (CTWA) | Ad CTA Button | https://wa.me/971545866094?text=...[META_CTWA_LONDON] |
-| Meta (Instagram/FB) | Instant Lead Form | Form Thank-You Screen | https://wa.me/971545866094?text=...[META_LEAD_FORM] |
+| Meta (Instagram/FB) | Click-to-WhatsApp (CTWA) | Ad CTA Button | https://wa.me/447404097586?text=...[META_CTWA_LONDON] |
+| Meta (Instagram/FB) | Instant Lead Form | Form Thank-You Screen | https://wa.me/447404097586?text=...[META_LEAD_FORM] |
 | Meta (Instagram/FB) | All Ads (Tracking Box) | Ad Level URL Parameters | utm_source=facebook&utm_medium=cpc&utm_campaign={{campaign.name}}&utm_content={{ad.name}} |
 | Google Ads | Search / Display / PMax | Final URL Suffix | utm_source=google&utm_medium=cpc&utm_campaign={campaignid}&utm_term={keyword} |
-| Google Ads | Sitelinks / Callouts | Extension Final URL | https://wa.me/971545866094?text=...[GADS_SEARCH] |
-| TikTok Ads | In-Feed / Bio Video Ads | Destination URL | https://wa.me/971545866094?text=...[TIKTOK_EVENT] |
+| Google Ads | Sitelinks / Callouts | Extension Final URL | https://wa.me/447404097586?text=...[GADS_SEARCH] |
+| TikTok Ads | In-Feed / Bio Video Ads | Destination URL | https://wa.me/447404097586?text=...[TIKTOK_EVENT] |
 
 ---
 
 ## 6. Pre-Launch Quality Assurance (QA) Checklist for Chetan
 
 * [ ] 1. Pause Inactive Campaigns: Verify that \'Danube Open House - London Awareness – Copy\' is paused to avoid budget waste.
-* [ ] 2. Verify Destination Phone: Ensure the target WhatsApp number is +971 54 586 6094 (The Pods AI Concierge).
+* [ ] 2. Verify Destination Phone: Ensure the target WhatsApp number is +44 7404 097586 (The Pods AI Concierge Official Business Number).
 * [ ] 3. Test Deep Links: Click each generated link on a mobile device to verify that WhatsApp opens with the pre-filled text and bracketed tag intact.
 * [ ] 4. Check Dashboard Telemetry: After launching, monitor https://the-pods-ai.vercel.app/dashboard under Lead Matrix to confirm new leads reflect their exact traffic source automatically.
