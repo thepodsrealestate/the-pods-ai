@@ -233,6 +233,25 @@ export async function POST(req: NextRequest) {
             text: m.content,
           }));
         }
+
+        // CRITICAL: If AI is toggled OFF for this lead, save the message but DO NOT generate AI reply
+        if (existingLead && existingLead.aiEnabled === false) {
+          console.log(`[AI-OFF] AI disabled for ${existingLead.fullName || phone} — saving message only, no AI reply`);
+          after(async () => {
+            try {
+              await logToDatabase(body, userText, senderName, normalizedPhone, { reply: '', action: 'NONE', language: 'en' });
+            } catch (err: any) { console.error('[BG-LOG] Error:', err.message); }
+          });
+          return {
+            status: 'success',
+            reply: '',
+            ai_reply: '',
+            text: '',
+            action: 'AI_DISABLED',
+            language: 'en',
+            latency_ms: Date.now() - startTime,
+          };
+        }
       } catch (histErr) {
         console.warn('[CONTEXT] History lookup warning:', histErr);
       }

@@ -13,7 +13,8 @@ export function middleware(req: NextRequest) {
     pathname === '/login' ||
     pathname === '/api/auth/login' ||
     pathname === '/api/auth/verify' ||
-    pathname === '/api/webhooks/whatsapp'
+    pathname.startsWith('/api/webhooks/whatsapp') ||
+    pathname.startsWith('/brochures/')
   ) {
     return NextResponse.next();
   }
