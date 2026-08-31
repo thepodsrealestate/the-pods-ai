@@ -515,41 +515,48 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       ));
 
     if (isMeetingBooking) {
-      let meetingTime = new Date(Date.now() + 86400000 * 2);
+      let meetingTime = new Date(Date.now() + 86400000); // Default to tomorrow
       meetingTime.setHours(15, 0, 0, 0);
 
-      if (aiResult.booking_details?.time) {
-        try {
-          const parsed = new Date(aiResult.booking_details.time);
-          if (!isNaN(parsed.getTime()) && parsed.getFullYear() >= 2026) {
-            meetingTime = parsed;
-          } else {
-            const timeMatch = aiResult.booking_details.time.match(/(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i);
-            if (timeMatch) {
-              let hours = parseInt(timeMatch[1]);
-              const mins = parseInt(timeMatch[2] || '0');
-              const ampm = timeMatch[3]?.toUpperCase();
-              if (ampm === 'PM' && hours < 12) hours += 12;
-              if (ampm === 'AM' && hours === 12) hours = 0;
-              meetingTime.setHours(hours, mins, 0, 0);
-            }
-          }
+      const rawDateStr = ((aiResult.booking_details?.date || '') + ' ' + (aiResult.booking_details?.time || '') + ' ' + userText + ' ' + aiResult.reply).toLowerCase();
+      
+      if (rawDateStr.includes('tomorrow') || rawDateStr.includes('tom')) {
+        meetingTime = new Date(Date.now() + 86400000);
+      } else if (rawDateStr.includes('today')) {
+        meetingTime = new Date();
+      }
 
-          const dateInReply = (aiResult.booking_details.time + ' ' + (aiResult.booking_details.date || '')).toLowerCase();
-          const monthMatch = dateInReply.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+(\d{1,2})/i) || 
-                             dateInReply.match(/(\d{1,2})\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i);
-          if (monthMatch) {
-            const months: any = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
-            const m1 = monthMatch[1].toLowerCase().slice(0,3);
-            const m2 = monthMatch[2]?.toLowerCase().slice(0,3);
-            const monthIdx = months[m1] ?? months[m2];
-            const day = parseInt(months[m1] !== undefined ? monthMatch[2] : monthMatch[1]);
-            if (monthIdx !== undefined && day) {
-              meetingTime.setMonth(monthIdx, day);
-              if (meetingTime < new Date()) meetingTime.setFullYear(meetingTime.getFullYear() + 1);
-            }
-          }
-        } catch (_) { /* fallback to default */ }
+      const monthsMap: Record<string, number> = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
+      
+      const dayFirstMatch = rawDateStr.match(/(\d{1,2})(?:st|nd|rd|th)?\s+(?:of\s+)?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*(?:\s+(\d{4}))?/i);
+      const monthFirstMatch = rawDateStr.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s*,?\s*(\d{4}))?/i);
+
+      if (dayFirstMatch) {
+        const dayNum = parseInt(dayFirstMatch[1], 10);
+        const mKey = dayFirstMatch[2].toLowerCase().slice(0, 3);
+        const yr = dayFirstMatch[3] ? parseInt(dayFirstMatch[3], 10) : meetingTime.getFullYear();
+        const mIdx = monthsMap[mKey];
+        if (mIdx !== undefined && dayNum >= 1 && dayNum <= 31) {
+          meetingTime.setFullYear(yr, mIdx, dayNum);
+        }
+      } else if (monthFirstMatch) {
+        const mKey = monthFirstMatch[1].toLowerCase().slice(0, 3);
+        const dayNum = parseInt(monthFirstMatch[2], 10);
+        const yr = monthFirstMatch[3] ? parseInt(monthFirstMatch[3], 10) : meetingTime.getFullYear();
+        const mIdx = monthsMap[mKey];
+        if (mIdx !== undefined && dayNum >= 1 && dayNum <= 31) {
+          meetingTime.setFullYear(yr, mIdx, dayNum);
+        }
+      }
+
+      const timeMatch = (aiResult.booking_details?.time || rawDateStr).match(/(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i);
+      if (timeMatch) {
+        let hours = parseInt(timeMatch[1], 10);
+        const mins = parseInt(timeMatch[2] || '0', 10);
+        const ampm = timeMatch[3]?.toUpperCase();
+        if (ampm === 'PM' && hours < 12) hours += 12;
+        if (ampm === 'AM' && hours === 12) hours = 0;
+        meetingTime.setHours(hours, mins, 0, 0);
       }
 
       const replyLower = aiResult.reply.toLowerCase();
