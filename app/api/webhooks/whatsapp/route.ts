@@ -509,11 +509,32 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       }
 
       const replyLower = aiResult.reply.toLowerCase();
-      const bookingLocationRaw = aiResult.booking_details?.location || '';
+      const userTextLower = userText.toLowerCase();
+      const bookingLocationRaw = (aiResult.booking_details?.location || '').toLowerCase();
+      const isLondonEvent = 
+        replyLower.includes('london') || 
+        replyLower.includes('brompton') || 
+        replyLower.includes('knightsbridge') || 
+        replyLower.includes('open house') || 
+        userTextLower.includes('london') || 
+        userTextLower.includes('knightsbridge') || 
+        userTextLower.includes('thursday') || 
+        userTextLower.includes('sept 3') || 
+        bookingLocationRaw.includes('london') || 
+        bookingLocationRaw.includes('knightsbridge');
+
       let bookingLocation = 'Google Meet';
-      if (replyLower.includes('london') || replyLower.includes('brompton') || replyLower.includes('knightsbridge') || bookingLocationRaw.toLowerCase().includes('london')) {
+      if (isLondonEvent) {
         bookingLocation = 'Danube Properties, 44 Brompton Rd, Knightsbridge, London SW3 1BW, UK';
-      } else if (replyLower.includes('bluewaters') || replyLower.includes('pods') || bookingLocationRaw.toLowerCase().includes('bluewaters')) {
+        // Explicitly pin date to Thursday, September 3, 2026!
+        meetingTime.setFullYear(2026);
+        meetingTime.setMonth(8); // September (0-indexed: Jan=0 ... Sep=8)
+        meetingTime.setDate(3);
+        // Ensure reasonable daylight meeting hour (e.g. 18:00 GST = 3:00 PM BST)
+        if (meetingTime.getHours() === 0) {
+          meetingTime.setHours(18, 0, 0, 0);
+        }
+      } else if (replyLower.includes('bluewaters') || replyLower.includes('pods') || bookingLocationRaw.includes('bluewaters')) {
         bookingLocation = 'The Pods, Bluewaters Island, Dubai';
       }
 
