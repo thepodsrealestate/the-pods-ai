@@ -2212,6 +2212,8 @@ export default function MasterDashboardPage() {
                           <th className="text-left py-3 px-3">Platform</th>
                           <th className="text-left py-3 px-3">Campaign Name</th>
                           <th className="text-right py-3 px-3">Spend (AED)</th>
+                          <th className="text-right py-3 px-3 text-[#C5A059]">Leads</th>
+                          <th className="text-right py-3 px-3 text-emerald-400">CPL (AED)</th>
                           <th className="text-right py-3 px-3">Clicks</th>
                           <th className="text-right py-3 px-3">Impressions</th>
                           <th className="text-right py-3 px-3">CTR</th>
@@ -2239,6 +2241,8 @@ export default function MasterDashboardPage() {
                               )}
                             </td>
                             <td className="py-3 px-3 text-right font-mono text-white">{c.spend.toLocaleString()}</td>
+                            <td className="py-3 px-3 text-right font-mono font-bold text-[#C5A059]">{c.leads > 0 ? c.leads.toLocaleString() : '\u2014'}</td>
+                            <td className="py-3 px-3 text-right font-mono font-bold text-emerald-400">{c.cpl > 0 ? c.cpl.toLocaleString() : '\u2014'}</td>
                             <td className="py-3 px-3 text-right font-mono text-slate-300">{c.clicks.toLocaleString()}</td>
                             <td className="py-3 px-3 text-right font-mono text-slate-300">{c.impressions.toLocaleString()}</td>
                             <td className="py-3 px-3 text-right font-mono text-emerald-400">{c.ctr}%</td>
