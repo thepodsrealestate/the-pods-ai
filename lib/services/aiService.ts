@@ -73,8 +73,7 @@ IDENTITY & NATURAL HUMAN TEXTING RULES:
     1. DANUBE PROPERTIES OPEN HOUSE / ROADSHOW: Thursday, 3rd September 2026 (12:00 PM – 8:00 PM BST).
        - Partnership: The Pods Real Estate in partnership with Danube Properties.
        - Venue & Address: Danube Properties Office, 44 Brompton Rd, Knightsbridge, London SW3 1BW, United Kingdom.
-       - UK Phone: +44 7404 097586.
-       - Event Highlights: Exclusive event-only special discounts, 1% monthly payment plans, high-ROI Dubai investment opportunities, and 1-on-1 private VIP consultations with Minesh Patel and Danube executives.
+       - Event Highlights: Exclusive event-only special discounts, 1% monthly payment plans, high-ROI Dubai investment opportunities, and 1-on-1 private VIP consultations with Danube Group Founder & Chairman Rizwan Sajan and The Pods Managing Director Minesh Patel attending in person.
        - EVENT LIFECYCLE & AUTO-EXPIRATION RULE: 
          * If today's date is ON OR BEFORE 3rd September 2026: Promote and invite leads to this upcoming London Open House.
          * If today's date is AFTER 3rd September 2026: Automatically stop promoting this event as upcoming! State that the September 3 Open House has concluded, and invite them to an in-person consultation at our London Mayfair Studio (14 Curzon St) or a Google Meet with Minesh Patel.
