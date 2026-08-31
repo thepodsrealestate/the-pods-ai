@@ -11,6 +11,10 @@ import { LeadStatus } from '@prisma/client';
 // Sliding Window Rate Limiter (tracks phone -> request timestamps)
 const requestTracker = new Map<string, number[]>();
 
+// In-Flight and Recent Request Deduplication Locks (prevents concurrent ManyChat double-execution)
+const inFlightRequests = new Map<string, { timestamp: number; responsePromise: Promise<any> }>();
+const recentCompletedResponses = new Map<string, { timestamp: number; response: any }>();
+
 function checkRateLimit(identifier: string, limit: number = 10, windowMs: number = 60000): boolean {
   const now = Date.now();
   const timestamps = (requestTracker.get(identifier) || []).filter((ts) => now - ts < windowMs);
@@ -173,106 +177,139 @@ export async function POST(req: NextRequest) {
       normalizedPhone = LeadService.normalizePhone(phone, senderName);
     } catch (_) { /* fallback to raw phone */ }
 
-    let conversationHistory: { sender: string; text: string }[] = [];
-    let existingLead: any = null;
-    try {
-      existingLead = await prisma.lead.findFirst({
-        where: {
-          OR: [
-            { phone: normalizedPhone },
-            { phone },
-            senderName && senderName !== 'VIP Client' && senderName !== 'Guest'
-              ? { fullName: { equals: senderName, mode: 'insensitive' } }
-              : { phone: normalizedPhone },
-          ],
-        },
-        include: {
-          conversations: {
-            orderBy: { updatedAt: 'desc' },
-            take: 1,
-            include: {
-              messages: {
-                take: 100,
-                orderBy: { createdAt: 'desc' },
+    const dedupKey = `${normalizedPhone}_${userText.trim().toLowerCase().substring(0, 60)}`;
+    const now = Date.now();
+
+    // 1. Check if identical request completed in the last 4 seconds (suppress duplicate webhook)
+    const recent = recentCompletedResponses.get(dedupKey);
+    if (recent && now - recent.timestamp < 4000) {
+      console.log(`[DEDUP] Duplicate request from ${normalizedPhone} within 4s — returning cached response`);
+      return NextResponse.json(recent.response);
+    }
+
+    // 2. Check if identical request is currently in-flight (wait for single execution)
+    const inFlight = inFlightRequests.get(dedupKey);
+    if (inFlight && now - inFlight.timestamp < 6000) {
+      console.log(`[DEDUP] Concurrent in-flight request from ${normalizedPhone} — awaiting single execution`);
+      try {
+        const cachedRes = await inFlight.responsePromise;
+        return NextResponse.json(cachedRes);
+      } catch (_) {}
+    }
+
+    const processExecution = async () => {
+      let conversationHistory: { sender: string; text: string }[] = [];
+      let existingLead: any = null;
+      try {
+        existingLead = await prisma.lead.findFirst({
+          where: {
+            OR: [
+              { phone: normalizedPhone },
+              { phone },
+              senderName && senderName !== 'VIP Client' && senderName !== 'Guest'
+                ? { fullName: { equals: senderName, mode: 'insensitive' } }
+                : { phone: normalizedPhone },
+            ],
+          },
+          include: {
+            conversations: {
+              orderBy: { updatedAt: 'desc' },
+              take: 1,
+              include: {
+                messages: {
+                  take: 100,
+                  orderBy: { createdAt: 'desc' },
+                },
               },
             },
           },
-        },
+        });
+
+        if (existingLead && existingLead.conversations.length > 0) {
+          const recentMsgs = existingLead.conversations[0].messages.slice(0, 10);
+          const rawMsgs = [...recentMsgs].reverse();
+          conversationHistory = rawMsgs.map((m: any) => ({
+            sender: m.senderType === 'LEAD' ? 'LEAD' : 'AI',
+            text: m.content,
+          }));
+        }
+      } catch (histErr) {
+        console.warn('[CONTEXT] History lookup warning:', histErr);
+      }
+
+      let adSource = 'ORGANIC';
+      let campaignName = '';
+      const utmSource = body.utm_source || body.source || body.custom_fields?.utm_source || body.custom_fields?.source;
+      const utmCampaign = body.utm_campaign || body.campaign_name || body.custom_fields?.utm_campaign;
+      const userTextLower = userText.toLowerCase();
+
+      if (utmSource) {
+        const srcUpper = String(utmSource).toUpperCase();
+        adSource = srcUpper.includes('GOOGLE') ? 'GOOGLE_ADS' : (srcUpper.includes('FACEBOOK') || srcUpper.includes('INSTAGRAM') || srcUpper.includes('META')) ? 'META_ADS' : 'ORGANIC';
+        campaignName = utmCampaign || '';
+      } else if (body.campaign_id || body.ad_id) {
+        adSource = 'FACEBOOK_ADS';
+        campaignName = utmCampaign || 'Meta Ad Campaign';
+      } else if (userText.includes('[GADS]') || userText === 'Can I get more info on this?' || userText === 'Hello! Can I get more info on this?' || (userTextLower.includes('can i get more info') && conversationHistory.length === 0)) {
+        adSource = 'GOOGLE_ADS';
+        campaignName = 'Google Display Campaign';
+      } else if (
+        userText.includes('[META]') || 
+        userText.includes('[FB]') || 
+        userText.includes('[IG]') || 
+        userTextLower.includes('filled in your form') || 
+        userTextLower.includes('filled out your form') || 
+        userTextLower.includes('looking to invest in dubai property')
+      ) {
+        adSource = 'META_ADS';
+        campaignName = 'Meta London Event Form';
+      }
+
+      const aiResult = await AIService.generateResponse({
+        leadName: senderName || existingLead?.fullName || undefined,
+        buyerLocation: existingLead?.buyerLocation || undefined,
+        purchasePurpose: existingLead?.purchasePurpose || undefined,
+        budgetMin: existingLead?.budgetMin || undefined,
+        budgetMax: existingLead?.budgetMax || undefined,
+        timeline: existingLead?.timeline || undefined,
+        adSource,
+        campaignName,
+        conversationHistory,
+        userMessage: userText,
       });
 
-      if (existingLead && existingLead.conversations.length > 0) {
-        const recentMsgs = existingLead.conversations[0].messages.slice(0, 10);
-        const rawMsgs = [...recentMsgs].reverse();
-        conversationHistory = rawMsgs.map((m: any) => ({
-          sender: m.senderType === 'LEAD' ? 'LEAD' : 'AI',
-          text: m.content,
-        }));
-      }
-    } catch (histErr) {
-      console.warn('[CONTEXT] History lookup warning:', histErr);
+      const latency = Date.now() - startTime;
+      console.log(`[FAST] AI replied in ${latency}ms: "${aiResult.reply.substring(0, 80)}..."`);
+
+      after(async () => {
+        try {
+          await logToDatabase(body, userText, senderName, normalizedPhone, aiResult);
+        } catch (err: any) {
+          console.error('[BG-LOG] Async logging error:', err.message);
+        }
+      });
+
+      return {
+        status: 'success',
+        reply: aiResult.reply,
+        ai_reply: aiResult.reply,
+        text: aiResult.reply,
+        action: aiResult.action || 'NONE',
+        language: aiResult.language || 'en',
+        latency_ms: latency,
+      };
+    };
+
+    const executionPromise = processExecution();
+    inFlightRequests.set(dedupKey, { timestamp: now, responsePromise: executionPromise });
+
+    try {
+      const responsePayload = await executionPromise;
+      recentCompletedResponses.set(dedupKey, { timestamp: Date.now(), response: responsePayload });
+      return NextResponse.json(responsePayload);
+    } finally {
+      inFlightRequests.delete(dedupKey);
     }
-
-    let adSource = 'ORGANIC';
-    let campaignName = '';
-    const utmSource = body.utm_source || body.source || body.custom_fields?.utm_source || body.custom_fields?.source;
-    const utmCampaign = body.utm_campaign || body.campaign_name || body.custom_fields?.utm_campaign;
-    const userTextLower = userText.toLowerCase();
-
-    if (utmSource) {
-      const srcUpper = String(utmSource).toUpperCase();
-      adSource = srcUpper.includes('GOOGLE') ? 'GOOGLE_ADS' : (srcUpper.includes('FACEBOOK') || srcUpper.includes('INSTAGRAM') || srcUpper.includes('META')) ? 'META_ADS' : 'ORGANIC';
-      campaignName = utmCampaign || '';
-    } else if (body.campaign_id || body.ad_id) {
-      adSource = 'FACEBOOK_ADS';
-      campaignName = utmCampaign || 'Meta Ad Campaign';
-    } else if (userText.includes('[GADS]') || userText === 'Can I get more info on this?' || userText === 'Hello! Can I get more info on this?' || (userTextLower.includes('can i get more info') && conversationHistory.length === 0)) {
-      adSource = 'GOOGLE_ADS';
-      campaignName = 'Google Display Campaign';
-    } else if (
-      userText.includes('[META]') || 
-      userText.includes('[FB]') || 
-      userText.includes('[IG]') || 
-      userTextLower.includes('filled in your form') || 
-      userTextLower.includes('filled out your form') || 
-      userTextLower.includes('looking to invest in dubai property')
-    ) {
-      adSource = 'META_ADS';
-      campaignName = 'Meta London Event Form';
-    }
-
-    const aiResult = await AIService.generateResponse({
-      leadName: senderName || existingLead?.fullName || undefined,
-      buyerLocation: existingLead?.buyerLocation || undefined,
-      purchasePurpose: existingLead?.purchasePurpose || undefined,
-      budgetMin: existingLead?.budgetMin || undefined,
-      budgetMax: existingLead?.budgetMax || undefined,
-      timeline: existingLead?.timeline || undefined,
-      adSource,
-      campaignName,
-      conversationHistory,
-      userMessage: userText,
-    });
-
-    const latency = Date.now() - startTime;
-    console.log(`[FAST] AI replied in ${latency}ms: "${aiResult.reply.substring(0, 80)}..."`);
-
-    after(async () => {
-      try {
-        await logToDatabase(body, userText, senderName, normalizedPhone, aiResult);
-      } catch (err: any) {
-        console.error('[BG-LOG] Async logging error:', err.message);
-      }
-    });
-
-    return NextResponse.json({
-      status: 'success',
-      reply: aiResult.reply,
-      ai_reply: aiResult.reply,
-      text: aiResult.reply,
-      action: aiResult.action || 'NONE',
-      language: aiResult.language || 'en',
-      latency_ms: latency,
-    });
   } catch (error: any) {
     console.error('Webhook Error:', error.message);
     return NextResponse.json({

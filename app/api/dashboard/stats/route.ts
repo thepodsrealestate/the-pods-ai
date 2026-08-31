@@ -45,6 +45,20 @@ export async function GET() {
       })
     ]);
 
+    // Deduplicate conversations so each unique lead has exactly ONE conversation thread
+    const uniqueConvMap = new Map<string, any>();
+    for (const c of conversations) {
+      const key = c.leadId || c.id;
+      if (!uniqueConvMap.has(key)) {
+        uniqueConvMap.set(key, { ...c, messages: [...c.messages] });
+      } else {
+        const existing = uniqueConvMap.get(key);
+        existing.messages.push(...c.messages);
+        existing.messages.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      }
+    }
+    const deduplicatedConversations = Array.from(uniqueConvMap.values());
+
     return NextResponse.json({
       success: true,
       stats: {
@@ -55,7 +69,7 @@ export async function GET() {
         totalVouchers
       },
       recentLeads,
-      conversations,
+      conversations: deduplicatedConversations,
       bookings
     });
   } catch (error: any) {
