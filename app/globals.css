@@ -21,3 +21,27 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-sf);
   letter-spacing: -0.022em;
 }
+
+/* Luxury Custom Dark Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E2538;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C5A059;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1E2538 transparent;
+}

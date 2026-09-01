@@ -1578,63 +1578,34 @@ export default function MasterDashboardPage() {
                             </div>
                             <span className="text-xs text-slate-400 font-mono shrink-0">
                               {formatTimeAgo(conv.updatedAt)}
+                              {formatTimeAgo(conv.updatedAt)}
                             </span>
                           </div>
 
                           <p className="text-sm text-slate-400 line-clamp-1">
                             {lastMsg ? lastMsg.content : "No messages yet"}
                           </p>
-
-                          <div className="flex items-center justify-between pt-1">
-                            {/* Minesh's Red / Green Action Badge */}
+                          <div className="flex items-center justify-between pt-0.5">
+                            {/* Status Indicator */}
                             <div className="flex items-center space-x-1.5">
                               {needsReply ? (
-                                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/15 text-rose-300 border border-rose-500/30">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-rose-400 inline-block"></span>
+                                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/15 text-rose-300 border border-rose-500/25">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
                                   <span>Needs reply</span>
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
+                                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                                   <span>Replied</span>
                                 </span>
                               )}
                             </div>
 
-                            {/* Channel / Social Media Source Tag */}
-                            <div className="flex items-center space-x-1.5 min-w-0 justify-end">
-                              {(() => {
-                                const src = (conv.lead?.leadSource || "WHATSAPP_DIRECT").toUpperCase();
-                                if (src.includes("GOOGLE")) {
-                                  return (
-                                    <span className="text-xs font-bold font-mono px-2 py-1 rounded bg-red-500/10 text-red-400 border border-red-500/30">
-                                      G-ADS
-                                    </span>
-                                  );
-                                }
-                                if (src.includes("INSTAGRAM")) {
-                                  return (
-                                    <span className="text-xs font-bold font-mono px-2 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/30">
-                                      INSTA
-                                    </span>
-                                  );
-                                }
-                                if (src.includes("FACEBOOK") || src.includes("META")) {
-                                  return (
-                                    <span className="text-xs font-bold font-mono px-2 py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/30">
-                                      Meta
-                                    </span>
-                                  );
-                                }
-                                return (
-                                  <span className="text-xs font-bold font-mono px-2 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                                    WA DIRECT
-                                  </span>
-                                );
-                              })()}
-
+                            {/* Channel Source & Location Tag */}
+                            <div className="flex items-center space-x-1.5 min-w-0 justify-end text-[10px] text-slate-400">
+                              <SourceBadge source={conv.lead?.leadSource} compact={true} />
                               {conv.lead?.buyerLocation && (
-                                <span className="text-xs font-mono text-slate-400 bg-[#151824] px-2 py-1 rounded border border-[#1E2230] truncate max-w-28">
+                                <span className="text-[10px] font-mono text-slate-400 bg-[#121624] px-1.5 py-0.5 rounded border border-[#1E2230] truncate max-w-24">
                                   {conv.lead.buyerLocation}
                                 </span>
                               )}
@@ -1648,21 +1619,21 @@ export default function MasterDashboardPage() {
               </div>
 
               {/* Right Transcript */}
-              <div className={`flex-1 bg-[#0D0F17] border border-[#1E2230] rounded-2xl flex-col shadow-xl overflow-hidden ${
+              <div className={`flex-1 bg-[#090B12] border border-[#1E2538] rounded-2xl flex-col shadow-xl overflow-hidden ${
                 mobileShowChat ? "flex h-full" : "hidden md:flex"
               }`}>
                 {!selectedConversation ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-slate-500 space-y-2 p-8">
+                  <div className="flex-1 flex flex-col items-center justify-center text-slate-500 space-y-2 p-8 bg-[#090B12]">
                     <MessageSquare className="w-10 h-10 text-[#C5A059]" />
                     <p className="text-sm font-semibold text-slate-400">No conversation selected</p>
                     <p className="text-xs text-slate-500 text-center max-w-sm">
-                      As soon as a WhatsApp lead texts your number, the complete conversation transcript will render here in real time.
+                      Select a WhatsApp lead from the left feed to view the real-time transcript and send replies.
                     </p>
                   </div>
                 ) : (
                   <div className="flex-1 flex flex-col h-full">
                     {/* 2-Row Native Messenger Header */}
-                    <div className="px-3.5 py-2.5 border-b border-[#1E2230] bg-[#111420] flex flex-col gap-1.5 shadow-sm">
+                    <div className="px-4 py-2.5 border-b border-[#1E2230] bg-[#111420] flex flex-col gap-1.5 shadow-sm">
                       {/* Row 1: Back + Avatar + Name + Actions */}
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center space-x-2.5 min-w-0">
@@ -1703,7 +1674,7 @@ export default function MasterDashboardPage() {
                             }`}
                             title="Toggle AI Automation"
                           >
-                            {selectedConversation.lead.aiEnabled ? "AI Active" : "Manual"}
+                            {selectedConversation.lead.aiEnabled ? "Auto-Pilot ON" : "Manual"}
                           </button>
 
                           <button
@@ -1733,7 +1704,7 @@ export default function MasterDashboardPage() {
                     </div>
 
                     {/* Messages Feed */}
-                    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-[#090B10] h-0 min-h-0">
+                    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-[#07090F] h-0 min-h-0">
                       {(() => {
                         const rawMsgs = selectedConversation.messages || [];
                         const uniqueMsgs = deduplicateConsecutiveMessages(rawMsgs);
@@ -1745,10 +1716,10 @@ export default function MasterDashboardPage() {
                               className={`flex ${isOutgoing ? "justify-end" : "justify-start"}`}
                             >
                               <div
-                                className={`max-w-[85%] sm:max-w-md p-3.5 sm:p-4 rounded-2xl shadow-md space-y-1.5 ${
+                                className={`max-w-[80%] sm:max-w-[72%] p-3.5 sm:p-4 rounded-2xl shadow-md space-y-1.5 ${
                                   isOutgoing
                                     ? "bg-[#161B29] border border-[#C5A059]/30 text-slate-100 rounded-br-xs"
-                                    : "bg-[#1E2333] text-slate-200 rounded-bl-xs border border-[#272F45]"
+                                    : "bg-[#1A1F30] text-slate-200 rounded-bl-xs border border-[#252C42]"
                                 }`}
                               >
                                 <div className="flex items-center justify-between text-[11px] text-slate-400 space-x-3 pb-0.5 border-b border-white/5">
@@ -1847,7 +1818,7 @@ export default function MasterDashboardPage() {
 
               {/* Column 3: Lead Profile & Quick Cockpit Actions (Visible on XL Desktop) */}
               {selectedConversation && (
-                <div className="hidden xl:flex w-80 shrink-0 bg-[#0D0F17] border border-[#1E2230] rounded-2xl flex-col shadow-xl overflow-y-auto p-4 space-y-4">
+                <div className="hidden xl:flex w-80 shrink-0 bg-[#0D101A] border border-[#1A2030] rounded-2xl flex-col shadow-xl overflow-y-auto p-4 space-y-4">
                   <div className="flex items-center justify-between pb-3 border-b border-[#1E2230]">
                     <div className="flex items-center space-x-2">
                       <Users className="w-4 h-4 text-[#C5A059]" />
@@ -1858,12 +1829,12 @@ export default function MasterDashboardPage() {
                         ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
                         : "bg-amber-500/15 text-amber-400 border border-amber-500/30"
                     }`}>
-                      {selectedConversation.lead?.aiEnabled ? "Auto-Pilot On" : "Manual Takeover"}
+                      {selectedConversation.lead?.aiEnabled ? "Auto-Pilot ON" : "Manual"}
                     </span>
                   </div>
 
                   {/* Profile Summary Card */}
-                  <div className="bg-[#151824] rounded-xl p-3.5 border border-[#1E2230] space-y-2.5">
+                  <div className="bg-[#141826] rounded-xl p-3.5 border border-[#1E2438] space-y-2.5">
                     <div>
                       <h3 className="font-bold text-white text-sm">
                         {selectedConversation.lead?.fullName || "VIP Client"}
@@ -1894,10 +1865,25 @@ export default function MasterDashboardPage() {
                         </span>
                       </div>
                       <div>
-                        <span className="text-slate-500 block text-[10px]">Meeting</span>
-                        <span className="text-slate-200 font-semibold truncate block">{selectedConversation.lead?.meetingPreference || "Pending"}</span>
+                        <span className="text-slate-500 block text-[10px]">Timeline</span>
+                        <span className="text-slate-200 font-semibold">{selectedConversation.lead?.timeline || "Immediate"}</span>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Ad Attribution Intelligence */}
+                  <div className="bg-[#141826] rounded-xl p-3 border border-[#1E2438] space-y-1.5 text-xs">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Acquisition Source</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-300 font-medium">{selectedConversation.lead?.leadSource || "Direct WhatsApp"}</span>
+                      <SourceBadge source={selectedConversation.lead?.leadSource} compact={true} />
+                    </div>
+                    {selectedConversation.lead?.meetingPreference && (
+                      <div className="pt-1 border-t border-white/5">
+                        <span className="text-[10px] text-slate-500 block">Requested Session:</span>
+                        <span className="text-emerald-400 font-semibold text-[11px]">{selectedConversation.lead.meetingPreference}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Quick Cockpit Actions */}
@@ -1907,10 +1893,10 @@ export default function MasterDashboardPage() {
                         setSelectedLead(selectedConversation.lead);
                         setDrawerOpen(true);
                       }}
-                      className="w-full py-2.5 px-3 rounded-xl bg-[#151824] hover:bg-[#1E2333] border border-[#1E2230] hover:border-[#C5A059]/40 text-slate-200 text-xs font-bold transition-all flex items-center justify-center space-x-2 shadow-sm"
+                      className="w-full py-2.5 px-3 rounded-xl bg-[#141826] hover:bg-[#1E2438] border border-[#1E2438] hover:border-[#C5A059]/40 text-slate-200 text-xs font-bold transition-all flex items-center justify-center space-x-2 shadow-sm"
                     >
                       <FileText className="w-3.5 h-3.5 text-[#C5A059]" />
-                      <span>View Full Lead Details</span>
+                      <span>View Full Lead Profile</span>
                     </button>
 
                     <button
