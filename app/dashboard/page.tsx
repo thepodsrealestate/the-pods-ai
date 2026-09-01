@@ -49,7 +49,7 @@ function SourceBadge({ source }: { source: string }) {
 
   if (upper.includes("WHATSAPP")) {
     return (
-      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs sm:text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shrink-0">
         <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347z"/>
           <path d="M12 2a10 10 0 0 0-8.59 15.11L2 22l4.99-1.31A10 10 0 1 0 12 2zm0 18a7.95 7.95 0 0 1-4.07-1.12l-.29-.17-3.02.79.81-2.94-.19-.3A7.96 7.96 0 1 1 12 20z"/>
@@ -61,7 +61,7 @@ function SourceBadge({ source }: { source: string }) {
 
   if (upper.includes("INSTAGRAM")) {
     return (
-      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/30">
+      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs sm:text-[10px] font-bold uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/30 shrink-0">
         <svg className="w-3.5 h-3.5 fill-none stroke-current stroke-[2]" viewBox="0 0 24 24">
           <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
           <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -74,7 +74,7 @@ function SourceBadge({ source }: { source: string }) {
 
   if (upper.includes("FACEBOOK") || upper.includes("META")) {
     return (
-      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/30">
+      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs sm:text-[10px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/30 shrink-0">
         <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
           <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
         </svg>
@@ -85,7 +85,7 @@ function SourceBadge({ source }: { source: string }) {
 
   if (upper.includes("GOOGLE")) {
     return (
-      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/30">
+      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs sm:text-[10px] font-bold uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/30 shrink-0">
         <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
           <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
         </svg>
@@ -95,7 +95,7 @@ function SourceBadge({ source }: { source: string }) {
   }
 
   return (
-    <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-[#C5A059]/10 text-[#C5A059] border border-[#C5A059]/30">
+    <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs sm:text-[10px] font-bold uppercase tracking-wider bg-[#C5A059]/10 text-[#C5A059] border border-[#C5A059]/30 shrink-0">
       <Globe className="w-3.5 h-3.5" />
       <span>{upper.replace("_", " ")}</span>
     </span>
@@ -124,6 +124,24 @@ function cleanWhatsAppPhone(phone?: string | null) {
   return phone.replace(/[^0-9]/g, "");
 }
 
+type ConversationMessage = {
+  senderType: string;
+  content?: string;
+  createdAt: string | Date;
+};
+
+function deduplicateConsecutiveMessages<T extends ConversationMessage>(messages: T[]): T[] {
+  return messages.filter((message, index) => {
+    const previous = messages[index - 1];
+    if (!previous || previous.senderType !== message.senderType) return true;
+
+    const sameContent = (previous.content || "").trim().toLowerCase()
+      === (message.content || "").trim().toLowerCase();
+    const timeDifference = new Date(message.createdAt).getTime() - new Date(previous.createdAt).getTime();
+    return !(sameContent && timeDifference >= 0 && timeDifference <= 10000);
+  });
+}
+
 export default function MasterDashboardPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -131,7 +149,7 @@ export default function MasterDashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-  const [selectedConvIndex, setSelectedConvIndex] = useState<number>(0);
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [mobileShowChat, setMobileShowChat] = useState<boolean>(false);
 
   const chatScrollEndRef = useRef<HTMLDivElement>(null);
@@ -180,6 +198,8 @@ export default function MasterDashboardPage() {
   const [leadBriefings, setLeadBriefings] = useState<Record<string, any>>({});
   const [loadingBriefing, setLoadingBriefing] = useState<Record<string, boolean>>({});
   const [chatReplyInput, setChatReplyInput] = useState<string>("");
+  const [sendingChatReply, setSendingChatReply] = useState<boolean>(false);
+  const [chatSendError, setChatSendError] = useState<string | null>(null);
   // Delete Lead & Chat History State
   const [deleteModalLead, setDeleteModalLead] = useState<any | null>(null);
   const [deletePasscode, setDeletePasscode] = useState<string>("");
@@ -537,47 +557,43 @@ export default function MasterDashboardPage() {
   };
 
   const handleSendManualReply = async () => {
-    if (!chatReplyInput.trim() || !data?.conversations || data.conversations.length === 0) return;
-
-    const currentConv = data.conversations[selectedConvIndex];
-    if (!currentConv) return;
+    if (!chatReplyInput.trim() || !selectedConversation) return;
 
     const messageText = chatReplyInput.trim();
-    setChatReplyInput("");
+    setSendingChatReply(true);
+    setChatSendError(null);
 
-    const tempMsg = {
-      id: `msg_manual_${Date.now()}`,
-      senderType: "AI",
-      content: messageText,
-      createdAt: new Date().toISOString(),
-    };
-
-    // Optimistically update UI
-    setData((prev: any) => {
-      if (!prev || !prev.conversations) return prev;
-      const updatedConvs = [...prev.conversations];
-      if (updatedConvs[selectedConvIndex]) {
-        updatedConvs[selectedConvIndex] = {
-          ...updatedConvs[selectedConvIndex],
-          messages: [...updatedConvs[selectedConvIndex].messages, tempMsg],
-        };
-      }
-      return { ...prev, conversations: updatedConvs };
-    });
-
-    // Send to live WhatsApp API
     try {
-      await fetch("/api/conversations/reply", {
+      const response = await fetch("/api/conversations/reply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          conversationId: currentConv.id,
+          conversationId: selectedConversation.id,
           text: messageText,
         }),
       });
-      fetchData();
-    } catch (e) {
+      const result = await response.json();
+      if (!response.ok || !result.success || !result.delivered) {
+        throw new Error(result.error || "WhatsApp could not deliver this message");
+      }
+
+      setChatReplyInput("");
+      setData((previous: any) => {
+        if (!previous?.conversations) return previous;
+        return {
+          ...previous,
+          conversations: previous.conversations.map((conversation: any) =>
+            conversation.id === selectedConversation.id
+              ? { ...conversation, messages: [...conversation.messages, result.message] }
+              : conversation
+          ),
+        };
+      });
+    } catch (e: any) {
       console.error("Failed to send manual reply:", e);
+      setChatSendError(e.message || "WhatsApp delivery failed. Your message was not recorded as sent.");
+    } finally {
+      setSendingChatReply(false);
     }
   };
 
@@ -694,6 +710,10 @@ export default function MasterDashboardPage() {
       const json = await res.json();
       if (json.success) {
         setData(json);
+        setSelectedConversationId((currentId) => {
+          const stillExists = json.conversations?.some((conversation: any) => conversation.id === currentId);
+          return stillExists ? currentId : json.conversations?.[0]?.id || null;
+        });
       }
     } catch (e) {
       console.error("Dashboard fetch error:", e);
@@ -758,6 +778,9 @@ export default function MasterDashboardPage() {
   const leads = data?.recentLeads || [];
   const conversations = data?.conversations || [];
   const bookings = data?.bookings || [];
+  const selectedConversation = conversations.find(
+    (conversation: any) => conversation.id === selectedConversationId
+  ) || null;
 
   // Dynamic filtered leads list based on search and status filters
   const filteredLeads = leads.filter((lead: any) => {
@@ -805,14 +828,14 @@ export default function MasterDashboardPage() {
 
   // Auto-scroll ONLY when switching contact or when new message is added
   const prevMsgCountRef = useRef<number>(0);
-  const currentMsgsLength = conversations[selectedConvIndex]?.messages?.length || 0;
+  const currentMsgsLength = selectedConversation?.messages?.length || 0;
 
   useEffect(() => {
     if (currentMsgsLength !== prevMsgCountRef.current) {
       chatScrollEndRef.current?.scrollIntoView({ behavior: "smooth" });
       prevMsgCountRef.current = currentMsgsLength;
     }
-  }, [selectedConvIndex, currentMsgsLength]);
+  }, [selectedConversationId, currentMsgsLength]);
 
   // Calculate Lead Source Distribution dynamically from DB leads (normalized to prevent duplicates)
   const sourceCounts = leads.reduce((acc: Record<string, number>, lead: any) => {
@@ -1414,8 +1437,8 @@ export default function MasterDashboardPage() {
 
                                   <button
                                     onClick={() => {
-                                      const convIdx = conversations.findIndex((c: any) => c.leadId === lead.id);
-                                      if (convIdx !== -1) setSelectedConvIndex(convIdx);
+                                      const conversation = conversations.find((item: any) => item.leadId === lead.id);
+                                      if (conversation) setSelectedConversationId(conversation.id);
                                       setActiveTab("conversations");
                                     }}
                                     title="Open WhatsApp Chat transcript"
@@ -1454,7 +1477,7 @@ export default function MasterDashboardPage() {
 
           {/* TAB 3: CONVERSATIONS */}
           {activeTab === "conversations" && (
-            <div className="h-[calc(100vh-7.5rem)] md:h-[calc(100vh-10rem)] flex flex-col md:flex-row gap-6 max-w-7xl mx-auto overflow-hidden">
+            <div className="h-[calc(100dvh-7.5rem)] md:h-[calc(100vh-10rem)] flex flex-col md:flex-row gap-4 md:gap-6 max-w-7xl mx-auto overflow-hidden">
               {/* Left Thread List */}
               <div className={`w-full md:w-88 bg-[#0D0F17] border border-[#1E2230] rounded-2xl flex-col shadow-xl overflow-hidden select-none shrink-0 ${
                 mobileShowChat ? "hidden md:flex" : "flex h-full"
@@ -1463,9 +1486,9 @@ export default function MasterDashboardPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="font-bold text-white text-sm">Active Threads</h3>
-                      <p className="text-[11px] text-slate-400">Live WhatsApp Chat Feeds</p>
+                      <p className="text-xs text-slate-400">Live WhatsApp Chat Feeds</p>
                     </div>
-                    <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full font-bold">
+                    <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full font-bold">
                       {filteredConversations.length} Active
                     </span>
                   </div>
@@ -1478,16 +1501,16 @@ export default function MasterDashboardPage() {
                       value={convSearchQuery}
                       onChange={(e) => setConvSearchQuery(e.target.value)}
                       placeholder="Search chats by name or phone..."
-                      className="w-full bg-[#0D0F17] border border-[#1E2230] focus:border-[#C5A059] rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 outline-none transition-all"
+                      className="w-full bg-[#0D0F17] border border-[#1E2230] focus:border-[#C5A059] rounded-xl pl-9 pr-3 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition-all"
                     />
                   </div>
 
                   {/* Filter Pills */}
-                  <div className="flex flex-wrap items-center gap-1 bg-[#0D0F17] p-1 rounded-xl border border-[#1E2230] text-[10px] font-bold">
+                  <div className="flex flex-wrap items-center gap-1 bg-[#0D0F17] p-1 rounded-xl border border-[#1E2230] text-xs font-bold">
                     {[
                       { key: "ALL", label: "All" },
-                      { key: "NEEDS_REPLY", label: "🔴 Needs Reply" },
-                      { key: "RESPONDED", label: "🟢 Responded" },
+                      { key: "NEEDS_REPLY", label: "Needs Reply" },
+                      { key: "RESPONDED", label: "Replied" },
                       { key: "AI", label: "AI Active" },
                       { key: "HUMAN", label: "Human" },
                     ].map((btn) => (
@@ -1514,16 +1537,17 @@ export default function MasterDashboardPage() {
                         : "No active conversations in database yet."}
                     </div>
                   ) : (
-                    filteredConversations.map((conv: any, idx: number) => {
+                    filteredConversations.map((conv: any) => {
                       const lastMsg = conv.messages?.[conv.messages.length - 1];
-                      const isSelected = selectedConvIndex === idx;
+                      const isSelected = selectedConversationId === conv.id;
                       const needsReply = lastMsg?.senderType === "LEAD" || conv.lead?.handoffStatus === true;
 
                       return (
                         <div
                           key={conv.id}
                           onClick={() => {
-                            setSelectedConvIndex(idx);
+                            setSelectedConversationId(conv.id);
+                            setChatSendError(null);
                             setMobileShowChat(true);
                           }}
                           className={`p-4 cursor-pointer transition-colors space-y-1.5 relative ${
@@ -1532,16 +1556,16 @@ export default function MasterDashboardPage() {
                         >
                           <div className="flex justify-between items-start">
                             <div className="flex items-center space-x-1.5 truncate max-w-[170px]">
-                              <span className="font-semibold text-white text-xs truncate">
+                              <span className="font-semibold text-white text-sm truncate">
                                 {conv.lead?.fullName || conv.lead?.phone}
                               </span>
                             </div>
-                            <span className="text-[10px] text-slate-400 font-mono">
+                            <span className="text-xs text-slate-400 font-mono shrink-0">
                               {formatTimeAgo(conv.updatedAt)}
                             </span>
                           </div>
 
-                          <p className="text-xs text-slate-400 line-clamp-1 italic">
+                          <p className="text-sm text-slate-400 line-clamp-1">
                             {lastMsg ? lastMsg.content : "No messages yet"}
                           </p>
 
@@ -1549,52 +1573,52 @@ export default function MasterDashboardPage() {
                             {/* Minesh's Red / Green Action Badge */}
                             <div className="flex items-center space-x-1.5">
                               {needsReply ? (
-                                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-rose-400 inline-block animate-ping"></span>
-                                  <span>🔴 NEEDS REPLY</span>
+                                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/15 text-rose-300 border border-rose-500/30">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-rose-400 inline-block"></span>
+                                  <span>Needs reply</span>
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
                                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
-                                  <span>🟢 RESPONDED</span>
+                                  <span>Replied</span>
                                 </span>
                               )}
                             </div>
 
                             {/* Channel / Social Media Source Tag */}
-                            <div className="flex items-center space-x-1">
+                            <div className="flex items-center space-x-1.5 min-w-0 justify-end">
                               {(() => {
                                 const src = (conv.lead?.leadSource || "WHATSAPP_DIRECT").toUpperCase();
                                 if (src.includes("GOOGLE")) {
                                   return (
-                                    <span className="text-[9px] font-bold font-mono px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/30">
+                                    <span className="text-xs font-bold font-mono px-2 py-1 rounded bg-red-500/10 text-red-400 border border-red-500/30">
                                       G-ADS
                                     </span>
                                   );
                                 }
                                 if (src.includes("INSTAGRAM")) {
                                   return (
-                                    <span className="text-[9px] font-bold font-mono px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/30">
+                                    <span className="text-xs font-bold font-mono px-2 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/30">
                                       INSTA
                                     </span>
                                   );
                                 }
                                 if (src.includes("FACEBOOK") || src.includes("META")) {
                                   return (
-                                    <span className="text-[9px] font-bold font-mono px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/30">
-                                      META
+                                    <span className="text-xs font-bold font-mono px-2 py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/30">
+                                      Meta
                                     </span>
                                   );
                                 }
                                 return (
-                                  <span className="text-[9px] font-bold font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                                  <span className="text-xs font-bold font-mono px-2 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
                                     WA DIRECT
                                   </span>
                                 );
                               })()}
 
                               {conv.lead?.buyerLocation && (
-                                <span className="text-[9px] font-mono text-slate-400 bg-[#151824] px-1.5 py-0.5 rounded border border-[#1E2230]">
+                                <span className="text-xs font-mono text-slate-400 bg-[#151824] px-2 py-1 rounded border border-[#1E2230] truncate max-w-28">
                                   {conv.lead.buyerLocation}
                                 </span>
                               )}
@@ -1611,7 +1635,7 @@ export default function MasterDashboardPage() {
               <div className={`flex-1 bg-[#0D0F17] border border-[#1E2230] rounded-2xl flex-col shadow-xl overflow-hidden ${
                 mobileShowChat ? "flex h-full" : "hidden md:flex"
               }`}>
-                {conversations.length === 0 ? (
+                {!selectedConversation ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-slate-500 space-y-2 p-8">
                     <MessageSquare className="w-10 h-10 text-[#C5A059]" />
                     <p className="text-sm font-semibold text-slate-400">No conversation selected</p>
@@ -1622,59 +1646,59 @@ export default function MasterDashboardPage() {
                 ) : (
                   <div className="flex-1 flex flex-col h-full">
                     {/* Header with Back Button on Mobile */}
-                    <div className="p-4 border-b border-[#1E2230] bg-[#151824] flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
+                    <div className="p-4 border-b border-[#1E2230] bg-[#151824] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center space-x-3 min-w-0 w-full sm:w-auto">
                         <button
                           onClick={() => setMobileShowChat(false)}
-                          className="md:hidden p-1.5 rounded-lg bg-[#0D0F17] border border-[#1E2230] text-[#C5A059] font-bold text-xs flex items-center space-x-1"
+                          className="md:hidden min-h-11 px-3 rounded-lg bg-[#0D0F17] border border-[#1E2230] text-[#C5A059] font-bold text-xs flex items-center space-x-1 shrink-0"
                         >
                           <ChevronLeft className="w-4 h-4" />
                           <span>Back</span>
                         </button>
-                        <div>
-                          <div className="flex items-center space-x-2">
-                            <h3 className="font-bold text-white text-sm">
-                              {conversations[selectedConvIndex]?.lead.fullName || conversations[selectedConvIndex]?.lead.phone}
-                            </h3>
-                            <SourceBadge source={conversations[selectedConvIndex]?.lead.leadSource} />
+                        <div className="min-w-0">
+                          <h3 className="font-bold text-white text-sm truncate">
+                            {selectedConversation.lead.fullName || selectedConversation.lead.phone}
+                          </h3>
+                          <div className="flex items-center gap-2 mt-1 min-w-0">
+                            <p className="text-xs text-[#C5A059] font-mono truncate">
+                              {selectedConversation.lead.phone}
+                            </p>
+                            <SourceBadge source={selectedConversation.lead.leadSource} />
                           </div>
-                          <p className="text-xs text-[#C5A059] font-mono mt-0.5">
-                            {conversations[selectedConvIndex]?.lead.phone}
-                          </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto flex-wrap">
                         {/* Red / Green Status Badge in Header */}
                         {(() => {
-                          const curConv = conversations[selectedConvIndex];
+                          const curConv = selectedConversation;
                           const curLastMsg = curConv?.messages?.[curConv.messages.length - 1];
                           const curNeedsReply = curLastMsg?.senderType === "LEAD" || curConv?.lead?.handoffStatus === true;
 
                           return curNeedsReply ? (
-                            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse flex items-center space-x-1.5">
-                              <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping inline-block"></span>
-                              <span>🔴 ACTION REQUIRED</span>
+                            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/15 text-rose-300 border border-rose-500/30 flex items-center space-x-1.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-rose-400 inline-block"></span>
+                              <span>Needs reply</span>
                             </span>
                           ) : (
-                            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1.5">
-                              <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>
-                              <span>🟢 UP TO DATE</span>
+                            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
+                              <span>Replied</span>
                             </span>
                           );
                         })()}
 
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${
-                          conversations[selectedConvIndex]?.lead.aiEnabled
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                          selectedConversation.lead.aiEnabled
                             ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
                             : "bg-amber-500/10 text-amber-400 border border-amber-500/30"
                         }`}>
-                          {conversations[selectedConvIndex]?.lead.aiEnabled ? "AI Active" : "Human Control"}
+                          {selectedConversation.lead.aiEnabled ? "AI Active" : "Human Control"}
                         </span>
 
                         <button
                           onClick={() => {
-                            const curLead = conversations[selectedConvIndex]?.lead;
+                            const curLead = selectedConversation.lead;
                             if (curLead) {
                               setDeleteModalLead(curLead);
                               setDeletePasscode("");
@@ -1694,35 +1718,29 @@ export default function MasterDashboardPage() {
                     {/* Messages */}
                     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-[#07080C]/60 h-0 min-h-0">
                       {(() => {
-                        const rawMsgs = conversations[selectedConvIndex]?.messages || [];
-                        const seenMsgKeys = new Set<string>();
-                        const uniqueMsgs = rawMsgs.filter((msg: any) => {
-                          const key = `${msg.senderType}_${(msg.content || '').trim().toLowerCase().substring(0, 80)}`;
-                          if (seenMsgKeys.has(key)) return false;
-                          seenMsgKeys.add(key);
-                          return true;
-                        });
+                        const rawMsgs = selectedConversation.messages || [];
+                        const uniqueMsgs = deduplicateConsecutiveMessages(rawMsgs);
                         return uniqueMsgs.map((msg: any) => (
                           <div
                             key={msg.id}
-                            className={`flex ${msg.senderType === "AI" ? "justify-end" : "justify-start"}`}
+                            className={`flex ${msg.senderType === "AI" || msg.senderType === "HUMAN_AGENT" ? "justify-end" : "justify-start"}`}
                           >
                             <div
                               className={`max-w-[85%] md:max-w-md p-3.5 md:p-4 rounded-2xl shadow-lg space-y-1 ${
-                                msg.senderType === "AI"
+                                msg.senderType === "AI" || msg.senderType === "HUMAN_AGENT"
                                   ? "bg-[#151824] border border-[#C5A059]/40 text-white rounded-br-none"
                                   : "bg-[#1E2230] text-slate-200 rounded-bl-none"
                               }`}
                             >
-                              <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1 space-x-4">
+                              <div className="flex items-center justify-between text-xs text-slate-400 mb-1 space-x-4">
                                 <span className="font-bold tracking-wider uppercase text-[#C5A059]">
-                                  {msg.senderType === "AI" ? "AI Concierge" : "Lead"}
+                                  {msg.senderType === "AI" ? "AI Concierge" : msg.senderType === "HUMAN_AGENT" ? "Human Agent" : "Lead"}
                                 </span>
                                 <span className="font-mono">
                                   {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </span>
                               </div>
-                              <p className="text-xs leading-relaxed whitespace-pre-line">{msg.content}</p>
+                              <p className="text-sm leading-relaxed whitespace-pre-line">{msg.content}</p>
                             </div>
                           </div>
                         ));
@@ -1732,25 +1750,25 @@ export default function MasterDashboardPage() {
 
                     {/* AI Co-Pilot 1-Click Executive Reply Bar */}
                     <div className="p-4 border-t border-[#1E2230] bg-[#151824] space-y-3">
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <span className="text-xs font-extrabold text-[#C5A059] uppercase tracking-wider flex items-center space-x-1.5">
                           <Sparkles className="w-3.5 h-3.5" />
                           <span>AI Executive Reply Co-Pilot</span>
                         </span>
-                        <div className="flex items-center space-x-2">
+                        <div className="grid grid-cols-2 gap-2 w-full sm:w-auto">
                           <button
                             type="button"
-                            onClick={() => handleGenerateNudge(conversations[selectedConvIndex]?.lead?.id)}
+                            onClick={() => handleGenerateNudge(selectedConversation.lead?.id)}
                             disabled={generatingNudge}
-                            className="px-3 py-1 bg-[#0D0F17] hover:bg-[#1E2230] border border-emerald-500/40 text-emerald-400 font-bold text-[11px] rounded-lg transition-all disabled:opacity-50"
+                            className="min-h-11 px-3 py-2 bg-[#0D0F17] hover:bg-[#1E2230] border border-emerald-500/40 text-emerald-400 font-bold text-xs rounded-lg transition-all disabled:opacity-50"
                           >
                             {generatingNudge ? "Generating Nudge..." : "Generate 48h Nudge"}
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleGenerateAiSuggestions(conversations[selectedConvIndex]?.id)}
+                            onClick={() => handleGenerateAiSuggestions(selectedConversation.id)}
                             disabled={loadingSuggestions}
-                            className="px-3 py-1 bg-[#0D0F17] hover:bg-[#1E2230] border border-[#C5A059]/40 text-[#C5A059] font-bold text-[11px] rounded-lg transition-all disabled:opacity-50"
+                            className="min-h-11 px-3 py-2 bg-[#0D0F17] hover:bg-[#1E2230] border border-[#C5A059]/40 text-[#C5A059] font-bold text-xs rounded-lg transition-all disabled:opacity-50"
                           >
                             {loadingSuggestions ? "Generating Options..." : "Generate 1-Click Replies"}
                           </button>
@@ -1777,6 +1795,12 @@ export default function MasterDashboardPage() {
                         </div>
                       )}
 
+                      {chatSendError && (
+                        <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-xs text-rose-300">
+                          {chatSendError}
+                        </div>
+                      )}
+
                       <form
                         onSubmit={(e) => {
                           e.preventDefault();
@@ -1789,14 +1813,14 @@ export default function MasterDashboardPage() {
                           value={chatReplyInput}
                           onChange={(e) => setChatReplyInput(e.target.value)}
                           placeholder="Type or select an AI Co-Pilot reply above..."
-                          className="flex-1 bg-[#0D0F17] border border-[#1E2230] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#C5A059]"
+                          className="flex-1 min-w-0 bg-[#0D0F17] border border-[#1E2230] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C5A059]"
                         />
                         <button
                           type="submit"
-                          disabled={!chatReplyInput.trim()}
-                          className="px-4 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow hover:brightness-110 disabled:opacity-50"
+                          disabled={!chatReplyInput.trim() || sendingChatReply}
+                          className="min-h-11 px-4 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow hover:brightness-110 disabled:opacity-50"
                         >
-                          Send
+                          {sendingChatReply ? "Sending..." : "Send"}
                         </button>
                       </form>
 
@@ -2653,6 +2677,8 @@ export default function MasterDashboardPage() {
             <div className="p-4 border-t border-[#1E2230] bg-[#151824] flex items-center justify-between">
               <button
                 onClick={() => {
+                  const conversation = conversations.find((item: any) => item.leadId === selectedLead.id);
+                  if (conversation) setSelectedConversationId(conversation.id);
                   setActiveTab("conversations");
                   setDrawerOpen(false);
                 }}
@@ -2667,7 +2693,7 @@ export default function MasterDashboardPage() {
       )}
 
       {/* FLOATING LUXURY AI ACTION BALL (Fixed Bottom Right) */}
-      <div className="fixed bottom-6 right-6 z-40">
+      <div className={`fixed bottom-6 right-6 z-30 ${activeTab === "conversations" && mobileShowChat ? "hidden md:block" : ""}`}>
         <button
           onClick={() => setAdvisorOpen(!advisorOpen)}
           className="relative group p-4 rounded-full bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-black shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center border-2 border-white/20"

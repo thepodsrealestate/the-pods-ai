@@ -45,36 +45,37 @@ export async function GET() {
       })
     ]);
 
-    // Deduplicate conversations so each unique lead has exactly ONE conversation thread
-    const uniqueConvMap = new Map<string, any>();
+    type DashboardConversation = (typeof conversations)[number];
+    type DashboardMessage = DashboardConversation["messages"][number];
+
+    const isConsecutiveDuplicate = (previous: DashboardMessage | undefined, current: DashboardMessage) => {
+      if (!previous || previous.senderType !== current.senderType) return false;
+
+      const sameContent = previous.content.trim().toLowerCase() === current.content.trim().toLowerCase();
+      const timeDifference = new Date(current.createdAt).getTime() - new Date(previous.createdAt).getTime();
+      return sameContent && timeDifference >= 0 && timeDifference <= 10000;
+    };
+
+    // Keep one thread per lead while preserving legitimate repeated messages.
+    const uniqueConvMap = new Map<string, DashboardConversation>();
     for (const c of conversations) {
       const key = c.leadId || c.id;
       if (!uniqueConvMap.has(key)) {
-        // Deduplicate messages within the single conversation
-        const seenMsg = new Set<string>();
-        const cleanMsgs: any[] = [];
-        for (const m of c.messages) {
-          const mKey = `${m.senderType}_${m.content.trim().toLowerCase().substring(0, 80)}`;
-          if (!seenMsg.has(mKey)) {
-            seenMsg.add(mKey);
-            cleanMsgs.push(m);
-          }
-        }
-        uniqueConvMap.set(key, { ...c, messages: cleanMsgs });
+        uniqueConvMap.set(key, { ...c, messages: [...c.messages] });
       } else {
-        const existing = uniqueConvMap.get(key);
-        const seenMsg = new Set<string>(existing.messages.map((m: any) => `${m.senderType}_${m.content.trim().toLowerCase().substring(0, 80)}`));
-        for (const m of c.messages) {
-          const mKey = `${m.senderType}_${m.content.trim().toLowerCase().substring(0, 80)}`;
-          if (!seenMsg.has(mKey)) {
-            seenMsg.add(mKey);
-            existing.messages.push(m);
-          }
-        }
-        existing.messages.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        uniqueConvMap.get(key)?.messages.push(...c.messages);
       }
     }
-    const deduplicatedConversations = Array.from(uniqueConvMap.values());
+
+    const deduplicatedConversations = Array.from(uniqueConvMap.values()).map((conversation) => {
+      const sortedMessages = [...conversation.messages].sort(
+        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+      const cleanMessages = sortedMessages.filter(
+        (message, index) => !isConsecutiveDuplicate(sortedMessages[index - 1], message)
+      );
+      return { ...conversation, messages: cleanMessages };
+    });
 
     return NextResponse.json({
       success: true,

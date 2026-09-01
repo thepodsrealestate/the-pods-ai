@@ -65,13 +65,10 @@ export class LeadService {
   static async findOrCreateLead(input: CreateLeadInput) {
     const normalizedPhone = this.normalizePhone(input.phone, input.fullName);
 
-    // Search by normalized phone, email, or exact contact name to guarantee 100% unified thread
+    // Names are not stable identifiers; only merge contacts by phone or email.
     const searchConditions: any[] = [{ phone: normalizedPhone }];
     if (input.email && input.email.trim()) {
       searchConditions.push({ email: { equals: input.email.trim(), mode: 'insensitive' } });
-    }
-    if (input.fullName && input.fullName !== 'VIP Client' && input.fullName !== 'Guest' && input.fullName !== 'Rompa') {
-      searchConditions.push({ fullName: { equals: input.fullName.trim(), mode: 'insensitive' } });
     }
 
     let lead = await prisma.lead.findFirst({

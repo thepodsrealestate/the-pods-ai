@@ -241,10 +241,6 @@ export async function POST(req: NextRequest) {
         if (extractedFormEmail) {
           searchConditions.push({ email: { equals: extractedFormEmail, mode: 'insensitive' } });
         }
-        if (senderName && senderName !== 'VIP Client' && senderName !== 'Guest') {
-          searchConditions.push({ fullName: { equals: senderName, mode: 'insensitive' } });
-        }
-
         existingLead = await prisma.lead.findFirst({
           where: { OR: searchConditions },
           include: {
@@ -461,11 +457,13 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         where: {
           conversationId: conversation.id,
           senderType: SenderType.LEAD,
-          createdAt: { gte: new Date(Date.now() - 8000) },
+          createdAt: { gte: new Date(Date.now() - 10000) },
         },
         orderBy: { createdAt: 'desc' },
       });
-      if (!recentLeadMsg) {
+      const isDuplicateLeadMessage = recentLeadMsg
+        && recentLeadMsg.content.trim().toLowerCase() === userText.trim().toLowerCase();
+      if (!isDuplicateLeadMessage) {
         await MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.LEAD, content: userText, externalId: undefined });
       }
     }
@@ -474,11 +472,13 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         where: {
           conversationId: conversation.id,
           senderType: SenderType.AI,
-          createdAt: { gte: new Date(Date.now() - 8000) },
+          createdAt: { gte: new Date(Date.now() - 10000) },
         },
         orderBy: { createdAt: 'desc' },
       });
-      if (!recentAiMsg) {
+      const isDuplicateAiMessage = recentAiMsg
+        && recentAiMsg.content.trim().toLowerCase() === aiResult.reply.trim().toLowerCase();
+      if (!isDuplicateAiMessage) {
         await MessageService.storeMessage({ conversationId: conversation.id, senderType: SenderType.AI, content: aiResult.reply });
       }
     }
