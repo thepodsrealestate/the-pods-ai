@@ -1647,77 +1647,79 @@ export default function MasterDashboardPage() {
                   </div>
                 ) : (
                   <div className="flex-1 flex flex-col h-full">
-                    {/* WhatsApp Native Style Luxury Header */}
-                    <div className="px-3 sm:px-4 py-2.5 border-b border-[#1E2230] bg-[#111420] flex items-center justify-between gap-2 shadow-sm">
-                      <div className="flex items-center space-x-2.5 min-w-0 flex-1">
-                        <button
-                          onClick={() => setMobileShowChat(false)}
-                          className="md:hidden p-1.5 -ml-1 text-[#C5A059] hover:text-white transition-colors shrink-0"
-                          title="Back to Chats"
-                        >
-                          <ChevronLeft className="w-6 h-6" />
-                        </button>
+                    {/* 2-Row Native Messenger Header */}
+                    <div className="px-3.5 py-2.5 border-b border-[#1E2230] bg-[#111420] flex flex-col gap-1.5 shadow-sm">
+                      {/* Row 1: Back + Avatar + Name + Actions */}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center space-x-2.5 min-w-0">
+                          <button
+                            onClick={() => setMobileShowChat(false)}
+                            className="md:hidden p-1 -ml-1 text-[#C5A059] hover:text-white transition-colors shrink-0"
+                            title="Back to Chats"
+                          >
+                            <ChevronLeft className="w-5 h-5" />
+                          </button>
 
-                        {/* WhatsApp-Style Contact Avatar */}
-                        {(() => {
-                          const rawName = selectedConversation.lead?.fullName || "";
-                          const cleanName = rawName.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").trim();
-                          const initial = cleanName ? cleanName.charAt(0).toUpperCase() : (selectedConversation.lead?.phone?.slice(-2) || "VIP");
+                          {/* Contact Avatar Circle */}
+                          {(() => {
+                            const rawName = selectedConversation.lead?.fullName || "";
+                            const cleanName = rawName.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").trim();
+                            const initial = cleanName ? cleanName.charAt(0).toUpperCase() : (selectedConversation.lead?.phone?.slice(-2) || "VIP");
 
-                          return (
-                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#1F263B] to-[#121624] border border-[#C5A059]/40 flex items-center justify-center text-xs font-bold text-[#C5A059] shrink-0 shadow-sm">
-                              {initial}
-                            </div>
-                          );
-                        })()}
+                            return (
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#1F263B] to-[#121624] border border-[#C5A059]/40 flex items-center justify-center text-xs font-bold text-[#C5A059] shrink-0 shadow-sm">
+                                {initial}
+                              </div>
+                            );
+                          })()}
 
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center space-x-1.5 min-w-0">
-                            <h3 className="font-bold text-white text-sm sm:text-base truncate leading-tight">
-                              {selectedConversation.lead.fullName || selectedConversation.lead.phone}
-                            </h3>
-                            <SourceBadge source={selectedConversation.lead.leadSource} compact={true} />
-                          </div>
-                          <p className="text-[11px] text-slate-400 font-mono truncate mt-0.5">
-                            {selectedConversation.lead.phone}
-                          </p>
+                          <h3 className="font-bold text-white text-sm sm:text-base truncate">
+                            {selectedConversation.lead.fullName || selectedConversation.lead.phone}
+                          </h3>
+                        </div>
+
+                        <div className="flex items-center space-x-1.5 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => handleToggleAi(selectedConversation.lead?.id, selectedConversation.lead?.aiEnabled)}
+                            className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-all ${
+                              selectedConversation.lead.aiEnabled
+                                ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25"
+                                : "bg-amber-500/15 text-amber-400 border border-amber-500/30 hover:bg-amber-500/25"
+                            }`}
+                            title="Toggle AI Automation"
+                          >
+                            {selectedConversation.lead.aiEnabled ? "AI Active" : "Manual"}
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              const curLead = selectedConversation.lead;
+                              if (curLead) {
+                                setDeleteModalLead(curLead);
+                                setDeletePasscode("");
+                                setDeleteError(null);
+                                setDeleteSuccessMsg(null);
+                              }
+                            }}
+                            title="Delete Lead (Password Protected)"
+                            className="p-1 rounded-md text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
                         </div>
                       </div>
 
-                      <div className="flex items-center space-x-2 shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => handleToggleAi(selectedConversation.lead?.id, selectedConversation.lead?.aiEnabled)}
-                          className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all ${
-                            selectedConversation.lead.aiEnabled
-                              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25"
-                              : "bg-amber-500/15 text-amber-400 border border-amber-500/30 hover:bg-amber-500/25"
-                          }`}
-                          title="Toggle AI Bot Automation"
-                        >
-                          {selectedConversation.lead.aiEnabled ? "AI Bot On" : "Manual"}
-                        </button>
-
-                        <button
-                          onClick={() => {
-                            const curLead = selectedConversation.lead;
-                            if (curLead) {
-                              setDeleteModalLead(curLead);
-                              setDeletePasscode("");
-                              setDeleteError(null);
-                              setDeleteSuccessMsg(null);
-                            }
-                          }}
-                          title="Delete Thread & Lead (Password Protected)"
-                          className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                      {/* Row 2: Metadata (Phone • Source) */}
+                      <div className="flex items-center space-x-2 pl-0 sm:pl-10 text-[11px] text-slate-400">
+                        <span className="font-mono">{selectedConversation.lead.phone}</span>
+                        <span className="text-slate-600">•</span>
+                        <SourceBadge source={selectedConversation.lead.leadSource} compact={true} />
                       </div>
                     </div>
 
                     {/* Messages Feed */}
-                    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3.5 bg-[#090B10] h-0 min-h-0">
+                    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-[#090B10] h-0 min-h-0">
                       {(() => {
                         const rawMsgs = selectedConversation.messages || [];
                         const uniqueMsgs = deduplicateConsecutiveMessages(rawMsgs);
@@ -1729,7 +1731,7 @@ export default function MasterDashboardPage() {
                               className={`flex ${isOutgoing ? "justify-end" : "justify-start"}`}
                             >
                               <div
-                                className={`max-w-[88%] sm:max-w-md p-3.5 sm:p-4 rounded-2xl shadow-md space-y-1.5 ${
+                                className={`max-w-[85%] sm:max-w-md p-3.5 sm:p-4 rounded-2xl shadow-md space-y-1.5 ${
                                   isOutgoing
                                     ? "bg-[#161B29] border border-[#C5A059]/30 text-slate-100 rounded-br-xs"
                                     : "bg-[#1E2333] text-slate-200 rounded-bl-xs border border-[#272F45]"
@@ -1753,28 +1755,26 @@ export default function MasterDashboardPage() {
                     </div>
 
                     {/* Compact Luxury Bottom Composer & Co-Pilot */}
-                    <div className="p-3 sm:p-4 border-t border-[#1E2230] bg-[#111420] space-y-2.5">
+                    <div className="p-3 sm:p-4 border-t border-[#1E2230] bg-[#111420] space-y-2">
                       {/* AI Quick Actions Bar */}
-                      <div className="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar pb-1">
-                        <div className="flex items-center space-x-1.5">
-                          <button
-                            type="button"
-                            onClick={() => handleGenerateAiSuggestions(selectedConversation.id)}
-                            disabled={loadingSuggestions}
-                            className="px-2.5 py-1 bg-[#161B29] hover:bg-[#1E2333] border border-[#C5A059]/40 text-[#C5A059] font-bold text-[11px] rounded-lg transition-all flex items-center space-x-1 disabled:opacity-50 shrink-0"
-                          >
-                            <Sparkles className="w-3 h-3" />
-                            <span>{loadingSuggestions ? "Generating..." : "AI Suggestions"}</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleGenerateNudge(selectedConversation.lead?.id)}
-                            disabled={generatingNudge}
-                            className="px-2.5 py-1 bg-[#161B29] hover:bg-[#1E2333] border border-emerald-500/40 text-emerald-400 font-bold text-[11px] rounded-lg transition-all disabled:opacity-50 shrink-0"
-                          >
-                            <span>{generatingNudge ? "Nudging..." : "48h Nudge"}</span>
-                          </button>
-                        </div>
+                      <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-0.5">
+                        <button
+                          type="button"
+                          onClick={() => handleGenerateAiSuggestions(selectedConversation.id)}
+                          disabled={loadingSuggestions}
+                          className="px-2.5 py-1 bg-[#161B29] hover:bg-[#1E2333] border border-[#C5A059]/40 text-[#C5A059] font-bold text-[11px] rounded-lg transition-all flex items-center space-x-1 disabled:opacity-50 shrink-0"
+                        >
+                          <Sparkles className="w-3 h-3" />
+                          <span>{loadingSuggestions ? "Generating..." : "Suggest Reply"}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleGenerateNudge(selectedConversation.lead?.id)}
+                          disabled={generatingNudge}
+                          className="px-2.5 py-1 bg-[#161B29] hover:bg-[#1E2333] border border-emerald-500/40 text-emerald-400 font-bold text-[11px] rounded-lg transition-all disabled:opacity-50 shrink-0"
+                        >
+                          <span>{generatingNudge ? "Generating..." : "Follow-up Nudge"}</span>
+                        </button>
                       </div>
 
                       {aiSuggestions.length > 0 && (
@@ -1798,7 +1798,7 @@ export default function MasterDashboardPage() {
                       )}
 
                       {chatSendError && (
-                        <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-1.5 text-xs text-rose-300">
+                        <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-1 text-xs text-rose-300">
                           {chatSendError}
                         </div>
                       )}
@@ -1814,13 +1814,13 @@ export default function MasterDashboardPage() {
                           type="text"
                           value={chatReplyInput}
                           onChange={(e) => setChatReplyInput(e.target.value)}
-                          placeholder="Type your WhatsApp reply to client..."
-                          className="flex-1 min-w-0 bg-[#090B10] border border-[#23293D] focus:border-[#C5A059] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none transition-colors"
+                          placeholder="Type a reply..."
+                          className="flex-1 min-w-0 bg-[#090B10] border border-[#23293D] focus:border-[#C5A059] rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none transition-colors"
                         />
                         <button
                           type="submit"
                           disabled={!chatReplyInput.trim() || sendingChatReply}
-                          className="px-4 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-lg hover:brightness-110 disabled:opacity-50 shrink-0 transition-all"
+                          className="min-h-[42px] px-4 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-md hover:brightness-110 disabled:opacity-50 shrink-0 transition-all"
                         >
                           {sendingChatReply ? "..." : "Send"}
                         </button>
