@@ -1,5 +1,7 @@
 "use client";
 
+"use client";
+
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import LuxuryLoader from "../components/LuxuryLoader";
@@ -44,60 +46,60 @@ import {
   Filter
 } from "lucide-react";
 
-function SourceBadge({ source }: { source: string }) {
+function SourceBadge({ source, compact = false }: { source: string; compact?: boolean }) {
   const upper = (source || "DIRECT").toUpperCase();
 
   if (upper.includes("WHATSAPP")) {
     return (
-      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs sm:text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shrink-0">
-        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+      <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+        <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347z"/>
           <path d="M12 2a10 10 0 0 0-8.59 15.11L2 22l4.99-1.31A10 10 0 1 0 12 2zm0 18a7.95 7.95 0 0 1-4.07-1.12l-.29-.17-3.02.79.81-2.94-.19-.3A7.96 7.96 0 1 1 12 20z"/>
         </svg>
-        <span>WhatsApp Direct</span>
+        <span>{compact ? "Direct" : "WhatsApp Direct"}</span>
       </span>
     );
   }
 
   if (upper.includes("INSTAGRAM")) {
     return (
-      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs sm:text-[10px] font-bold uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/30 shrink-0">
-        <svg className="w-3.5 h-3.5 fill-none stroke-current stroke-[2]" viewBox="0 0 24 24">
+      <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20 shrink-0">
+        <svg className="w-2.5 h-2.5 fill-none stroke-current stroke-[2]" viewBox="0 0 24 24">
           <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
           <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
           <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
         </svg>
-        <span>Instagram Ads</span>
+        <span>{compact ? "IG" : "Instagram Ads"}</span>
       </span>
     );
   }
 
   if (upper.includes("FACEBOOK") || upper.includes("META")) {
     return (
-      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs sm:text-[10px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/30 shrink-0">
-        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+      <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 shrink-0">
+        <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24">
           <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
         </svg>
-        <span>Facebook Ads</span>
+        <span>{compact ? "Meta" : "Facebook Ads"}</span>
       </span>
     );
   }
 
   if (upper.includes("GOOGLE")) {
     return (
-      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs sm:text-[10px] font-bold uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/30 shrink-0">
-        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+      <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-500/10 text-red-400 border border-red-500/20 shrink-0">
+        <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24">
           <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
         </svg>
-        <span>Google Search</span>
+        <span>{compact ? "Google" : "Google Search"}</span>
       </span>
     );
   }
 
   return (
-    <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs sm:text-[10px] font-bold uppercase tracking-wider bg-[#C5A059]/10 text-[#C5A059] border border-[#C5A059]/30 shrink-0">
-      <Globe className="w-3.5 h-3.5" />
-      <span>{upper.replace("_", " ")}</span>
+    <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-[#C5A059]/10 text-[#C5A059] border border-[#C5A059]/20 shrink-0">
+      <Globe className="w-2.5 h-2.5" />
+      <span>{compact ? upper.split("_")[0] : upper.replace("_", " ")}</span>
     </span>
   );
 }
@@ -1645,60 +1647,55 @@ export default function MasterDashboardPage() {
                   </div>
                 ) : (
                   <div className="flex-1 flex flex-col h-full">
-                    {/* Header with Back Button on Mobile */}
-                    <div className="px-4 py-3 border-b border-[#1E2230] bg-[#111420] flex items-center justify-between gap-2 shadow-sm">
-                      <div className="flex items-center space-x-3 min-w-0">
+                    {/* WhatsApp Native Style Luxury Header */}
+                    <div className="px-3 sm:px-4 py-2.5 border-b border-[#1E2230] bg-[#111420] flex items-center justify-between gap-2 shadow-sm">
+                      <div className="flex items-center space-x-2.5 min-w-0 flex-1">
                         <button
                           onClick={() => setMobileShowChat(false)}
-                          className="md:hidden p-2 rounded-xl bg-[#1A1F2C] hover:bg-[#252C3E] text-[#C5A059] transition-all shrink-0"
+                          className="md:hidden p-1.5 -ml-1 text-[#C5A059] hover:text-white transition-colors shrink-0"
                           title="Back to Chats"
                         >
-                          <ChevronLeft className="w-5 h-5" />
+                          <ChevronLeft className="w-6 h-6" />
                         </button>
-                        <div className="min-w-0">
-                          <div className="flex items-center space-x-2">
-                            <h3 className="font-bold text-white text-sm sm:text-base truncate">
+
+                        {/* WhatsApp-Style Contact Avatar */}
+                        {(() => {
+                          const rawName = selectedConversation.lead?.fullName || "";
+                          const cleanName = rawName.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").trim();
+                          const initial = cleanName ? cleanName.charAt(0).toUpperCase() : (selectedConversation.lead?.phone?.slice(-2) || "VIP");
+
+                          return (
+                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#1F263B] to-[#121624] border border-[#C5A059]/40 flex items-center justify-center text-xs font-bold text-[#C5A059] shrink-0 shadow-sm">
+                              {initial}
+                            </div>
+                          );
+                        })()}
+
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center space-x-1.5 min-w-0">
+                            <h3 className="font-bold text-white text-sm sm:text-base truncate leading-tight">
                               {selectedConversation.lead.fullName || selectedConversation.lead.phone}
                             </h3>
-                            <SourceBadge source={selectedConversation.lead.leadSource} />
+                            <SourceBadge source={selectedConversation.lead.leadSource} compact={true} />
                           </div>
-                          <p className="text-xs text-slate-400 font-mono truncate mt-0.5">
+                          <p className="text-[11px] text-slate-400 font-mono truncate mt-0.5">
                             {selectedConversation.lead.phone}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
-                        {/* Red / Green Status Badge */}
-                        {(() => {
-                          const curConv = selectedConversation;
-                          const curLastMsg = curConv?.messages?.[curConv.messages.length - 1];
-                          const curNeedsReply = curLastMsg?.senderType === "LEAD" || curConv?.lead?.handoffStatus === true;
-
-                          return curNeedsReply ? (
-                            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-500/15 text-rose-300 border border-rose-500/30 flex items-center space-x-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
-                              <span className="hidden xs:inline">Needs reply</span>
-                            </span>
-                          ) : (
-                            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                              <span className="hidden xs:inline">Replied</span>
-                            </span>
-                          );
-                        })()}
-
+                      <div className="flex items-center space-x-2 shrink-0">
                         <button
                           type="button"
                           onClick={() => handleToggleAi(selectedConversation.lead?.id, selectedConversation.lead?.aiEnabled)}
                           className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all ${
                             selectedConversation.lead.aiEnabled
-                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20"
-                              : "bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20"
+                              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25"
+                              : "bg-amber-500/15 text-amber-400 border border-amber-500/30 hover:bg-amber-500/25"
                           }`}
-                          title="Toggle AI Automation"
+                          title="Toggle AI Bot Automation"
                         >
-                          {selectedConversation.lead.aiEnabled ? "AI Active" : "Human"}
+                          {selectedConversation.lead.aiEnabled ? "AI Bot On" : "Manual"}
                         </button>
 
                         <button
@@ -1714,7 +1711,7 @@ export default function MasterDashboardPage() {
                           title="Delete Thread & Lead (Password Protected)"
                           className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
