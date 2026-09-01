@@ -1580,7 +1580,6 @@ export default function MasterDashboardPage() {
                             </div>
                             <span className="text-xs text-slate-400 font-mono shrink-0">
                               {formatTimeAgo(conv.updatedAt)}
-                              {formatTimeAgo(conv.updatedAt)}
                             </span>
                           </div>
 
@@ -1854,21 +1853,25 @@ export default function MasterDashboardPage() {
                     <div className="pt-2 border-t border-white/5 grid grid-cols-2 gap-2 text-[11px]">
                       <div>
                         <span className="text-slate-500 block text-[10px]">Location</span>
-                        <span className="text-slate-200 font-semibold">{selectedConversation.lead?.buyerLocation || "International"}</span>
+                        <span className="text-slate-200 font-semibold">{selectedConversation.lead?.buyerLocation || "Not specified"}</span>
                       </div>
                       <div>
                         <span className="text-slate-500 block text-[10px]">Purpose</span>
-                        <span className="text-slate-200 font-semibold">{selectedConversation.lead?.purchasePurpose || "Investment"}</span>
+                        <span className="text-slate-200 font-semibold">{selectedConversation.lead?.purchasePurpose || "Not specified"}</span>
                       </div>
                       <div>
                         <span className="text-slate-500 block text-[10px]">Budget</span>
                         <span className="text-[#C5A059] font-bold">
-                          {selectedConversation.lead?.budgetMin ? `AED ${(selectedConversation.lead.budgetMin / 1000000).toFixed(1)}M+` : "Flexible"}
+                          {selectedConversation.lead?.budgetMin 
+                            ? `AED ${(selectedConversation.lead.budgetMin / 1000000).toFixed(1)}M+` 
+                            : selectedConversation.lead?.budgetMax 
+                            ? `AED ${(selectedConversation.lead.budgetMax / 1000000).toFixed(1)}M` 
+                            : "Not disclosed"}
                         </span>
                       </div>
                       <div>
                         <span className="text-slate-500 block text-[10px]">Timeline</span>
-                        <span className="text-slate-200 font-semibold">{selectedConversation.lead?.timeline || "Immediate"}</span>
+                        <span className="text-slate-200 font-semibold">{selectedConversation.lead?.timeline || "Not specified"}</span>
                       </div>
                     </div>
                   </div>
@@ -2524,7 +2527,7 @@ export default function MasterDashboardPage() {
                     setDeleteError(null);
                     setDeleteSuccessMsg(null);
                   }}
-                  title="Delete this Lead & All History (Password Protected)"
+                  title="Delete this Lead (Password Protected)"
                   className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border border-rose-500/30 transition-colors flex items-center space-x-1.5 text-xs font-bold"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -2573,12 +2576,12 @@ export default function MasterDashboardPage() {
                   <div className="p-3.5 rounded-xl bg-[#151824] border border-[#1E2230]">
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Budget Range</span>
                     <p className="text-xs font-mono font-bold text-[#C5A059] mt-1">
-                      {selectedLead.budgetMax ? `AED ${selectedLead.budgetMax.toLocaleString()}` : "Pending AI Discovery"}
+                      {selectedLead.budgetMax ? `AED ${selectedLead.budgetMax.toLocaleString()}` : selectedLead.budgetMin ? `AED ${(selectedLead.budgetMin / 1000000).toFixed(1)}M+` : "Not Disclosed"}
                     </p>
                   </div>
                   <div className="p-3.5 rounded-xl bg-[#151824] border border-[#1E2230]">
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Target Location</span>
-                    <p className="text-xs font-medium text-slate-200 mt-1">{selectedLead.buyerLocation || "Dubai Marina / JLT"}</p>
+                    <p className="text-xs font-medium text-slate-200 mt-1">{selectedLead.buyerLocation || "Not Disclosed"}</p>
                   </div>
                   <div className="p-3.5 rounded-xl bg-[#151824] border border-[#1E2230]">
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Traffic Source</span>
@@ -2666,9 +2669,6 @@ export default function MasterDashboardPage() {
                     <h4 className="text-xs font-bold text-white uppercase tracking-wider">WhatsApp Voice Note Intelligence</h4>
                   </div>
                   <button
-                    type="button"
-                    onClick={() => handleTranscribeVoice(selectedLead.id)}
-                    disabled={loadingVoice[selectedLead.id]}
                     className="px-3 py-1 bg-[#0D0F17] hover:bg-[#1E2230] border border-[#C5A059]/40 text-[#C5A059] font-bold text-[10px] rounded-lg transition-all disabled:opacity-50"
                   >
                     {loadingVoice[selectedLead.id] ? "Transcribing Audio..." : "Transcribe Voice Note"}

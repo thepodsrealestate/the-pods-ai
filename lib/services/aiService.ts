@@ -434,6 +434,15 @@ CURRENT LEAD MEMORY:
 - Budget Range: ${options.budgetMin ? `AED ${options.budgetMin}` : 'Unknown'} - ${options.budgetMax ? `AED ${options.budgetMax}` : 'Unknown'}
 - Timeline: ${options.timeline || 'Unknown'}
 
+STRICT LEAD ATTRIBUTE EXTRACTION RULES (CRITICAL):
+- ONLY populate "lead_updates" fields if the lead has EXPLICITLY stated or selected that specific attribute in the conversation.
+- NEVER invent, assume, or hallucinate budget, purpose, timeline, or location!
+- If the user has NOT explicitly stated their budget, leave budget_min and budget_max as null.
+- If the user has NOT explicitly stated their purpose, leave purchase_purpose as null.
+- If the user has NOT explicitly stated their timeline, leave timeline as null.
+- If the user has NOT explicitly stated their location, leave buyer_location as null.
+- If the user is an agent, broker, developer representative, or business associate (e.g. from Ellington, Danube, etc.), do NOT treat them as an off-plan retail buyer — leave all buyer attributes null!
+
 HUMAN HANDOFF TRIGGERS:
 - If the lead asks for "human", "speak to Minesh", "call me", or asks complex legal/contract questions -> Set action to "HANDOFF".
 
@@ -444,11 +453,11 @@ You MUST return your response as a valid JSON object matching this exact schema:
   "language": "auto-detected language code (en, ar, ru, fr, de, hi, etc.)",
   "action": "NONE|UPDATE_LEAD|SEARCH_PROPERTY|BOOK_MEETING|HANDOFF",
   "lead_updates": {
-    "buyer_location": "UAE Resident | International",
-    "purchase_purpose": "Investment ROI | Personal Residence",
-    "budget_min": 1000000,
-    "budget_max": 2000000,
-    "timeline": "Immediate | 0-3 months | 3-6 months"
+    "buyer_location": null,
+    "purchase_purpose": null,
+    "budget_min": null,
+    "budget_max": null,
+    "timeline": null
   },
   "handoff_reason": "Explanation if action is HANDOFF",
   "booking_details": {
