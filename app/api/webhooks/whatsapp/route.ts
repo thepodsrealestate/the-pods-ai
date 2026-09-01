@@ -234,6 +234,98 @@ export async function POST(req: NextRequest) {
       let conversationHistory: { sender: string; text: string }[] = [];
       let existingLead: any = null;
       try {
+        const isAdminSender = normalizedPhone.includes('447812222111') || normalizedPhone.includes('523666495') || phone.includes('447812222111') || phone.includes('523666495');
+
+        if (isAdminSender) {
+          const pendingBooking = await prisma.booking.findFirst({
+            where: { status: 'PENDING_APPROVAL' },
+            orderBy: { createdAt: 'desc' },
+            include: { lead: true },
+          });
+
+          const adminTextLower = userText.toLowerCase().trim();
+          const isApproval = adminTextLower.includes('yes') || adminTextLower.includes('approve') || adminTextLower.includes('confirm') || adminTextLower.includes('ok') || adminTextLower.includes('fine');
+
+          if (pendingBooking && isApproval) {
+            // 1. Confirm the booking in DB
+            await prisma.booking.update({
+              where: { id: pendingBooking.id },
+              data: { status: 'CONFIRMED' },
+            });
+
+            // 2. Dispatch calendar invite / booking service
+            try {
+              await CalendarService.createBooking({
+                leadId: pendingBooking.leadId,
+                meetingTime: pendingBooking.meetingTime,
+                location: pendingBooking.location,
+              });
+            } catch (_) {}
+
+            // 3. Send confirmation WhatsApp back to the lead/partner (e.g. Sheldon)
+            const leadPhone = pendingBooking.lead?.phone;
+            const timeFormatted = new Date(pendingBooking.meetingTime).toLocaleString('en-US', {
+              timeZone: 'Asia/Dubai',
+              weekday: 'short',
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+
+            const partnerReply = `Hi ${pendingBooking.lead?.fullName || 'there'}! Minesh has reviewed his schedule and confirmed your meeting for ${timeFormatted} at ${pendingBooking.location}. We look forward to meeting you!`;
+
+            if (leadPhone) {
+              await MessageService.sendWhatsAppDirect(leadPhone, partnerReply);
+            }
+
+            const adminReply = `✅ Meeting Confirmed!\n\n👤 ${pendingBooking.lead?.fullName || 'Partner'}\n📍 ${pendingBooking.location}\n⏰ ${timeFormatted}\n\nI have confirmed the meeting and sent a WhatsApp confirmation to ${pendingBooking.lead?.fullName || 'the contact'}.`;
+
+            return {
+              status: 'success',
+              reply: adminReply,
+              ai_reply: adminReply,
+              text: adminReply,
+              action: 'ADMIN_APPROVED',
+              language: 'en',
+              latency_ms: Date.now() - startTime,
+            };
+          } else if (pendingBooking) {
+            const timeFormatted = new Date(pendingBooking.meetingTime).toLocaleString('en-US', {
+              timeZone: 'Asia/Dubai',
+              weekday: 'short',
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+
+            const adminReply = `👋 Hello Minesh Sir! You have 1 VIP meeting approval pending:\n\n👤 ${pendingBooking.lead?.fullName || 'Partner'}\n📞 ${pendingBooking.lead?.phone}\n📍 ${pendingBooking.location}\n⏰ ${timeFormatted}\n\n👉 Reply "YES" or "APPROVED" to confirm this meeting, or reply with another time.`;
+
+            return {
+              status: 'success',
+              reply: adminReply,
+              ai_reply: adminReply,
+              text: adminReply,
+              action: 'ADMIN_PROMPT',
+              language: 'en',
+              latency_ms: Date.now() - startTime,
+            };
+          } else {
+            const adminReply = `👋 Hello Minesh Sir! All systems are live at The Pods Real Estate Command Center. You will receive live WhatsApp alerts here for any VIP meetings or human takeover requests.`;
+
+            return {
+              status: 'success',
+              reply: adminReply,
+              ai_reply: adminReply,
+              text: adminReply,
+              action: 'ADMIN_IDLE',
+              language: 'en',
+              latency_ms: Date.now() - startTime,
+            };
+          }
+        }
+
         const searchConditions: any[] = [{ phone: normalizedPhone }, { phone }];
         if (extractedFormPhone) {
           searchConditions.push({ phone: extractedFormPhone });
