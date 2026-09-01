@@ -245,6 +245,23 @@ export async function POST(req: NextRequest) {
 
           const adminTextLower = userText.toLowerCase().trim();
           const isApproval = adminTextLower.includes('yes') || adminTextLower.includes('approve') || adminTextLower.includes('confirm') || adminTextLower.includes('ok') || adminTextLower.includes('fine');
+          const isDecline = adminTextLower.includes('no') || adminTextLower.includes('decline') || adminTextLower.includes('cancel') || adminTextLower.includes('unavailable') || adminTextLower.includes('reject') || adminTextLower.includes('not possible');
+          const isReschedule = !isApproval && !isDecline && (
+            adminTextLower.includes('pm') || 
+            adminTextLower.includes('am') || 
+            adminTextLower.includes('monday') || 
+            adminTextLower.includes('tuesday') || 
+            adminTextLower.includes('wednesday') || 
+            adminTextLower.includes('thursday') || 
+            adminTextLower.includes('friday') || 
+            adminTextLower.includes('saturday') || 
+            adminTextLower.includes('sunday') || 
+            adminTextLower.includes('next week') || 
+            adminTextLower.includes('tomorrow') || 
+            adminTextLower.includes('move to') || 
+            adminTextLower.includes('reschedule') || 
+            adminTextLower.includes('change')
+          );
 
           if (pendingBooking && isApproval) {
             // 1. Confirm the booking in DB
@@ -290,6 +307,57 @@ export async function POST(req: NextRequest) {
               language: 'en',
               latency_ms: Date.now() - startTime,
             };
+          } else if (pendingBooking && isDecline) {
+            // Minesh declined the meeting
+            await prisma.booking.update({
+              where: { id: pendingBooking.id },
+              data: { status: 'DECLINED' },
+            });
+
+            const leadPhone = pendingBooking.lead?.phone;
+            const partnerReply = `Hi ${pendingBooking.lead?.fullName || 'there'}, thank you for reaching out. Minesh is unavailable for an in-person meeting at that time due to prior commitments. Please let us know your availability for next week and we will be happy to coordinate!`;
+
+            if (leadPhone) {
+              await MessageService.sendWhatsAppDirect(leadPhone, partnerReply);
+            }
+
+            const adminReply = `❌ Meeting Declined.\n\nI have politely informed ${pendingBooking.lead?.fullName || 'the contact'} that you are unavailable and asked them for alternative availability next week.`;
+
+            return {
+              status: 'success',
+              reply: adminReply,
+              ai_reply: adminReply,
+              text: adminReply,
+              action: 'ADMIN_DECLINED',
+              language: 'en',
+              latency_ms: Date.now() - startTime,
+            };
+          } else if (pendingBooking && isReschedule) {
+            // Minesh proposed a new time
+            const proposedTimeText = userText.trim();
+            await prisma.booking.update({
+              where: { id: pendingBooking.id },
+              data: { status: 'RESCHEDULE_PROPOSED' },
+            });
+
+            const leadPhone = pendingBooking.lead?.phone;
+            const partnerReply = `Hi ${pendingBooking.lead?.fullName || 'there'}! Minesh is eager to meet with you at ${pendingBooking.location}, but has a schedule conflict at the requested slot. He has proposed meeting at: "${proposedTimeText}". Does this slot work for you?`;
+
+            if (leadPhone) {
+              await MessageService.sendWhatsAppDirect(leadPhone, partnerReply);
+            }
+
+            const adminReply = `🔄 Reschedule Proposal Sent!\n\n👤 ${pendingBooking.lead?.fullName || 'Partner'}\n📍 ${pendingBooking.location}\n⏰ Proposed: "${proposedTimeText}"\n\nI have sent this alternative time to ${pendingBooking.lead?.fullName || 'the contact'} and will notify you as soon as they reply.`;
+
+            return {
+              status: 'success',
+              reply: adminReply,
+              ai_reply: adminReply,
+              text: adminReply,
+              action: 'ADMIN_RESCHEDULED',
+              language: 'en',
+              latency_ms: Date.now() - startTime,
+            };
           } else if (pendingBooking) {
             const timeFormatted = new Date(pendingBooking.meetingTime).toLocaleString('en-US', {
               timeZone: 'Asia/Dubai',
@@ -300,7 +368,7 @@ export async function POST(req: NextRequest) {
               minute: '2-digit',
             });
 
-            const adminReply = `👋 Hello Minesh Sir! You have 1 VIP meeting approval pending:\n\n👤 ${pendingBooking.lead?.fullName || 'Partner'}\n📞 ${pendingBooking.lead?.phone}\n📍 ${pendingBooking.location}\n⏰ ${timeFormatted}\n\n👉 Reply "YES" or "APPROVED" to confirm this meeting, or reply with another time.`;
+            const adminReply = `👋 Hello Minesh Sir! You have 1 VIP meeting approval pending:\n\n👤 ${pendingBooking.lead?.fullName || 'Partner'}\n📞 ${pendingBooking.lead?.phone}\n📍 ${pendingBooking.location}\n⏰ ${timeFormatted}\n\n👉 Reply "YES" to confirm.\n👉 Or reply with another time (e.g. "Friday 2 PM" or "Monday 11 AM").\n👉 Or reply "NO" to decline.`;
 
             return {
               status: 'success',
