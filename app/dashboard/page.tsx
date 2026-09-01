@@ -2040,8 +2040,12 @@ export default function MasterDashboardPage() {
                                 </td>
 
                                 <td className="px-6 py-4">
-                                  <span className="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                                    {b.status}
+                                  <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                                    b.status === "PENDING_APPROVAL"
+                                      ? "bg-amber-500/15 text-amber-400 border border-amber-500/30 animate-pulse"
+                                      : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                                  }`}>
+                                    {b.status === "PENDING_APPROVAL" ? "Awaiting Minesh Approval" : b.status || "Confirmed"}
                                   </span>
                                 </td>
 
@@ -2079,8 +2083,12 @@ export default function MasterDashboardPage() {
                             <h4 className="text-sm font-bold text-white">{b.lead?.fullName || "VIP Client"}</h4>
                             <p className="text-xs text-slate-400 font-mono">{b.lead?.phone}</p>
                           </div>
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                            Confirmed
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                            b.status === "PENDING_APPROVAL"
+                              ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
+                              : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                          }`}>
+                            {b.status === "PENDING_APPROVAL" ? "Awaiting Approval" : "Confirmed"}
                           </span>
                         </div>
 
