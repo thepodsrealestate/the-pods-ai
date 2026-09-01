@@ -1646,55 +1646,60 @@ export default function MasterDashboardPage() {
                 ) : (
                   <div className="flex-1 flex flex-col h-full">
                     {/* Header with Back Button on Mobile */}
-                    <div className="p-4 border-b border-[#1E2230] bg-[#151824] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div className="flex items-center space-x-3 min-w-0 w-full sm:w-auto">
+                    <div className="px-4 py-3 border-b border-[#1E2230] bg-[#111420] flex items-center justify-between gap-2 shadow-sm">
+                      <div className="flex items-center space-x-3 min-w-0">
                         <button
                           onClick={() => setMobileShowChat(false)}
-                          className="md:hidden min-h-11 px-3 rounded-lg bg-[#0D0F17] border border-[#1E2230] text-[#C5A059] font-bold text-xs flex items-center space-x-1 shrink-0"
+                          className="md:hidden p-2 rounded-xl bg-[#1A1F2C] hover:bg-[#252C3E] text-[#C5A059] transition-all shrink-0"
+                          title="Back to Chats"
                         >
-                          <ChevronLeft className="w-4 h-4" />
-                          <span>Back</span>
+                          <ChevronLeft className="w-5 h-5" />
                         </button>
                         <div className="min-w-0">
-                          <h3 className="font-bold text-white text-sm truncate">
-                            {selectedConversation.lead.fullName || selectedConversation.lead.phone}
-                          </h3>
-                          <div className="flex items-center gap-2 mt-1 min-w-0">
-                            <p className="text-xs text-[#C5A059] font-mono truncate">
-                              {selectedConversation.lead.phone}
-                            </p>
+                          <div className="flex items-center space-x-2">
+                            <h3 className="font-bold text-white text-sm sm:text-base truncate">
+                              {selectedConversation.lead.fullName || selectedConversation.lead.phone}
+                            </h3>
                             <SourceBadge source={selectedConversation.lead.leadSource} />
                           </div>
+                          <p className="text-xs text-slate-400 font-mono truncate mt-0.5">
+                            {selectedConversation.lead.phone}
+                          </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto flex-wrap">
-                        {/* Red / Green Status Badge in Header */}
+                      <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+                        {/* Red / Green Status Badge */}
                         {(() => {
                           const curConv = selectedConversation;
                           const curLastMsg = curConv?.messages?.[curConv.messages.length - 1];
                           const curNeedsReply = curLastMsg?.senderType === "LEAD" || curConv?.lead?.handoffStatus === true;
 
                           return curNeedsReply ? (
-                            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/15 text-rose-300 border border-rose-500/30 flex items-center space-x-1.5">
-                              <span className="w-1.5 h-1.5 rounded-full bg-rose-400 inline-block"></span>
-                              <span>Needs reply</span>
+                            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-500/15 text-rose-300 border border-rose-500/30 flex items-center space-x-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                              <span className="hidden xs:inline">Needs reply</span>
                             </span>
                           ) : (
-                            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1.5">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
-                              <span>Replied</span>
+                            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                              <span className="hidden xs:inline">Replied</span>
                             </span>
                           );
                         })()}
 
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
-                          selectedConversation.lead.aiEnabled
-                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                            : "bg-amber-500/10 text-amber-400 border border-amber-500/30"
-                        }`}>
-                          {selectedConversation.lead.aiEnabled ? "AI Active" : "Human Control"}
-                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleToggleAi(selectedConversation.lead?.id, selectedConversation.lead?.aiEnabled)}
+                          className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all ${
+                            selectedConversation.lead.aiEnabled
+                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20"
+                              : "bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20"
+                          }`}
+                          title="Toggle AI Automation"
+                        >
+                          {selectedConversation.lead.aiEnabled ? "AI Active" : "Human"}
+                        </button>
 
                         <button
                           onClick={() => {
@@ -1707,87 +1712,87 @@ export default function MasterDashboardPage() {
                             }
                           }}
                           title="Delete Thread & Lead (Password Protected)"
-                          className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border border-rose-500/30 transition-colors flex items-center space-x-1 text-xs font-bold"
+                          className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
-                          <span className="hidden sm:inline">Delete</span>
                         </button>
                       </div>
                     </div>
 
-                    {/* Messages */}
-                    <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-[#07080C]/60 h-0 min-h-0">
+                    {/* Messages Feed */}
+                    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3.5 bg-[#090B10] h-0 min-h-0">
                       {(() => {
                         const rawMsgs = selectedConversation.messages || [];
                         const uniqueMsgs = deduplicateConsecutiveMessages(rawMsgs);
-                        return uniqueMsgs.map((msg: any) => (
-                          <div
-                            key={msg.id}
-                            className={`flex ${msg.senderType === "AI" || msg.senderType === "HUMAN_AGENT" ? "justify-end" : "justify-start"}`}
-                          >
+                        return uniqueMsgs.map((msg: any) => {
+                          const isOutgoing = msg.senderType === "AI" || msg.senderType === "HUMAN_AGENT";
+                          return (
                             <div
-                              className={`max-w-[85%] md:max-w-md p-3.5 md:p-4 rounded-2xl shadow-lg space-y-1 ${
-                                msg.senderType === "AI" || msg.senderType === "HUMAN_AGENT"
-                                  ? "bg-[#151824] border border-[#C5A059]/40 text-white rounded-br-none"
-                                  : "bg-[#1E2230] text-slate-200 rounded-bl-none"
-                              }`}
+                              key={msg.id}
+                              className={`flex ${isOutgoing ? "justify-end" : "justify-start"}`}
                             >
-                              <div className="flex items-center justify-between text-xs text-slate-400 mb-1 space-x-4">
-                                <span className="font-bold tracking-wider uppercase text-[#C5A059]">
-                                  {msg.senderType === "AI" ? "AI Concierge" : msg.senderType === "HUMAN_AGENT" ? "Human Agent" : "Lead"}
-                                </span>
-                                <span className="font-mono">
-                                  {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </span>
+                              <div
+                                className={`max-w-[88%] sm:max-w-md p-3.5 sm:p-4 rounded-2xl shadow-md space-y-1.5 ${
+                                  isOutgoing
+                                    ? "bg-[#161B29] border border-[#C5A059]/30 text-slate-100 rounded-br-xs"
+                                    : "bg-[#1E2333] text-slate-200 rounded-bl-xs border border-[#272F45]"
+                                }`}
+                              >
+                                <div className="flex items-center justify-between text-[11px] text-slate-400 space-x-3 pb-0.5 border-b border-white/5">
+                                  <span className={`font-bold tracking-wider uppercase ${isOutgoing ? "text-[#C5A059]" : "text-slate-300"}`}>
+                                    {msg.senderType === "AI" ? "Aria (AI Concierge)" : msg.senderType === "HUMAN_AGENT" ? "The Pods Team" : selectedConversation.lead?.fullName || "Lead"}
+                                  </span>
+                                  <span className="font-mono text-[10px] text-slate-400">
+                                    {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </span>
+                                </div>
+                                <p className="text-[13px] sm:text-sm leading-relaxed whitespace-pre-line text-slate-100">{msg.content}</p>
                               </div>
-                              <p className="text-sm leading-relaxed whitespace-pre-line">{msg.content}</p>
                             </div>
-                          </div>
-                        ));
+                          );
+                        });
                       })()}
                       <div ref={chatScrollEndRef} />
                     </div>
 
-                    {/* AI Co-Pilot 1-Click Executive Reply Bar */}
-                    <div className="p-4 border-t border-[#1E2230] bg-[#151824] space-y-3">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <span className="text-xs font-extrabold text-[#C5A059] uppercase tracking-wider flex items-center space-x-1.5">
-                          <Sparkles className="w-3.5 h-3.5" />
-                          <span>AI Executive Reply Co-Pilot</span>
-                        </span>
-                        <div className="grid grid-cols-2 gap-2 w-full sm:w-auto">
-                          <button
-                            type="button"
-                            onClick={() => handleGenerateNudge(selectedConversation.lead?.id)}
-                            disabled={generatingNudge}
-                            className="min-h-11 px-3 py-2 bg-[#0D0F17] hover:bg-[#1E2230] border border-emerald-500/40 text-emerald-400 font-bold text-xs rounded-lg transition-all disabled:opacity-50"
-                          >
-                            {generatingNudge ? "Generating Nudge..." : "Generate 48h Nudge"}
-                          </button>
+                    {/* Compact Luxury Bottom Composer & Co-Pilot */}
+                    <div className="p-3 sm:p-4 border-t border-[#1E2230] bg-[#111420] space-y-2.5">
+                      {/* AI Quick Actions Bar */}
+                      <div className="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar pb-1">
+                        <div className="flex items-center space-x-1.5">
                           <button
                             type="button"
                             onClick={() => handleGenerateAiSuggestions(selectedConversation.id)}
                             disabled={loadingSuggestions}
-                            className="min-h-11 px-3 py-2 bg-[#0D0F17] hover:bg-[#1E2230] border border-[#C5A059]/40 text-[#C5A059] font-bold text-xs rounded-lg transition-all disabled:opacity-50"
+                            className="px-2.5 py-1 bg-[#161B29] hover:bg-[#1E2333] border border-[#C5A059]/40 text-[#C5A059] font-bold text-[11px] rounded-lg transition-all flex items-center space-x-1 disabled:opacity-50 shrink-0"
                           >
-                            {loadingSuggestions ? "Generating Options..." : "Generate 1-Click Replies"}
+                            <Sparkles className="w-3 h-3" />
+                            <span>{loadingSuggestions ? "Generating..." : "AI Suggestions"}</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleGenerateNudge(selectedConversation.lead?.id)}
+                            disabled={generatingNudge}
+                            className="px-2.5 py-1 bg-[#161B29] hover:bg-[#1E2333] border border-emerald-500/40 text-emerald-400 font-bold text-[11px] rounded-lg transition-all disabled:opacity-50 shrink-0"
+                          >
+                            <span>{generatingNudge ? "Nudging..." : "48h Nudge"}</span>
                           </button>
                         </div>
                       </div>
 
                       {aiSuggestions.length > 0 && (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 max-h-36 overflow-y-auto p-1 bg-[#090B10] rounded-xl border border-[#1E2230]">
                           {aiSuggestions.map((sug, i) => (
                             <button
                               key={i}
                               type="button"
                               onClick={() => setChatReplyInput(sug.text)}
-                              className="p-2.5 rounded-xl bg-[#0D0F17] border border-[#1E2230] hover:border-[#C5A059]/50 text-left space-y-1 transition-all group"
+                              className="p-2 rounded-lg bg-[#161B29] border border-[#1E2230] hover:border-[#C5A059]/50 text-left space-y-0.5 transition-all group"
                             >
-                              <span className="text-[10px] font-bold text-[#C5A059] uppercase tracking-wider block">
+                              <span className="text-[9px] font-bold text-[#C5A059] uppercase tracking-wider block">
                                 {sug.type}
                               </span>
-                              <p className="text-xs text-slate-300 line-clamp-2 group-hover:text-white">
+                              <p className="text-[11px] text-slate-300 line-clamp-2 group-hover:text-white">
                                 {sug.text}
                               </p>
                             </button>
@@ -1796,7 +1801,7 @@ export default function MasterDashboardPage() {
                       )}
 
                       {chatSendError && (
-                        <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-xs text-rose-300">
+                        <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-1.5 text-xs text-rose-300">
                           {chatSendError}
                         </div>
                       )}
@@ -1812,15 +1817,15 @@ export default function MasterDashboardPage() {
                           type="text"
                           value={chatReplyInput}
                           onChange={(e) => setChatReplyInput(e.target.value)}
-                          placeholder="Type or select an AI Co-Pilot reply above..."
-                          className="flex-1 min-w-0 bg-[#0D0F17] border border-[#1E2230] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C5A059]"
+                          placeholder="Type your WhatsApp reply to client..."
+                          className="flex-1 min-w-0 bg-[#090B10] border border-[#23293D] focus:border-[#C5A059] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none transition-colors"
                         />
                         <button
                           type="submit"
                           disabled={!chatReplyInput.trim() || sendingChatReply}
-                          className="min-h-11 px-4 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow hover:brightness-110 disabled:opacity-50"
+                          className="px-4 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-lg hover:brightness-110 disabled:opacity-50 shrink-0 transition-all"
                         >
-                          {sendingChatReply ? "Sending..." : "Send"}
+                          {sendingChatReply ? "..." : "Send"}
                         </button>
                       </form>
 
