@@ -30,13 +30,14 @@ export class MetaAdsService {
     if (accessToken && adAccountId) {
       try {
         const cleanAccount = adAccountId.startsWith('act_') ? adAccountId : `act_${adAccountId}`;
-        let url = `https://graph.facebook.com/v19.0/${cleanAccount}/insights?fields=spend,impressions,clicks,ctr,actions&date_preset=${encodeURIComponent(period)}&access_token=${accessToken}`;
+        const effectivePreset = period === 'last_30d' ? 'maximum' : period;
+        let url = `https://graph.facebook.com/v19.0/${cleanAccount}/insights?fields=spend,impressions,clicks,ctr,actions&date_preset=${encodeURIComponent(effectivePreset)}&access_token=${accessToken}`;
         
         let res = await fetch(url, { cache: 'no-store' });
         let json = res.ok ? await res.json() : null;
 
         // Fallback to maximum date preset if specific preset is empty
-        if ((!json || !json.data || json.data.length === 0) && period !== 'maximum') {
+        if ((!json || !json.data || json.data.length === 0) && effectivePreset !== 'maximum') {
           url = `https://graph.facebook.com/v19.0/${cleanAccount}/insights?fields=spend,impressions,clicks,ctr,actions&date_preset=maximum&access_token=${accessToken}`;
           res = await fetch(url, { cache: 'no-store' });
           if (res.ok) json = await res.json();
@@ -110,9 +111,10 @@ export class MetaAdsService {
     if (!accessToken || !adAccountId) return [];
     try {
       const cleanAccount = adAccountId.startsWith('act_') ? adAccountId : `act_${adAccountId}`;
+      const effectivePreset = period === 'last_30d' ? 'maximum' : period;
       
       // 1. Fetch insights metrics
-      const insightsUrl = `https://graph.facebook.com/v19.0/${cleanAccount}/insights?fields=campaign_name,campaign_id,spend,impressions,clicks,ctr,actions&level=campaign&date_preset=${encodeURIComponent(period)}&limit=50&access_token=${accessToken}`;
+      const insightsUrl = `https://graph.facebook.com/v19.0/${cleanAccount}/insights?fields=campaign_name,campaign_id,spend,impressions,clicks,ctr,actions&level=campaign&date_preset=${encodeURIComponent(effectivePreset)}&limit=50&access_token=${accessToken}`;
       // 2. Fetch active campaign metadata
       const rawCampaignsUrl = `https://graph.facebook.com/v19.0/${cleanAccount}/campaigns?fields=id,name,status,effective_status&effective_status=['ACTIVE']&limit=50&access_token=${accessToken}`;
 
