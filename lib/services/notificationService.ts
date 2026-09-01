@@ -186,9 +186,10 @@ export class NotificationService {
    */
   private static async sendWhatsAppAlert(messageText: string) {
     const adminPhones = [
+      '447812222111', // Minesh Patel (Direct UK WhatsApp)
       (process.env.ADMIN_PHONE_MINESH || '+971523666495').replace(/[^0-9]/g, ''),
       (process.env.ADMIN_PHONE_RESHMA || '+971523999502').replace(/[^0-9]/g, ''),
-      '971545866094',
+      '971545866094', // Asif Khan
     ];
 
     // Method 1: ManyChat Send Content API
@@ -203,9 +204,13 @@ export class NotificationService {
           const findData = await findRes.json();
           let subscriberId = findData?.data?.id || findData?.data?.[0]?.id;
 
+          if (phone === '447812222111' && !subscriberId) {
+            subscriberId = 1957138196;
+          }
+
           // If not found by phone, try searching by name or direct custom field
           if (!subscriberId) {
-            const nameSearch = phone.includes('523666495') ? 'Minesh' : 'Reshma';
+            const nameSearch = phone.includes('523666495') || phone.includes('7812222111') ? 'Minesh' : 'Reshma';
             const nameRes = await fetch(`https://api.manychat.com/fb/subscriber/findByName?name=${encodeURIComponent(nameSearch)}`, {
               headers: { Authorization: `Bearer ${manychatToken}` },
             });
