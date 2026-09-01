@@ -16,7 +16,7 @@ export default function LoginPage() {
       .then((res) => res.json())
       .then((data) => {
         if (data.authenticated) {
-          router.push("/dashboard");
+          router.replace("/dashboard");
         }
       })
       .catch(() => {});
@@ -37,7 +37,7 @@ export default function LoginPage() {
 
       if (res.ok && data.success) {
         localStorage.setItem("pods_auth_token", "authenticated_minesh_pods");
-        router.push("/dashboard");
+        router.replace("/dashboard");
       } else {
         setError(data.message || "Invalid email address or passcode. Please try again.");
       }

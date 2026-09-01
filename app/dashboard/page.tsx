@@ -154,6 +154,20 @@ export default function MasterDashboardPage() {
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [mobileShowChat, setMobileShowChat] = useState<boolean>(false);
 
+  // Mobile swipe-back gesture protection (prevents navigating back to /login)
+  useEffect(() => {
+    if (mobileShowChat) {
+      window.history.pushState({ chatOpen: true }, "");
+      const handlePopState = () => {
+        setMobileShowChat(false);
+      };
+      window.addEventListener("popstate", handlePopState);
+      return () => {
+        window.removeEventListener("popstate", handlePopState);
+      };
+    }
+  }, [mobileShowChat]);
+
   const chatScrollEndRef = useRef<HTMLDivElement>(null);
 
   // Lead Slide-Over Drawer States
@@ -1830,6 +1844,98 @@ export default function MasterDashboardPage() {
                   </div>
                 )}
               </div>
+
+              {/* Column 3: Lead Profile & Quick Cockpit Actions (Visible on XL Desktop) */}
+              {selectedConversation && (
+                <div className="hidden xl:flex w-80 shrink-0 bg-[#0D0F17] border border-[#1E2230] rounded-2xl flex-col shadow-xl overflow-y-auto p-4 space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-[#1E2230]">
+                    <div className="flex items-center space-x-2">
+                      <Users className="w-4 h-4 text-[#C5A059]" />
+                      <h4 className="font-bold text-white text-xs uppercase tracking-wider">Lead Profile</h4>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      selectedConversation.lead?.aiEnabled
+                        ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                        : "bg-amber-500/15 text-amber-400 border border-amber-500/30"
+                    }`}>
+                      {selectedConversation.lead?.aiEnabled ? "Auto-Pilot On" : "Manual Takeover"}
+                    </span>
+                  </div>
+
+                  {/* Profile Summary Card */}
+                  <div className="bg-[#151824] rounded-xl p-3.5 border border-[#1E2230] space-y-2.5">
+                    <div>
+                      <h3 className="font-bold text-white text-sm">
+                        {selectedConversation.lead?.fullName || "VIP Client"}
+                      </h3>
+                      <p className="text-xs text-[#C5A059] font-mono mt-0.5">
+                        {selectedConversation.lead?.phone}
+                      </p>
+                      {selectedConversation.lead?.email && (
+                        <p className="text-xs text-slate-400 truncate mt-0.5">
+                          {selectedConversation.lead.email}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="pt-2 border-t border-white/5 grid grid-cols-2 gap-2 text-[11px]">
+                      <div>
+                        <span className="text-slate-500 block text-[10px]">Location</span>
+                        <span className="text-slate-200 font-semibold">{selectedConversation.lead?.buyerLocation || "International"}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block text-[10px]">Purpose</span>
+                        <span className="text-slate-200 font-semibold">{selectedConversation.lead?.purchasePurpose || "Investment"}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block text-[10px]">Budget</span>
+                        <span className="text-[#C5A059] font-bold">
+                          {selectedConversation.lead?.budgetMin ? `AED ${(selectedConversation.lead.budgetMin / 1000000).toFixed(1)}M+` : "Flexible"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block text-[10px]">Meeting</span>
+                        <span className="text-slate-200 font-semibold truncate block">{selectedConversation.lead?.meetingPreference || "Pending"}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quick Cockpit Actions */}
+                  <div className="space-y-2 pt-1">
+                    <button
+                      onClick={() => {
+                        setSelectedLead(selectedConversation.lead);
+                        setDrawerOpen(true);
+                      }}
+                      className="w-full py-2.5 px-3 rounded-xl bg-[#151824] hover:bg-[#1E2333] border border-[#1E2230] hover:border-[#C5A059]/40 text-slate-200 text-xs font-bold transition-all flex items-center justify-center space-x-2 shadow-sm"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-[#C5A059]" />
+                      <span>View Full Lead Details</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setActiveTab("bookings");
+                      }}
+                      className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#C5A059]/20 to-[#D4B06A]/20 hover:from-[#C5A059]/30 hover:to-[#D4B06A]/30 border border-[#C5A059]/40 text-[#C5A059] text-xs font-bold transition-all flex items-center justify-center space-x-2 shadow-sm"
+                    >
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>Schedule VIP Presentation</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleToggleAi(selectedConversation.lead?.id, selectedConversation.lead?.aiEnabled)}
+                      className={`w-full py-2 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center space-x-2 ${
+                        selectedConversation.lead?.aiEnabled
+                          ? "bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-300"
+                          : "bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/30 text-emerald-300"
+                      }`}
+                    >
+                      <span>{selectedConversation.lead?.aiEnabled ? "Switch to Manual Takeover" : "Resume AI Auto-Pilot"}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
