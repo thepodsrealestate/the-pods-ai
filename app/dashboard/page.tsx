@@ -839,6 +839,8 @@ export default function MasterDashboardPage() {
         return false;
       }
     }
+
+
     return true;
   });
 
@@ -853,7 +855,7 @@ export default function MasterDashboardPage() {
     }
   }, [selectedConversationId, currentMsgsLength]);
 
-  // Calculate Lead Source Distribution dynamically from DB leads (normalized to prevent duplicates)
+  // Calculate Lead Source Distribution dynamically from DB leads
   const sourceCounts = leads.reduce((acc: Record<string, number>, lead: any) => {
     let source = (lead.leadSource || "DIRECT").toUpperCase().replace(/\s+/g, "_");
     if (source.includes("FACEBOOK") || source.includes("META")) source = "FACEBOOK_ADS";
@@ -866,10 +868,10 @@ export default function MasterDashboardPage() {
 
   const navItems = [
     { id: "overview", name: "Overview", icon: LayoutDashboard },
-    { id: "leads", name: "Lead Matrix", icon: Users },
+    { id: "leads", name: "Lead Pipeline", icon: Users },
     { id: "conversations", name: "Conversations", icon: MessageSquare },
-    { id: "bookings", name: "VIP Bookings", icon: Calendar },
-    { id: "analytics", name: "Analytics & Export", icon: BarChart3 },
+    { id: "bookings", name: "VIP Presentations", icon: Calendar },
+    { id: "analytics", name: "Marketing & ROI", icon: BarChart3 },
     { id: "settings", name: "Alert Settings", icon: Sliders },
   ];
 
