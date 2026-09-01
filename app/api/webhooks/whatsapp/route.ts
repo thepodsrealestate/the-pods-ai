@@ -524,6 +524,19 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         meetingTime = new Date(Date.now() + 86400000);
       } else if (rawDateStr.includes('today')) {
         meetingTime = new Date();
+      } else {
+        const weekdaysMap: Record<string, number> = {
+          sunday: 0, monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6
+        };
+        for (const [dayName, targetDayNum] of Object.entries(weekdaysMap)) {
+          if (rawDateStr.includes(dayName)) {
+            const currentDayNum = new Date().getDay();
+            let daysToAdd = (targetDayNum - currentDayNum + 7) % 7;
+            if (daysToAdd === 0) daysToAdd = 7; // Next occurrence
+            meetingTime = new Date(Date.now() + daysToAdd * 86400000);
+            break;
+          }
+        }
       }
 
       const monthsMap: Record<string, number> = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
@@ -587,6 +600,16 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         }
       } else if (replyLower.includes('bluewaters') || replyLower.includes('pods') || bookingLocationRaw.includes('bluewaters')) {
         bookingLocation = 'The Pods, Bluewaters Island, Dubai';
+      } else if (
+        rawDateStr.includes('burlington') || 
+        rawDateStr.includes('business bay') || 
+        rawDateStr.includes('ellington') ||
+        bookingLocationRaw.includes('burlington') ||
+        bookingLocationRaw.includes('ellington')
+      ) {
+        bookingLocation = 'Ellington Properties, Burlington Tower, Business Bay, Dubai';
+      } else if (aiResult.booking_details?.location && aiResult.booking_details.location.trim().length > 3 && !aiResult.booking_details.location.toLowerCase().includes('google meet')) {
+        bookingLocation = aiResult.booking_details.location.trim();
       }
 
       await CalendarService.createBooking({
@@ -594,6 +617,7 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         meetingTime,
         location: bookingLocation,
       });
+
       console.log('[BG-LOG] ✅ Meeting Booking created & Google Calendar invite dispatched to', lead.email, 'at', bookingLocation, 'on', meetingTime.toISOString());
     } else if (aiResult.action === 'HANDOFF') {
       await prisma.lead.update({
@@ -614,9 +638,10 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
 
     console.log('[BG-LOG] ✅ Messages and attribution saved to DB');
   } catch (err: any) {
-    console.error('[BG-LOG] Error:', err.message);
+    console.error('[BG-LOG] Error in logToDatabase:', err.message);
   }
 }
+
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
