@@ -1,0 +1,7 @@
+knowledge/raw/
+tools/
+backups/
+docs/
+cookies.txt
+duplicate-findings.html
+*.tsbuildinfo
