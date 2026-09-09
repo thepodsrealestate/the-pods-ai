@@ -735,26 +735,43 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       const replyLower = aiResult.reply.toLowerCase();
       const userTextLower = userText.toLowerCase();
       const bookingLocationRaw = (aiResult.booking_details?.location || '').toLowerCase();
+      const isLeicesterEvent = 
+        replyLower.includes('leicester') || 
+        replyLower.includes('marriott') || 
+        replyLower.includes('expo') || 
+        userTextLower.includes('leicester') || 
+        userTextLower.includes('marriott') || 
+        userTextLower.includes('expo') || 
+        bookingLocationRaw.includes('leicester') || 
+        bookingLocationRaw.includes('marriott');
+
       const isLondonEvent = 
         replyLower.includes('london') || 
         replyLower.includes('brompton') || 
         replyLower.includes('knightsbridge') || 
-        replyLower.includes('open house') || 
         userTextLower.includes('london') || 
         userTextLower.includes('knightsbridge') || 
-        userTextLower.includes('thursday') || 
-        userTextLower.includes('sept 3') || 
         bookingLocationRaw.includes('london') || 
         bookingLocationRaw.includes('knightsbridge');
 
       let bookingLocation = 'Google Meet';
-      if (isLondonEvent) {
-        bookingLocation = 'Danube Properties, 44 Brompton Rd, Knightsbridge, London SW3 1BW, UK';
-        // Explicitly pin date to Thursday, September 3, 2026!
+      if (isLeicesterEvent) {
+        bookingLocation = 'Marriott Hotel, Smith Way, Leicester LE19 1SW, United Kingdom';
         meetingTime.setFullYear(2026);
-        meetingTime.setMonth(8); // September (0-indexed: Jan=0 ... Sep=8)
+        meetingTime.setMonth(8); // September
+        if (userTextLower.includes('sunday') || userTextLower.includes('27')) {
+          meetingTime.setDate(27);
+        } else {
+          meetingTime.setDate(26);
+        }
+        if (meetingTime.getHours() === 0) {
+          meetingTime.setHours(15, 0, 0, 0);
+        }
+      } else if (isLondonEvent) {
+        bookingLocation = 'Danube Properties, 44 Brompton Rd, Knightsbridge, London SW3 1BW, UK';
+        meetingTime.setFullYear(2026);
+        meetingTime.setMonth(8); // September
         meetingTime.setDate(3);
-        // Ensure reasonable daylight meeting hour (e.g. 18:00 GST = 3:00 PM BST)
         if (meetingTime.getHours() === 0) {
           meetingTime.setHours(18, 0, 0, 0);
         }

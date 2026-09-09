@@ -15,9 +15,14 @@ async function main() {
   console.log(`\nProject Connected Successfully!`);
   console.log(`Total Public Tables Deployed: ${result.length}\n`);
 
-  result.forEach((row, i) => {
-    console.log(`  ${i + 1}. ${row.table_name}`);
-  });
+  for (const row of result) {
+    try {
+      const cnt = await prisma.$queryRawUnsafe(`SELECT COUNT(*) as count FROM public."${row.table_name}"`);
+      console.log(`  ${row.table_name}: ${(cnt as any)[0].count}`);
+    } catch(e: any) {
+      console.log(`  ${row.table_name}: err ${e.message}`);
+    }
+  }
 
   console.log("\n==================================================");
 }
