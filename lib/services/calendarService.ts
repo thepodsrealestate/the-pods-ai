@@ -57,6 +57,7 @@ export class CalendarService {
 
     // Insert Event directly into Minesh Patel's Google Calendar
     try {
+      const isUkEvent = (booking.location || '').toLowerCase().includes('leicester') || (booking.location || '').toLowerCase().includes('london') || (booking.location || '').toLowerCase().includes('united kingdom');
       const gcalResult = await GoogleCalendarService.insertEvent({
         summary: `VIP Investor Consultation - ${booking.lead.fullName || 'VIP Client'}`,
         description: `Investor Meeting with Minesh Patel (The Pods Real Estate)\n\nLead Name: ${booking.lead.fullName || 'VIP Client'}\nPhone: ${booking.lead.phone}\nEmail: ${booking.lead.email || 'N/A'}\nPurpose: ${booking.lead.purchasePurpose || 'Luxury Real Estate Investment'}\nBudget: ${booking.lead.budgetMax ? `AED ${booking.lead.budgetMax}` : 'HNW'}\n\nLocation: ${booking.location}`,
@@ -64,6 +65,7 @@ export class CalendarService {
         startTime: booking.meetingTime,
         attendeeEmail: booking.lead.email || undefined,
         attendeeName: booking.lead.fullName || undefined,
+        timeZone: isUkEvent ? 'Europe/London' : 'Asia/Dubai',
       });
 
       if (gcalResult?.eventId) {

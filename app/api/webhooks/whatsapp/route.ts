@@ -778,15 +778,39 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         }
       }
 
-      const timeMatch = (aiResult.booking_details?.time || rawDateStr).match(/(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i);
-      if (timeMatch) {
-        let hours = parseInt(timeMatch[1], 10);
-        const mins = parseInt(timeMatch[2] || '0', 10);
-        const ampm = timeMatch[3]?.toUpperCase();
-        if (ampm === 'PM' && hours < 12) hours += 12;
-        if (ampm === 'AM' && hours === 12) hours = 0;
-        meetingTime.setHours(hours, mins, 0, 0);
+      // Remove email addresses from rawDateStr so digits inside email (e.g. sabrina545) never trigger false time matches!
+      const sanitizedTimeStr = ((aiResult.booking_details?.time || '') + ' ' + (aiResult.booking_details?.date || '') + ' ' + userText + ' ' + aiResult.reply)
+        .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '')
+        .toLowerCase();
+
+      let targetHour = 14; // Default to 2:00 PM for afternoon consultations (NEVER 12 AM midnight)
+      let targetMin = 0;
+
+      const explicitTimeMatch = sanitizedTimeStr.match(/\b([1-9]|1[0-2])(?::([0-5]\d))?\s*(am|pm)\b/i);
+      const hour24Match = sanitizedTimeStr.match(/\b([01]?\d|2[0-3]):([0-5]\d)\b/);
+
+      if (explicitTimeMatch) {
+        let h = parseInt(explicitTimeMatch[1], 10);
+        targetMin = explicitTimeMatch[2] ? parseInt(explicitTimeMatch[2], 10) : 0;
+        const ampm = explicitTimeMatch[3].toLowerCase();
+        if (ampm === 'pm' && h < 12) h += 12;
+        if (ampm === 'am' && h === 12) h = 0;
+        targetHour = h;
+      } else if (hour24Match) {
+        targetHour = parseInt(hour24Match[1], 10);
+        targetMin = parseInt(hour24Match[2], 10);
+      } else if (sanitizedTimeStr.includes('morning')) {
+        targetHour = 11;
+        targetMin = 0;
+      } else if (sanitizedTimeStr.includes('afternoon') || sanitizedTimeStr.includes('after around 1') || sanitizedTimeStr.includes('after around 2')) {
+        targetHour = 14; // 2:00 PM
+        targetMin = 0;
+      } else if (sanitizedTimeStr.includes('evening')) {
+        targetHour = 17; // 5:00 PM
+        targetMin = 0;
       }
+
+      meetingTime.setHours(targetHour, targetMin, 0, 0);
 
       const replyLower = aiResult.reply.toLowerCase();
       const userTextLower = userText.toLowerCase();
@@ -830,24 +854,16 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         bookingLocation = 'Google Meet';
       } else if (isLeicesterEvent) {
         bookingLocation = 'Marriott Hotel, Smith Way, Leicester LE19 1SW, United Kingdom';
-        meetingTime.setFullYear(2026);
-        meetingTime.setMonth(8); // September
-        if (userTextLower.includes('sunday') || userTextLower.includes('27')) {
-          meetingTime.setDate(27);
-        } else {
-          meetingTime.setDate(26);
-        }
-        if (meetingTime.getHours() === 0) {
-          meetingTime.setHours(15, 0, 0, 0);
-        }
+        const isSunday = userTextLower.includes('sunday') || userTextLower.includes('27') || rawDateStr.includes('sunday') || rawDateStr.includes('27');
+        const eventDay = isSunday ? 27 : 26;
+        // Leicester UK is in BST (UTC+1). 14:00 BST = 13:00 UTC.
+        const utcHour = (targetHour - 1 + 24) % 24;
+        meetingTime = new Date(Date.UTC(2026, 8, eventDay, utcHour, targetMin, 0));
       } else if (isLondonEvent) {
         bookingLocation = 'Danube Properties, 44 Brompton Rd, Knightsbridge, London SW3 1BW, UK';
-        meetingTime.setFullYear(2026);
-        meetingTime.setMonth(8); // September
-        meetingTime.setDate(3);
-        if (meetingTime.getHours() === 0) {
-          meetingTime.setHours(18, 0, 0, 0);
-        }
+        // 18:00 BST = 17:00 UTC
+        const utcHour = (targetHour - 1 + 24) % 24;
+        meetingTime = new Date(Date.UTC(2026, 8, 3, utcHour, targetMin, 0));
       } else if (!isUkLead && (replyLower.includes('bluewaters') || replyLower.includes('pods') || bookingLocationRaw.includes('bluewaters'))) {
         bookingLocation = 'The Pods, Bluewaters Island, Dubai';
       } else if (

@@ -31,22 +31,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'This lead does not have a deliverable WhatsApp phone number' }, { status: 422 });
     }
 
-    let subscriberId = phone.startsWith('+mc_') ? phone.slice(4) : undefined;
-    if (!subscriberId) {
-      const cleanPhone = phone.replace(/[^0-9]/g, '');
-      const findRes = await fetch(
-        `https://api.manychat.com/fb/subscriber/findBySystemField?phone=%2B${cleanPhone}`,
-        { headers: { Authorization: `Bearer ${manychatToken}` } }
-      );
-      const findData = await findRes.json().catch(() => ({}));
-
-      if (!findRes.ok) {
-        console.error('ManyChat subscriber lookup failed:', findRes.status, findData);
-        return NextResponse.json({ error: 'Unable to locate the WhatsApp contact' }, { status: 502 });
-      }
-
-      subscriberId = findData?.data?.id || findData?.data?.[0]?.id;
-    }
+    const subscriberId = await MessageService.findManyChatSubscriberId(phone);
 
     if (!subscriberId) {
       return NextResponse.json({ error: 'WhatsApp contact was not found in ManyChat' }, { status: 404 });

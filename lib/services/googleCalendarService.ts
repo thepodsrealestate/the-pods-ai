@@ -8,6 +8,7 @@ interface CalendarEventParams {
   endTime?: Date;
   attendeeEmail?: string;
   attendeeName?: string;
+  timeZone?: string;
 }
 
 export class GoogleCalendarService {
@@ -168,12 +169,14 @@ export class GoogleCalendarService {
         attendees.push({ email: params.attendeeEmail, displayName: params.attendeeName || undefined });
       }
 
+      const timeZone = params.timeZone || (params.location?.toLowerCase().includes('leicester') || params.location?.toLowerCase().includes('london') || params.location?.toLowerCase().includes('united kingdom') ? 'Europe/London' : 'Asia/Dubai');
+
       const eventPayload: any = {
         summary: params.summary,
         description: params.description,
         location: params.location,
-        start: { dateTime: startDateTime, timeZone: 'Asia/Dubai' },
-        end: { dateTime: endDateTime, timeZone: 'Asia/Dubai' },
+        start: { dateTime: startDateTime, timeZone },
+        end: { dateTime: endDateTime, timeZone },
         attendees,
         conferenceData: {
           createRequest: {
@@ -211,6 +214,47 @@ export class GoogleCalendarService {
     } catch (err: any) {
       console.error('[GCAL] Failed to insert event:', err.message);
       return null;
+    }
+  }
+
+  /**
+   * Updates an existing event in Google Calendar
+   */
+  static async updateEvent(
+    calendarEventId: string,
+    params: { startTime: Date; endTime?: Date; location?: string; timeZone?: string }
+  ): Promise<boolean> {
+    try {
+      const accessToken = await this.getAccessToken();
+      if (!accessToken) return false;
+      const calendarId = encodeURIComponent(process.env.GOOGLE_CALENDAR_ID || 'primary');
+      const timeZone = params.timeZone || 'Europe/London';
+      const startDateTime = params.startTime.toISOString();
+      const endDateTime = (params.endTime || new Date(params.startTime.getTime() + 45 * 60 * 1000)).toISOString();
+
+      const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${calendarEventId}?sendUpdates=all`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          start: { dateTime: startDateTime, timeZone },
+          end: { dateTime: endDateTime, timeZone },
+          ...(params.location ? { location: params.location } : {}),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        console.error('[GCAL] Update error:', data);
+        return false;
+      }
+      console.log('[GCAL] Event updated successfully:', data.id);
+      return true;
+    } catch (err: any) {
+      console.error('[GCAL] Failed to update event:', err.message);
+      return false;
     }
   }
 }

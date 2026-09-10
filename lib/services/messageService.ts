@@ -32,6 +32,48 @@ export class MessageService {
   }
 
   /**
+   * Resolve ManyChat Subscriber ID reliably from DB webhook events or ManyChat API
+   */
+  static async findManyChatSubscriberId(phone: string): Promise<string | null> {
+    if (!phone) return null;
+    if (phone.startsWith('+mc_')) return phone.slice(4);
+
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+
+    // 1. Check if we logged an inbound WhatsApp webhook event with this subscriber ID
+    try {
+      const event = await prisma.webhookEvent.findFirst({
+        where: {
+          eventType: 'inbound_whatsapp',
+          OR: [
+            { payload: { path: ['phone'], string_contains: cleanPhone } },
+            { payload: { path: ['opt_in_phone'], string_contains: cleanPhone } },
+          ],
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+      const subId = (event?.payload as any)?.subscriber_id;
+      if (subId) return String(subId);
+    } catch (_) {}
+
+    // 2. Fallback to ManyChat system field
+    const manychatToken = process.env.MANYCHAT_API_TOKEN;
+    if (manychatToken) {
+      try {
+        const findRes = await fetch(
+          `https://api.manychat.com/fb/subscriber/findBySystemField?phone=%2B${cleanPhone}`,
+          { headers: { Authorization: `Bearer ${manychatToken}` } }
+        );
+        const findData = await findRes.json().catch(() => ({}));
+        const subId = findData?.data?.id || findData?.data?.[0]?.id;
+        if (subId) return String(subId);
+      } catch (_) {}
+    }
+
+    return null;
+  }
+
+  /**
    * Send WhatsApp message directly to a lead via ManyChat API
    */
   static async sendWhatsAppDirect(phone: string, text: string) {
@@ -39,16 +81,10 @@ export class MessageService {
     if (!manychatToken || !phone || !text.trim()) return false;
 
     try {
-      const cleanPhone = phone.replace(/[^0-9]/g, '');
-      const findRes = await fetch(
-        `https://api.manychat.com/fb/subscriber/findBySystemField?phone=%2B${cleanPhone}`,
-        { headers: { Authorization: `Bearer ${manychatToken}` } }
-      );
-      const findData = await findRes.json().catch(() => ({}));
-      let subscriberId = findData?.data?.id || findData?.data?.[0]?.id;
+      const subscriberId = await this.findManyChatSubscriberId(phone);
 
       if (!subscriberId) {
-        console.warn(`[sendWhatsAppDirect] Could not find subscriber for phone +${cleanPhone}`);
+        console.warn(`[sendWhatsAppDirect] Could not find subscriber for phone ${phone}`);
         return false;
       }
 
@@ -70,7 +106,7 @@ export class MessageService {
       });
 
       const sendData = await sendRes.json().catch(() => ({}));
-      console.log(`[sendWhatsAppDirect -> +${cleanPhone}]:`, sendData?.status || 'dispatched');
+      console.log(`[sendWhatsAppDirect -> ${phone}]:`, sendData?.status || 'dispatched');
       return true;
     } catch (err: any) {
       console.error('[sendWhatsAppDirect Error]:', err.message);
