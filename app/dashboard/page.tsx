@@ -3035,22 +3035,28 @@ export default function MasterDashboardPage() {
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">1-Click Executive Prompts</span>
                 <div className="flex flex-wrap gap-2">
                   <button
+                    onClick={() => handleQueryAdvisor("Diagnose our active campaign health, pacing, and 3 immediate strategic recommendations.")}
+                    className="px-3 py-1.5 rounded-xl bg-[#C5A059]/10 hover:bg-[#C5A059]/20 border border-[#C5A059]/40 text-[#C5A059] text-xs font-semibold transition-all"
+                  >
+                    Active Campaign Health &amp; Strategy
+                  </button>
+                  <button
+                    onClick={() => handleQueryAdvisor("Why do we have clicks but no form leads yet on our active campaign? How do we fix it?")}
+                    className="px-3 py-1.5 rounded-xl bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
+                  >
+                    Diagnose 0-Lead Conversion
+                  </button>
+                  <button
                     onClick={() => handleQueryAdvisor("Compare Google Ads vs Meta Ads CPL and lead volume.")}
                     className="px-3 py-1.5 rounded-xl bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
                   >
                     Compare Google vs Meta CPL
                   </button>
                   <button
-                    onClick={() => handleQueryAdvisor("How many HOT leads require viewing booking today?")}
-                    className="px-3 py-1.5 rounded-xl bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
-                  >
-                    Summary of HOT Leads
-                  </button>
-                  <button
                     onClick={() => handleQueryAdvisor("Generate an executive 1-paragraph report for our sales meeting.")}
                     className="px-3 py-1.5 rounded-xl bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
                   >
-                    Generate Board Report
+                    Executive Meeting Brief
                   </button>
                 </div>
               </div>
