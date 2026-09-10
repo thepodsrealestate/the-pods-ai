@@ -37,6 +37,84 @@ function parseEventDetails(campaignName: string) {
   };
 }
 
+interface AdCreativeInfo {
+  adName?: string;
+  headline?: string;
+  body?: string;
+  description?: string;
+  format?: 'IMAGE' | 'VIDEO' | 'CAROUSEL' | 'UNKNOWN';
+  callToAction?: string;
+  imageUrl?: string;
+  imageBase64?: string;
+}
+
+async function fetchActiveAdCreative(campaignId: string): Promise<AdCreativeInfo | null> {
+  const token = process.env.META_ADS_ACCESS_TOKEN;
+  if (!token || !campaignId) return null;
+
+  try {
+    const adsUrl = `https://graph.facebook.com/v19.0/${campaignId}/ads?fields=id,name,status,effective_status,creative{id,name,title,body,call_to_action_type,image_url,thumbnail_url,video_id,asset_feed_spec}&limit=5&access_token=${token}`;
+    const res = await fetch(adsUrl, { cache: 'no-store' });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const activeAd = Array.isArray(json?.data) ? json.data.find((a: any) => a.effective_status === 'ACTIVE') || json.data[0] : null;
+    if (!activeAd || !activeAd.creative) return null;
+
+    const cr = activeAd.creative;
+    const feed = cr.asset_feed_spec;
+    const headline = feed?.titles?.[0]?.text || cr.title || cr.name || '';
+    const body = feed?.bodies?.[0]?.text || cr.body || '';
+    const description = feed?.descriptions?.[0]?.text || '';
+    const callToAction = feed?.call_to_actions?.[0]?.type || cr.call_to_action_type || 'SIGN_UP';
+    const isVideo = !!cr.video_id || (Array.isArray(feed?.videos) && feed.videos.length > 0);
+    const format = isVideo ? 'VIDEO' : 'IMAGE';
+
+    let imageUrl = cr.image_url || cr.thumbnail_url;
+    let imageBase64: string | undefined = undefined;
+
+    // Fetch high-res image if hash is available
+    if (Array.isArray(feed?.images) && feed.images.length > 0) {
+      const hash = feed.images[0].hash;
+      const account = (process.env.META_AD_ACCOUNT_ID || '').startsWith('act_') ? process.env.META_AD_ACCOUNT_ID : `act_${process.env.META_AD_ACCOUNT_ID}`;
+      const imgApiUrl = `https://graph.facebook.com/v19.0/${account}/adimages?hashes=${encodeURIComponent(JSON.stringify([hash]))}&fields=url&access_token=${token}`;
+      const imgRes = await fetch(imgApiUrl, { cache: 'no-store' }).catch(() => null);
+      if (imgRes && imgRes.ok) {
+        const imgJson = await imgRes.json();
+        if (imgJson?.data?.[0]?.url) {
+          imageUrl = imgJson.data[0].url;
+        }
+      }
+    }
+
+    // Download image buffer for OpenAI multimodal vision
+    if (imageUrl) {
+      try {
+        const fetchImg = await fetch(imageUrl);
+        if (fetchImg.ok) {
+          const buffer = await fetchImg.arrayBuffer();
+          imageBase64 = Buffer.from(buffer).toString('base64');
+        }
+      } catch (err) {
+        console.warn('Could not download creative image for vision model:', err);
+      }
+    }
+
+    return {
+      adName: activeAd.name,
+      headline,
+      body,
+      description,
+      format,
+      callToAction,
+      imageUrl,
+      imageBase64,
+    };
+  } catch (error) {
+    console.warn('Error fetching active ad creative:', error);
+    return null;
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -63,6 +141,12 @@ export async function POST(req: Request) {
     const activeCampaigns = allCampaigns.filter((c: any) => c.status === 'Active');
     const pausedCampaigns = allCampaigns.filter((c: any) => c.status !== 'Active');
 
+    // 3. Fetch active ad creative & image if an active campaign exists
+    let activeCreative: AdCreativeInfo | null = null;
+    if (activeCampaigns.length > 0 && activeCampaigns[0].campaignId) {
+      activeCreative = await fetchActiveAdCreative(activeCampaigns[0].campaignId);
+    }
+
     let activeCampaignsSummary = '';
     if (activeCampaigns.length > 0) {
       activeCampaignsSummary = activeCampaigns.map((c: any) => {
@@ -88,6 +172,20 @@ export async function POST(req: Request) {
       activeCampaignsSummary = 'No campaign is currently delivering (all campaigns are paused or ended).';
     }
 
+    let creativeSection = '';
+    if (activeCreative) {
+      creativeSection = `
+ACTIVE AD CREATIVE DETAILS (INSPECTED LIVE VIA META API):
+- Ad Name: "${activeCreative.adName || 'Active Ad'}"
+- Media Format: ${activeCreative.format} (${activeCreative.format === 'IMAGE' ? 'Static Graphic Image Flyer (Zero video motion)' : 'Video Creative'})
+- Live Headline: "${activeCreative.headline}"
+- Live Description: "${activeCreative.description}"
+- Live Primary Text (Ad Copy): "${activeCreative.body}"
+- Call To Action Button: "${activeCreative.callToAction}"
+- Computer Vision Status: ${activeCreative.imageBase64 ? 'Active ad image attached directly to this prompt via multimodal vision. Analyze the actual image pixels, text hierarchy, and aesthetics.' : 'Image metadata loaded.'}
+`;
+    }
+
     let leadPromptSection = '';
     if (leadContext) {
       leadPromptSection = `
@@ -108,6 +206,7 @@ SELECTED DASHBOARD TIMEFRAME: ${period.toUpperCase().replace('_', ' ')}
 
 CURRENT LIVE CAMPAIGNS IN DELIVERING STATE:
 ${activeCampaignsSummary}
+${creativeSection}
 
 HISTORICAL / PAUSED CAMPAIGNS SUMMARY:
 - Paused Campaigns: ${pausedCampaigns.length} total (e.g. UK_LONDON_EVENT_SEPT03_META, Danube Open House, Breez by Danube, Feb Events)
@@ -116,25 +215,25 @@ HISTORICAL / PAUSED CAMPAIGNS SUMMARY:
 DUBAI REAL ESTATE UK-EXPATS PERFORMANCE BENCHMARKS:
 1. CTR (Click-Through Rate):
    - Healthy: >= 1.2%
-   - Underperforming: < 1.0% (Root Cause: creative fatigue, uncompelling static image, or lack of scroll-stopping hook on Danube 1% payment plan).
+   - Underperforming: < 1.0% (Root Cause: static flyer fatigue, lack of video walkthrough, weak hook on Danube 1% payment plan).
 2. CPC (Cost Per Click):
    - Target: AED 4.50 - 8.00 (£1.00 - £1.75).
-   - High: > AED 9.00 (Root Cause: targeting too narrow or bidding competition high; expand to UK Midlands investor / NRI interest clusters).
+   - High: > AED 9.00 (Root Cause: audience too narrow or general competition; expand to UK Midlands investor / NRI clusters).
 3. Form Conversion (Click-to-Lead):
    - Target: 8% - 14% of ad clicks should convert to instant form leads.
-   - Warning (e.g. 16+ clicks and 0 leads): High form friction, too many pre-qualifying questions, or lack of immediate incentive (e.g. free VIP event pass, developer inventory catalog).
+   - Warning (e.g. 16+ clicks and 0 leads): High form friction, too many pre-qualifying questions, or lack of immediate incentive (e.g. free VIP event pass, floorplan catalog).
 4. CPL (Cost Per Lead):
    - Target for UK Property Expos: AED 120 - 220 (£25 - £45).
 
 YOUR ROLE & TONE:
-- You are a strategic advisor, NOT a simple metric readout bot. Do not just restate the numbers Minesh can see.
+- You are a strategic advisor with computer vision capabilities. If asked about the creative, critique the attached image, the headline, the format (static vs video), and copy.
 - Dissect the ACTIVE campaign's health, diagnose why numbers are where they are, and provide 3 concrete tactical recommendations.
 - Keep the tone direct, authoritative, commercially astute, and tailored to UK-to-Dubai property exhibitions.
 - Do NOT use markdown headers (###). Format answer in clean paragraphs. Do not use emojis.
 
 OUTPUT FORMAT:
 Return a valid JSON object with:
-- "answer": A 2-3 paragraph strategic analysis addressing Minesh's query with active campaign diagnosis, root-cause insight, and market context.
+- "answer": A 2-3 paragraph strategic analysis addressing Minesh's query with active campaign diagnosis, creative critique, root-cause insight, and market context.
 - "bullets": An array of exactly 3 concise, high-impact tactical recommendations.`;
 
     const apiKey = process.env.OPENAI_API_KEY;
@@ -142,14 +241,21 @@ Return a valid JSON object with:
     if (!apiKey || apiKey === 'dummy_key' || apiKey.includes('placeholder')) {
       return NextResponse.json({
         success: true,
-        answer: `Your active campaign Danube_DubaiExpo_Leicester_Sept26-27 has generated 16 clicks at an average CPC of AED 7.71 with zero form submissions. With the Leicester Marriott Expo in approximately 16 days, current CTR (0.78%) is below our 1.2% benchmark, signaling that ad creatives need a stronger scroll-stopping hook featuring Danube's 1% payment plan.`,
+        answer: `Your active campaign Danube_DubaiExpo_Leicester_Sept26-27 is using a static graphic flyer ad titled "${activeCreative?.headline || '21 Seats Left'}" with zero video motion. Across 16 clicks, CTR sits at 0.70% with zero lead conversions. In the UK market, static flyers look like corporate brochures; switching to a 15-second vertical video walkthrough of Danube's project with a prominent "Leicester Marriott Hotel" hook will significantly lift CTR above 1.5%.`,
         bullets: [
-          `Deploy short-form video walkthroughs highlighting the Marriott Hotel Leicester LE19 venue and 1% payment plan to lift CTR above 1.2%.`,
-          `Streamline Meta Instant Form to 3 fields (Name, WhatsApp, Budget) to fix the current zero-conversion drop-off across 16 clicks.`,
-          `Scale daily budget 7-10 days out from the event to capitalize on peak UK investor attendance commitment windows.`,
+          `Deploy a 15-second vertical video reel featuring Danube's 1% payment plan and private balcony pool to replace the current static flyer.`,
+          `Rewrite headline from "21 Seats Left" to "Danube Dubai Expo Leicester: Luxury Apartments From 1% Monthly" for clearer value.`,
+          `Streamline instant form fields to Full Name, WhatsApp, and Investment Budget to eliminate form drop-off across clicks.`,
         ],
       });
     }
+
+    const userMessageContent = activeCreative?.imageBase64
+      ? [
+          { type: 'text', text: query },
+          { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${activeCreative.imageBase64}` } },
+        ]
+      : query;
 
     const aiRes = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -162,7 +268,7 @@ Return a valid JSON object with:
         response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: query },
+          { role: 'user', content: userMessageContent },
         ],
         temperature: 0.3,
       }),

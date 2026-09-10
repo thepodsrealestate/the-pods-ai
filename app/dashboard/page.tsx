@@ -3041,6 +3041,12 @@ export default function MasterDashboardPage() {
                     Active Campaign Health &amp; Strategy
                   </button>
                   <button
+                    onClick={() => handleQueryAdvisor("Inspect our live ad image, headline, and creative copy using vision AI. Tell me how it looks and what design/copy flaws are hurting our CTR.")}
+                    className="px-3 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-semibold transition-all"
+                  >
+                    Critique Live Ad Image &amp; Creative
+                  </button>
+                  <button
                     onClick={() => handleQueryAdvisor("Why do we have clicks but no form leads yet on our active campaign? How do we fix it?")}
                     className="px-3 py-1.5 rounded-xl bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
                   >
