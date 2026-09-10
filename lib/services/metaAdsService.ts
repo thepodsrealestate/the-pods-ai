@@ -115,8 +115,8 @@ export class MetaAdsService {
       
       // 1. Fetch insights metrics
       const insightsUrl = `https://graph.facebook.com/v19.0/${cleanAccount}/insights?fields=campaign_name,campaign_id,spend,impressions,clicks,ctr,actions&level=campaign&date_preset=${encodeURIComponent(effectivePreset)}&limit=50&access_token=${accessToken}`;
-      // 2. Fetch active campaign metadata
-      const rawCampaignsUrl = `https://graph.facebook.com/v19.0/${cleanAccount}/campaigns?fields=id,name,status,effective_status&effective_status=['ACTIVE']&limit=50&access_token=${accessToken}`;
+      // 2. Fetch all campaign metadata (including true status & effective_status)
+      const rawCampaignsUrl = `https://graph.facebook.com/v19.0/${cleanAccount}/campaigns?fields=id,name,status,effective_status&limit=100&access_token=${accessToken}`;
 
       const [insightsRes, campaignsRes] = await Promise.all([
         fetch(insightsUrl, { cache: 'no-store' }),
@@ -129,7 +129,8 @@ export class MetaAdsService {
       const statusMap = new Map<string, string>();
       if (Array.isArray(campaignsJson?.data)) {
         campaignsJson.data.forEach((c: any) => {
-          statusMap.set(c.id, c.effective_status || c.status || 'ACTIVE');
+          const eff = (c.effective_status || c.status || '').toUpperCase();
+          statusMap.set(c.id, eff === 'ACTIVE' ? 'Active' : 'Paused');
         });
       }
 
@@ -145,13 +146,12 @@ export class MetaAdsService {
             const la = d.actions.find((a: any) => a.action_type === 'lead' || a.action_type === 'onsite_conversion.lead_grouped');
             if (la) leads = parseInt(la.value || '0', 10);
           }
-          const rawStatus = statusMap.get(d.campaign_id) || 'ACTIVE';
-          const isPaused = rawStatus.toUpperCase().includes('PAUSED') || rawStatus.toUpperCase().includes('ARCHIVED');
+          const status = statusMap.get(d.campaign_id) || 'Paused';
           campaignMap.set(d.campaign_id, {
             platform: 'meta',
             campaignName: d.campaign_name,
             campaignId: d.campaign_id,
-            status: isPaused ? 'Paused' : 'Active',
+            status,
             spend: parseFloat(spend.toFixed(2)),
             clicks,
             impressions,
@@ -167,13 +167,13 @@ export class MetaAdsService {
       if (Array.isArray(campaignsJson?.data)) {
         campaignsJson.data.forEach((c: any) => {
           if (!campaignMap.has(c.id)) {
-            const rawStatus = c.effective_status || c.status || 'ACTIVE';
-            const isPaused = rawStatus.toUpperCase().includes('PAUSED') || rawStatus.toUpperCase().includes('ARCHIVED');
+            const eff = (c.effective_status || c.status || '').toUpperCase();
+            const status = eff === 'ACTIVE' ? 'Active' : 'Paused';
             campaignMap.set(c.id, {
               platform: 'meta',
               campaignName: c.name,
               campaignId: c.id,
-              status: isPaused ? 'Paused' : 'Active',
+              status,
               spend: 0,
               clicks: 0,
               impressions: 0,

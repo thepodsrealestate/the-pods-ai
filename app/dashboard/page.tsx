@@ -2346,7 +2346,7 @@ export default function MasterDashboardPage() {
                               : 'text-slate-400 hover:text-white'
                           }`}
                         >
-                          Active Only ({adCampaigns.filter((c: any) => !(c.status === 'Paused' || c.campaignName?.toLowerCase().includes('feb') || c.campaignName?.toLowerCase().includes('(paused)'))).length})
+                          Active Only ({adCampaigns.filter((c: any) => c.status === 'Active').length})
                         </button>
                         <button
                           type="button"
@@ -2382,8 +2382,7 @@ export default function MasterDashboardPage() {
                         {adCampaigns
                           .filter((c: any) => {
                             if (campaignStatusFilter === 'all') return true;
-                            const isPaused = c.status === 'Paused' || (c.campaignName && c.campaignName.toLowerCase().includes('feb')) || (c.campaignName && c.campaignName.toLowerCase().includes('(paused)'));
-                            return !isPaused;
+                            return c.status === 'Active';
                           })
                           .sort((a: any, b: any) => b.spend - a.spend)
                           .map((c: any, idx: number) => (
