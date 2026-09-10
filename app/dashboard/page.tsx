@@ -43,7 +43,9 @@ import {
   Search,
   MessageCircle,
   ExternalLink,
-  Filter
+  Filter,
+  Maximize2,
+  Minimize2
 } from "lucide-react";
 
 function SourceBadge({ source, compact = false }: { source: string; compact?: boolean }) {
@@ -101,6 +103,65 @@ function SourceBadge({ source, compact = false }: { source: string; compact?: bo
       <Globe className="w-2.5 h-2.5" />
       <span>{compact ? upper.split("_")[0] : upper.replace("_", " ")}</span>
     </span>
+  );
+}
+
+function FormattedAdvisorMessage({ text, bullets }: { text: string; bullets?: string[] }) {
+  const renderParagraph = (paragraph: string, pIdx: number) => {
+    const parts = paragraph.split(/(\*\*.*?\*\*)/g);
+    return (
+      <p key={pIdx} className="leading-relaxed text-[12.5px] text-slate-200">
+        {parts.map((part, idx) => {
+          if (part.startsWith("**") && part.endsWith("**")) {
+            return (
+              <strong key={idx} className="text-white font-bold tracking-tight">
+                {part.slice(2, -2)}
+              </strong>
+            );
+          }
+          return part;
+        })}
+      </p>
+    );
+  };
+
+  const cleanBullets = (bullets || [])
+    .map((b) => b.replace(/^[\s•\-\*\d\.\)]+/, "").trim())
+    .filter(Boolean);
+
+  const paragraphs = text
+    .split(/\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  return (
+    <div className="space-y-3.5">
+      <div className="space-y-2.5">
+        {paragraphs.map((p, idx) => renderParagraph(p, idx))}
+      </div>
+
+      {cleanBullets.length > 0 && (
+        <div className="pt-3 border-t border-[#1E2230] space-y-2">
+          <div className="flex items-center space-x-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#C5A059]">
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#C5A059]" />
+            <span>Priority Recommendations &amp; Action Items</span>
+          </div>
+          <div className="grid gap-2">
+            {cleanBullets.map((bullet, i) => (
+              <div
+                key={i}
+                className="bg-[#0D0F17]/80 hover:bg-[#0D0F17] border border-[#1E2230] hover:border-[#C5A059]/40 p-3 rounded-xl flex items-start space-x-3 transition-all text-[11.5px] text-slate-200 shadow-sm"
+              >
+                <span className="bg-[#C5A059]/15 text-[#C5A059] border border-[#C5A059]/30 font-mono text-[10px] font-extrabold px-1.5 py-0.5 rounded shrink-0 select-none mt-0.5">
+                  0{i + 1}
+                </span>
+                <span className="leading-relaxed flex-1">{bullet}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -307,6 +368,7 @@ export default function MasterDashboardPage() {
 
   // Floating AI Executive Advisor & Ad Metrics State
   const [advisorOpen, setAdvisorOpen] = useState<boolean>(false);
+  const [advisorFullscreen, setAdvisorFullscreen] = useState<boolean>(false);
   const [advisorQuery, setAdvisorQuery] = useState<string>("");
   const [loadingAdvisor, setLoadingAdvisor] = useState<boolean>(false);
   const [adPeriod, setAdPeriod] = useState<string>("last_30d");
@@ -2842,38 +2904,79 @@ export default function MasterDashboardPage() {
         </button>
       </div>
 
-      {/* AI EXECUTIVE COMMAND CENTER DRAWER OVERLAY */}
+      {/* AI EXECUTIVE COMMAND CENTER OVERLAY (SIDE DRAWER & FULL SCREEN MODES) */}
       {advisorOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden bg-black/75 backdrop-blur-md flex justify-end transition-all">
-          <div className="w-full max-w-xl bg-[#0D0F17] border-l border-[#1E2230] h-full flex flex-col shadow-2xl">
-            {/* Drawer Header */}
-            <div className="p-5 border-b border-[#1E2230] bg-[#151824] flex items-center justify-between">
-              <div className="flex items-center space-x-2.5">
+        <div
+          className={`fixed inset-0 z-50 overflow-hidden bg-black/80 backdrop-blur-md flex transition-all duration-300 ${
+            advisorFullscreen ? "items-center justify-center p-2 sm:p-6" : "justify-end"
+          }`}
+        >
+          <div
+            className={`bg-[#0D0F17] flex flex-col shadow-2xl transition-all duration-300 ${
+              advisorFullscreen
+                ? "w-full max-w-7xl h-full max-h-[94vh] rounded-3xl border border-[#C5A059]/40 overflow-hidden"
+                : "w-full max-w-xl h-full border-l border-[#1E2230]"
+            }`}
+          >
+            {/* Drawer / Fullscreen Header */}
+            <div className="p-4 sm:p-5 border-b border-[#1E2230] bg-[#151824] flex items-center justify-between shrink-0">
+              <div className="flex items-center space-x-3">
                 <div className="p-2 rounded-xl bg-[#C5A059]/10 border border-[#C5A059]/30 text-[#C5A059]">
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
                     <h3 className="text-base font-bold text-white tracking-tight">AI Executive Advisor Console</h3>
+                    {advisorFullscreen && (
+                      <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#C5A059]/15 text-[#C5A059] border border-[#C5A059]/30">
+                        Full Screen Cockpit
+                      </span>
+                    )}
                     <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-[#1E2230] text-slate-400 border border-[#2A2F42]">
                       ⌘K / Ctrl+K
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-400">Multi-Channel Ad Intelligence & Strategic Real Estate Co-Pilot</p>
+                  <p className="text-[11px] text-slate-400">Multi-Channel Ad Intelligence &amp; Strategic Real Estate Co-Pilot</p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1.5 sm:space-x-2">
+                {/* Fullscreen Expansion Toggle Button */}
                 <button
+                  type="button"
+                  onClick={() => setAdvisorFullscreen(!advisorFullscreen)}
+                  title={advisorFullscreen ? "Exit Full Screen (Side Drawer)" : "Expand to Full Screen"}
+                  className={`p-2 rounded-xl border transition-all flex items-center space-x-1.5 text-xs font-bold ${
+                    advisorFullscreen
+                      ? "bg-[#C5A059]/20 border-[#C5A059]/50 text-[#C5A059] shadow-sm"
+                      : "bg-[#0D0F17] hover:bg-[#1E2230] border-[#1E2230] text-slate-300 hover:text-white"
+                  }`}
+                >
+                  {advisorFullscreen ? (
+                    <>
+                      <Minimize2 className="w-4 h-4 text-[#C5A059]" />
+                      <span className="hidden sm:inline">Side View</span>
+                    </>
+                  ) : (
+                    <>
+                      <Maximize2 className="w-4 h-4 text-[#C5A059]" />
+                      <span className="hidden sm:inline">Full Screen</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
                   onClick={handleExportAdvisorSession}
                   title="Copy formatted markdown report to clipboard"
-                  className="px-2.5 py-1.5 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-xs font-bold text-slate-300 hover:text-white transition-all flex items-center space-x-1.5"
+                  className="px-2.5 py-2 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-xs font-bold text-slate-300 hover:text-white transition-all flex items-center space-x-1.5"
                 >
                   <Share2 className="w-3.5 h-3.5 text-[#C5A059]" />
                   <span className="hidden sm:inline">{copiedAdvisor ? "Copied!" : "Export"}</span>
                 </button>
 
                 <button
+                  type="button"
                   onClick={handleClearAdvisorHistory}
                   title="Clear conversation history"
                   className="p-2 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-slate-400 hover:text-rose-400 transition-colors"
@@ -2882,6 +2985,7 @@ export default function MasterDashboardPage() {
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => setAdvisorOpen(false)}
                   className="p-2 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-slate-400 hover:text-white transition-colors"
                 >
@@ -2890,221 +2994,233 @@ export default function MasterDashboardPage() {
               </div>
             </div>
 
-            {/* Scrollable Content Body */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-6">
-              {/* SECTION 1: VISUAL MULTI-CHANNEL AD ROI COMPARISON GRAPH & SCORECARDS */}
-              <div className="p-5 rounded-2xl bg-[#151824] border border-[#1E2230] space-y-4 shadow-lg">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <h4 className="text-xs font-extrabold text-white uppercase tracking-wider flex items-center space-x-2">
-                    <BarChart3 className="w-4 h-4 text-[#C5A059]" />
-                    <span>Meta Ads vs Google Ads ROI Comparison</span>
-                  </h4>
-                  <div className="flex items-center space-x-1.5 bg-[#0D0F17] p-1 rounded-lg border border-[#1E2230] text-[10px] font-bold">
-                    {[
-                      { key: "today", label: "Today" },
-                      { key: "last_7d", label: "7D" },
-                      { key: "last_30d", label: "30D" },
-                      { key: "this_month", label: "Month" },
-                      { key: "maximum", label: "All" },
-                    ].map((btn) => (
-                      <button
-                        key={btn.key}
-                        type="button"
-                        onClick={() => handleSelectAdPeriod(btn.key)}
-                        className={`px-2 py-0.5 rounded transition-all ${
-                          adPeriod === btn.key
-                            ? "bg-[#C5A059] text-black font-extrabold shadow-sm"
-                            : "text-slate-400 hover:text-white"
-                        }`}
-                      >
-                        {btn.label}
-                      </button>
-                    ))}
+            {/* Content Container (2-Column in Fullscreen, 1-Column in Drawer) */}
+            <div className={`flex-1 overflow-hidden ${advisorFullscreen ? "grid grid-cols-1 lg:grid-cols-12" : "flex flex-col overflow-y-auto"}`}>
+              {/* LEFT PANEL (Analytics & Prompts) */}
+              <div
+                className={`space-y-5 p-5 overflow-y-auto ${
+                  advisorFullscreen ? "lg:col-span-5 border-b lg:border-b-0 lg:border-r border-[#1E2230] bg-[#0E1018]" : "space-y-6"
+                }`}
+              >
+                {/* SECTION 1: VISUAL MULTI-CHANNEL AD ROI COMPARISON GRAPH & SCORECARDS */}
+                <div className="p-5 rounded-2xl bg-[#151824] border border-[#1E2230] space-y-4 shadow-lg">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <h4 className="text-xs font-extrabold text-white uppercase tracking-wider flex items-center space-x-2">
+                      <BarChart3 className="w-4 h-4 text-[#C5A059]" />
+                      <span>Meta Ads vs Google Ads ROI Comparison</span>
+                    </h4>
+                    <div className="flex items-center space-x-1 bg-[#0D0F17] p-1 rounded-lg border border-[#1E2230] text-[10px] font-bold">
+                      {[
+                        { key: "today", label: "Today" },
+                        { key: "last_7d", label: "7D" },
+                        { key: "last_30d", label: "30D" },
+                        { key: "this_month", label: "Month" },
+                        { key: "maximum", label: "All" },
+                      ].map((btn) => (
+                        <button
+                          key={btn.key}
+                          type="button"
+                          onClick={() => handleSelectAdPeriod(btn.key)}
+                          className={`px-2 py-0.5 rounded transition-all ${
+                            adPeriod === btn.key
+                              ? "bg-[#C5A059] text-black font-extrabold shadow-sm"
+                              : "text-slate-400 hover:text-white"
+                          }`}
+                        >
+                          {btn.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Visual Bar Comparison Chart */}
+                  <div className="space-y-3 bg-[#0D0F17] p-4 rounded-xl border border-[#1E2230]">
+                    {/* Meta Bar */}
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-semibold">
+                        <span className="text-purple-400 flex items-center space-x-1">
+                          <span className="w-2 h-2 rounded-full bg-purple-400 inline-block"></span>
+                          <span>Meta Ads (FB / IG)</span>
+                        </span>
+                        <span className="text-slate-300 font-mono text-[11px]">
+                          {adMetrics.meta.spendAed > 0 
+                            ? `AED ${adMetrics.meta.spendAed.toLocaleString()} · ${adMetrics.meta.clicks} clicks (${adMetrics.meta.impressions.toLocaleString()} impr)` 
+                            : `CPL: AED ${adMetrics.meta.cplAed} (${adMetrics.meta.leads} leads)`}
+                        </span>
+                      </div>
+                      <div className="w-full bg-[#151824] rounded-full h-3 overflow-hidden border border-purple-500/30 p-0.5">
+                        <div 
+                          className="h-full bg-gradient-to-r from-purple-600 to-purple-400 rounded-full transition-all duration-500" 
+                          style={{ width: `${adMetrics.summary.totalSpendAed > 0 ? Math.max(5, Math.round((adMetrics.meta.spendAed / adMetrics.summary.totalSpendAed) * 100)) : 0}%` }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    {/* Google Bar */}
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-semibold">
+                        <span className="text-[#C5A059] flex items-center space-x-1">
+                          <span className="w-2 h-2 rounded-full bg-[#C5A059] inline-block"></span>
+                          <span>Google Ads (Display &amp; Search)</span>
+                        </span>
+                        <span className="text-slate-300 font-mono text-[11px]">
+                          {adMetrics.google.spendAed > 0 
+                            ? `AED ${adMetrics.google.spendAed.toLocaleString()} · ${adMetrics.google.clicks} clicks (CPC: AED ${adMetrics.google.cpcAed ?? adMetrics.google.cplAed})` 
+                            : `CPL: AED ${adMetrics.google.cplAed} (${adMetrics.google.leads} leads)`}
+                        </span>
+                      </div>
+                      <div className="w-full bg-[#151824] rounded-full h-3 overflow-hidden border border-[#C5A059]/30 p-0.5">
+                        <div 
+                          className="h-full bg-gradient-to-r from-[#C5A059] to-[#D4B06A] rounded-full transition-all duration-500" 
+                          style={{ width: `${adMetrics.summary.totalSpendAed > 0 ? Math.max(5, Math.round((adMetrics.google.spendAed / adMetrics.summary.totalSpendAed) * 100)) : 0}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 text-xs pt-1">
+                    <div className="bg-[#0D0F17] p-3 rounded-xl border border-[#1E2230]">
+                      <span className="text-[10px] text-slate-400 uppercase font-bold">Total Digital Spend</span>
+                      <p className="text-sm font-mono font-bold text-white mt-0.5">AED {adMetrics.summary.totalSpendAed.toLocaleString()}</p>
+                    </div>
+                    <div className="bg-[#0D0F17] p-3 rounded-xl border border-[#1E2230]">
+                      <span className="text-[10px] text-slate-400 uppercase font-bold">{adMetrics.summary.totalLeads > 0 ? "Overall CPL" : "Overall CPC"}</span>
+                      <p className="text-sm font-mono font-bold text-emerald-400 mt-0.5">AED {adMetrics.summary.totalLeads > 0 ? adMetrics.summary.overallCplAed : adMetrics.summary.overallCpcAed}</p>
+                    </div>
                   </div>
                 </div>
 
-                {/* Visual Bar Comparison Chart */}
-                <div className="space-y-3 bg-[#0D0F17] p-4 rounded-xl border border-[#1E2230]">
-                  {/* Meta Bar */}
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between text-xs font-semibold">
-                      <span className="text-purple-400 flex items-center space-x-1">
-                        <span className="w-2 h-2 rounded-full bg-purple-400 inline-block"></span>
-                        <span>Meta Ads (FB / IG)</span>
-                      </span>
-                      <span className="text-slate-300 font-mono">
-                        {adMetrics.meta.spendAed > 0 
-                          ? `AED ${adMetrics.meta.spendAed.toLocaleString()} · ${adMetrics.meta.clicks} clicks (${adMetrics.meta.impressions.toLocaleString()} impr)` 
-                          : `CPL: AED ${adMetrics.meta.cplAed} (${adMetrics.meta.leads} leads)`}
-                      </span>
-                    </div>
-                    <div className="w-full bg-[#151824] rounded-full h-3.5 overflow-hidden border border-purple-500/30 p-0.5">
-                      <div 
-                        className="h-full bg-gradient-to-r from-purple-600 to-purple-400 rounded-full transition-all duration-500" 
-                        style={{ width: `${adMetrics.summary.totalSpendAed > 0 ? Math.max(5, Math.round((adMetrics.meta.spendAed / adMetrics.summary.totalSpendAed) * 100)) : 0}%` }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  {/* Google Bar */}
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between text-xs font-semibold">
-                      <span className="text-[#C5A059] flex items-center space-x-1">
-                        <span className="w-2 h-2 rounded-full bg-[#C5A059] inline-block"></span>
-                        <span>Google Ads (Display & Search)</span>
-                      </span>
-                      <span className="text-slate-300 font-mono">
-                        {adMetrics.google.spendAed > 0 
-                          ? `AED ${adMetrics.google.spendAed.toLocaleString()} · ${adMetrics.google.clicks} clicks (CPC: AED ${adMetrics.google.cpcAed ?? adMetrics.google.cplAed})` 
-                          : `CPL: AED ${adMetrics.google.cplAed} (${adMetrics.google.leads} leads)`}
-                      </span>
-                    </div>
-                    <div className="w-full bg-[#151824] rounded-full h-3.5 overflow-hidden border border-[#C5A059]/30 p-0.5">
-                      <div 
-                        className="h-full bg-gradient-to-r from-[#C5A059] to-[#D4B06A] rounded-full transition-all duration-500" 
-                        style={{ width: `${adMetrics.summary.totalSpendAed > 0 ? Math.max(5, Math.round((adMetrics.google.spendAed / adMetrics.summary.totalSpendAed) * 100)) : 0}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 text-xs pt-1">
-                  <div className="bg-[#0D0F17] p-3 rounded-xl border border-[#1E2230]">
-                    <span className="text-[10px] text-slate-400 uppercase">Total Digital Spend</span>
-                    <p className="text-sm font-mono font-bold text-white">AED {adMetrics.summary.totalSpendAed.toLocaleString()}</p>
-                  </div>
-                  <div className="bg-[#0D0F17] p-3 rounded-xl border border-[#1E2230]">
-                    <span className="text-[10px] text-slate-400 uppercase">{adMetrics.summary.totalLeads > 0 ? "Overall CPL" : "Overall CPC"}</span>
-                    <p className="text-sm font-mono font-bold text-emerald-400">AED {adMetrics.summary.totalLeads > 0 ? adMetrics.summary.overallCplAed : adMetrics.summary.overallCpcAed}</p>
+                {/* SECTION 3: 1-CLICK PROMPT PILLS */}
+                <div className="space-y-2.5 p-4 rounded-2xl bg-[#151824]/60 border border-[#1E2230]">
+                  <span className="text-[10px] font-extrabold text-[#C5A059] uppercase tracking-wider flex items-center space-x-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
+                    <span>1-Click Executive Prompts</span>
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleQueryAdvisor("Diagnose our active campaign health, pacing, and 3 immediate strategic recommendations.")}
+                      className="px-3 py-1.5 rounded-xl bg-[#C5A059]/10 hover:bg-[#C5A059]/20 border border-[#C5A059]/40 text-[#C5A059] text-xs font-semibold transition-all"
+                    >
+                      Active Campaign Health &amp; Strategy
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleQueryAdvisor("Inspect our live ad image, headline, and creative copy using vision AI. Tell me how it looks and what design/copy flaws are hurting our CTR.")}
+                      className="px-3 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-semibold transition-all"
+                    >
+                      Critique Live Ad Image &amp; Creative
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleQueryAdvisor("Why do we have clicks but no form leads yet on our active campaign? How do we fix it?")}
+                      className="px-3 py-1.5 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
+                    >
+                      Diagnose 0-Lead Conversion
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleQueryAdvisor("Compare Google Ads vs Meta Ads CPL and lead volume.")}
+                      className="px-3 py-1.5 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
+                    >
+                      Compare Google vs Meta CPL
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleQueryAdvisor("Generate an executive 1-paragraph report for our sales meeting.")}
+                      className="px-3 py-1.5 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
+                    >
+                      Executive Meeting Brief
+                    </button>
                   </div>
                 </div>
               </div>
 
-              {/* SECTION 2: AI ADVISOR CHAT CONSOLE */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-extrabold text-slate-300 uppercase tracking-wider flex items-center space-x-2">
+              {/* RIGHT PANEL (Chat Console & Input) */}
+              <div className={`flex flex-col ${advisorFullscreen ? "lg:col-span-7 h-full bg-[#111420]" : "flex-1 px-5 pb-5 space-y-4"}`}>
+                <div className="p-4 border-b border-[#1E2230] bg-[#151824] flex items-center justify-between shrink-0">
+                  <h4 className="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center space-x-2">
                     <MessageSquare className="w-4 h-4 text-[#C5A059]" />
                     <span>Executive AI Query Console</span>
                   </h4>
-                  <span className="text-[10px] text-slate-500 font-mono">GPT-4o-mini Grounded</span>
+                  <span className="text-[10px] text-slate-400 font-mono bg-[#0D0F17] px-2 py-0.5 rounded border border-[#1E2230]">
+                    GPT-4o-mini Grounded
+                  </span>
                 </div>
 
-                <div className="space-y-3 max-h-80 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-[#1E2230] scrollbar-track-[#0D0F17]">
+                {/* Messages Container with Beautiful Formatting */}
+                <div className={`flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-[#1E2230] scrollbar-track-[#0D0F17] ${
+                  advisorFullscreen ? "max-h-[calc(94vh-185px)]" : "max-h-96"
+                }`}>
                   {advisorMessages.map((m, idx) => (
                     <div
                       key={idx}
-                      className={`p-4 rounded-2xl text-xs space-y-2.5 shadow-xl transition-all ${
+                      className={`p-4 sm:p-5 rounded-2xl text-xs space-y-3 shadow-xl transition-all ${
                         m.role === "user"
-                          ? "bg-[#1E2230] text-slate-100 ml-8 border border-[#2A2F42]"
-                          : "bg-[#151824] text-slate-200 border border-[#C5A059]/40"
+                          ? "bg-[#1E2230] text-slate-100 ml-6 sm:ml-12 border border-[#2A2F42]"
+                          : "bg-[#151824] text-slate-200 border border-[#C5A059]/40 shadow-[#C5A059]/5"
                       }`}
                     >
-                      <div className="flex items-center justify-between text-[10px] font-bold text-[#C5A059] uppercase tracking-wider">
-                        <span>{m.role === "user" ? "Minesh Patel (CEO)" : "AI Executive Advisor"}</span>
+                      <div className="flex items-center justify-between text-[10px] font-extrabold text-[#C5A059] uppercase tracking-wider pb-2 border-b border-[#1E2230]/60">
+                        <span className="flex items-center space-x-1.5">
+                          <span className={`w-2 h-2 rounded-full ${m.role === "user" ? "bg-slate-400" : "bg-[#C5A059]"}`}></span>
+                          <span>{m.role === "user" ? "Minesh Patel (CEO)" : "AI Executive Advisor"}</span>
+                        </span>
+                        <span className="text-slate-500 font-normal">Real Estate Co-Pilot</span>
                       </div>
-                      <div className="leading-relaxed space-y-2 text-slate-200">
-                        {m.text.split("\n").map((line, lIdx) => (
-                          line.trim() && <p key={lIdx}>{line}</p>
-                        ))}
-                      </div>
-                      {m.bullets && m.bullets.length > 0 && (
-                        <ul className="space-y-1.5 pt-2 border-t border-[#1E2230] text-[11px] text-slate-300">
-                          {m.bullets.map((b, i) => (
-                            <li key={i} className="flex items-start space-x-2">
-                              <span className="text-[#C5A059] font-bold">•</span>
-                              <span>{b}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+
+                      {/* Render formatted message content */}
+                      <FormattedAdvisorMessage text={m.text} bullets={m.bullets} />
                     </div>
                   ))}
+
                   {loadingAdvisor && (
-                    <div className="p-4 rounded-2xl bg-[#151824] border border-[#C5A059]/40 text-xs text-[#C5A059] font-bold flex items-center space-x-2 animate-pulse">
+                    <div className="p-4 rounded-2xl bg-[#151824] border border-[#C5A059]/40 text-xs text-[#C5A059] font-bold flex items-center space-x-2.5 animate-pulse shadow-lg">
                       <RefreshCw className="w-4 h-4 animate-spin text-[#C5A059]" />
-                      <span>Analyzing Ad APIs and Database Context...</span>
+                      <span>Analyzing live Ad APIs, creatives, and CRM context...</span>
                     </div>
                   )}
                 </div>
-              </div>
 
+                {/* Input Bar */}
+                <div className="p-3 sm:p-4 border-t border-[#1E2230] bg-[#151824] shrink-0">
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleQueryAdvisor();
+                    }}
+                    className="flex items-center space-x-2"
+                  >
+                    <button
+                      type="button"
+                      onClick={handleToggleVoiceDictation}
+                      title={isListeningVoice ? "Listening... Click to stop" : "Click to speak your prompt"}
+                      className={`p-3 rounded-xl border transition-all shrink-0 ${
+                        isListeningVoice
+                          ? "bg-rose-500 text-white border-rose-400 animate-pulse"
+                          : "bg-[#0D0F17] hover:bg-[#1E2230] border-[#1E2230] text-slate-400 hover:text-[#C5A059]"
+                      }`}
+                    >
+                      <Mic className={`w-4 h-4 ${isListeningVoice ? "animate-bounce" : ""}`} />
+                    </button>
 
-              {/* SECTION 3: 1-CLICK PROMPT PILLS */}
-              <div className="space-y-2 pt-2">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">1-Click Executive Prompts</span>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => handleQueryAdvisor("Diagnose our active campaign health, pacing, and 3 immediate strategic recommendations.")}
-                    className="px-3 py-1.5 rounded-xl bg-[#C5A059]/10 hover:bg-[#C5A059]/20 border border-[#C5A059]/40 text-[#C5A059] text-xs font-semibold transition-all"
-                  >
-                    Active Campaign Health &amp; Strategy
-                  </button>
-                  <button
-                    onClick={() => handleQueryAdvisor("Inspect our live ad image, headline, and creative copy using vision AI. Tell me how it looks and what design/copy flaws are hurting our CTR.")}
-                    className="px-3 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-semibold transition-all"
-                  >
-                    Critique Live Ad Image &amp; Creative
-                  </button>
-                  <button
-                    onClick={() => handleQueryAdvisor("Why do we have clicks but no form leads yet on our active campaign? How do we fix it?")}
-                    className="px-3 py-1.5 rounded-xl bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
-                  >
-                    Diagnose 0-Lead Conversion
-                  </button>
-                  <button
-                    onClick={() => handleQueryAdvisor("Compare Google Ads vs Meta Ads CPL and lead volume.")}
-                    className="px-3 py-1.5 rounded-xl bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
-                  >
-                    Compare Google vs Meta CPL
-                  </button>
-                  <button
-                    onClick={() => handleQueryAdvisor("Generate an executive 1-paragraph report for our sales meeting.")}
-                    className="px-3 py-1.5 rounded-xl bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
-                  >
-                    Executive Meeting Brief
-                  </button>
+                    <input
+                      type="text"
+                      value={advisorQuery}
+                      onChange={(e) => setAdvisorQuery(e.target.value)}
+                      placeholder={isListeningVoice ? "Listening to your voice..." : "Ask AI Advisor about Google Ads, Meta Ads, or leads..."}
+                      className="flex-1 bg-[#0D0F17] border border-[#1E2230] focus:border-[#C5A059] rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 outline-none transition-all"
+                    />
+                    <button
+                      type="submit"
+                      disabled={loadingAdvisor || !advisorQuery.trim()}
+                      className="px-4 py-3 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-lg hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 shrink-0"
+                    >
+                      <Send className="w-4 h-4" />
+                    </button>
+                  </form>
                 </div>
               </div>
-            </div>
-
-            {/* Input Bar */}
-            <div className="p-4 border-t border-[#1E2230] bg-[#151824]">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleQueryAdvisor();
-                }}
-                className="flex items-center space-x-2"
-              >
-                <button
-                  type="button"
-                  onClick={handleToggleVoiceDictation}
-                  title={isListeningVoice ? "Listening... Click to stop" : "Click to speak your prompt"}
-                  className={`p-3 rounded-xl border transition-all ${
-                    isListeningVoice
-                      ? "bg-rose-500 text-white border-rose-400 animate-pulse"
-                      : "bg-[#0D0F17] hover:bg-[#1E2230] border-[#1E2230] text-slate-400 hover:text-[#C5A059]"
-                  }`}
-                >
-                  <Mic className={`w-4 h-4 ${isListeningVoice ? "animate-bounce" : ""}`} />
-                </button>
-
-                <input
-                  type="text"
-                  value={advisorQuery}
-                  onChange={(e) => setAdvisorQuery(e.target.value)}
-                  placeholder={isListeningVoice ? "Listening to your voice..." : "Ask AI Advisor about Google Ads, Meta Ads, or leads..."}
-                  className="flex-1 bg-[#0D0F17] border border-[#1E2230] focus:border-[#C5A059] rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 outline-none transition-all"
-                />
-                <button
-                  type="submit"
-                  disabled={loadingAdvisor || !advisorQuery.trim()}
-                  className="px-4 py-3 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-lg hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
-                >
-                  <Send className="w-4 h-4" />
-                </button>
-              </form>
             </div>
           </div>
         </div>
