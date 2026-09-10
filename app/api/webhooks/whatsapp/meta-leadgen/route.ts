@@ -98,6 +98,35 @@ export async function POST(req: NextRequest) {
             });
           }
 
+          // Auto-Sync to Live Google Sheet Master
+          const googleSheetWebhook = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+          if (googleSheetWebhook) {
+            try {
+              await fetch(googleSheetWebhook, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  timestamp: new Date().toISOString(),
+                  leadSource: 'Meta Lead Ad',
+                  fullName,
+                  phone,
+                  email,
+                  campaign: 'Leicester Event',
+                  propertyInterest: 'Apartment',
+                  budget: budgetMax ? `£${budgetMax.toLocaleString()}` : '£200,000 - £600,000',
+                  meetingSlot: '26-27 Sept Leicester',
+                  leadStatus: 'New Lead',
+                  assignedAgent: 'Minesh Patel',
+                  notes: 'Meta Instant Form',
+                  comments: 'Synced via The Pods AI Engine',
+                }),
+              });
+              console.log(`[GOOGLE SHEET SUCCESS] Synced lead: ${fullName} to Google Sheets`);
+            } catch (sheetErr: any) {
+              console.error('[GOOGLE SHEET SYNC ERROR]', sheetErr?.message || sheetErr);
+            }
+          }
+
           console.log(`[META LEADGEN SUCCESS] Synced lead: ${fullName} (${phone})`);
         }
       }

@@ -328,6 +328,7 @@ export default function MasterDashboardPage() {
     google: { spendAed: 0, impressions: 0, clicks: 0, ctr: 0, leads: 0, cplAed: 0, isLive: false }
   });
   const [adCampaigns, setAdCampaigns] = useState<any[]>([]);
+  const [campaignStatusFilter, setCampaignStatusFilter] = useState<'active' | 'all'>('active');
 
   useEffect(() => {
     fetchAdMetrics("last_30d");
@@ -2334,7 +2335,33 @@ export default function MasterDashboardPage() {
                       </h3>
                       <p className="text-xs text-slate-400 mt-1">Live per-campaign breakdown from Meta &amp; Google Ads APIs</p>
                     </div>
-                    <span className="text-[9px] font-mono bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold uppercase">Live API</span>
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center bg-[#151824] p-0.5 rounded-lg border border-[#1E2230]">
+                        <button
+                          type="button"
+                          onClick={() => setCampaignStatusFilter('active')}
+                          className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition-colors ${
+                            campaignStatusFilter === 'active'
+                              ? 'bg-[#C5A059] text-black shadow'
+                              : 'text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          Active Only ({adCampaigns.filter((c: any) => !(c.status === 'Paused' || c.campaignName?.toLowerCase().includes('feb') || c.campaignName?.toLowerCase().includes('(paused)'))).length})
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setCampaignStatusFilter('all')}
+                          className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition-colors ${
+                            campaignStatusFilter === 'all'
+                              ? 'bg-[#C5A059] text-black shadow'
+                              : 'text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          All ({adCampaigns.length})
+                        </button>
+                      </div>
+                      <span className="text-[9px] font-mono bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold uppercase">Live API</span>
+                    </div>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
@@ -2353,6 +2380,11 @@ export default function MasterDashboardPage() {
                       </thead>
                       <tbody>
                         {adCampaigns
+                          .filter((c: any) => {
+                            if (campaignStatusFilter === 'all') return true;
+                            const isPaused = c.status === 'Paused' || (c.campaignName && c.campaignName.toLowerCase().includes('feb')) || (c.campaignName && c.campaignName.toLowerCase().includes('(paused)'));
+                            return !isPaused;
+                          })
                           .sort((a: any, b: any) => b.spend - a.spend)
                           .map((c: any, idx: number) => (
                           <tr key={`${c.platform}-${c.campaignId}-${idx}`} className="border-b border-[#1E2230]/50 hover:bg-[#151824] transition-colors">
