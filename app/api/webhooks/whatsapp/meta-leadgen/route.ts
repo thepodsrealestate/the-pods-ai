@@ -73,6 +73,8 @@ export async function POST(req: NextRequest) {
             phone = `+meta_${leadgenId}`;
           }
 
+          const isUkPhone = phone.startsWith('+44') || phone.startsWith('44');
+
           // Save / Upsert Lead in Supabase using valid schema keys
           const lead = await LeadService.findOrCreateLead({
             phone,
@@ -81,19 +83,19 @@ export async function POST(req: NextRequest) {
             attribution: {
               source: 'FACEBOOK_ADS',
               medium: 'cpc',
-              campaign: 'Meta Instant Form',
+              campaign: isUkPhone ? 'Danube_DubaiExpo_Leicester_Sept26-27' : 'Meta Instant Form',
               adId: String(leadgenId),
             },
           });
 
           // Update Email & Budget Details if available
-          if (email || budgetMax) {
+          if (email || budgetMax || isUkPhone) {
             await prisma.lead.update({
               where: { id: lead.id },
               data: {
                 ...(email ? { email } : {}),
                 ...(budgetMax ? { budgetMax } : {}),
-                buyerLocation: 'International',
+                buyerLocation: isUkPhone ? 'United Kingdom (Leicester Expo)' : 'International',
               },
             });
           }
@@ -111,13 +113,13 @@ export async function POST(req: NextRequest) {
                   fullName,
                   phone,
                   email,
-                  campaign: 'Leicester Event',
+                  campaign: isUkPhone ? 'Danube Dubai Expo Leicester (Sept 26-27)' : 'Meta Lead Form',
                   propertyInterest: 'Apartment',
                   budget: budgetMax ? `£${budgetMax.toLocaleString()}` : '£200,000 - £600,000',
-                  meetingSlot: '26-27 Sept Leicester',
+                  meetingSlot: isUkPhone ? '26-27 Sept Leicester Marriott' : 'TBD',
                   leadStatus: 'New Lead',
                   assignedAgent: 'Minesh Patel',
-                  notes: 'Meta Instant Form',
+                  notes: isUkPhone ? 'Danube Dubai Expo Leicester UK Lead' : 'Meta Instant Form',
                   comments: 'Synced via The Pods AI Engine',
                 }),
               });

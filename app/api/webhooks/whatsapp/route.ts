@@ -404,6 +404,7 @@ export async function POST(req: NextRequest) {
         existingLead = await prisma.lead.findFirst({
           where: { OR: searchConditions },
           include: {
+            attributions: { take: 1, orderBy: { createdAt: 'desc' } },
             conversations: {
               orderBy: { updatedAt: 'desc' },
               take: 1,
@@ -470,21 +471,39 @@ export async function POST(req: NextRequest) {
         userText.includes('[IG]') || 
         userTextLower.includes('filled in your form') || 
         userTextLower.includes('filled out your form') || 
-        userTextLower.includes('looking to invest in dubai property')
+        userTextLower.includes('looking to invest in dubai property') ||
+        userTextLower.includes('signed up for this event')
       ) {
         adSource = 'META_ADS';
-        campaignName = 'Meta London Event Form';
+        const isUkOrLeicester = 
+          normalizedPhone.startsWith('+44') || 
+          phone.startsWith('44') || 
+          userText.includes('+44') || 
+          userTextLower.includes('leicester') || 
+          userTextLower.includes('marriott') || 
+          userTextLower.includes('event');
+
+        campaignName = isUkOrLeicester ? 'Danube_DubaiExpo_Leicester_Sept26-27' : 'Meta Ad Campaign';
       }
+
+      // Check if existing lead has campaign attribution
+      if (!campaignName && existingLead?.attributions?.[0]?.campaign) {
+        campaignName = existingLead.attributions[0].campaign;
+      }
+
+      const effectivePhone = normalizedPhone || phone || extractedFormPhone || undefined;
+      const isUkPhone = effectivePhone && (effectivePhone.startsWith('+44') || effectivePhone.startsWith('44') || effectivePhone.startsWith('0044'));
 
       const aiResult = await AIService.generateResponse({
         leadName: senderName || existingLead?.fullName || undefined,
-        buyerLocation: existingLead?.buyerLocation || undefined,
+        phone: effectivePhone,
+        buyerLocation: existingLead?.buyerLocation || (isUkPhone ? 'United Kingdom' : undefined),
         purchasePurpose: existingLead?.purchasePurpose || undefined,
         budgetMin: existingLead?.budgetMin || undefined,
         budgetMax: existingLead?.budgetMax || undefined,
         timeline: existingLead?.timeline || undefined,
-        adSource,
-        campaignName,
+        adSource: adSource || existingLead?.attributions?.[0]?.source || undefined,
+        campaignName: campaignName || existingLead?.attributions?.[0]?.campaign || undefined,
         conversationHistory,
         userMessage: userText,
       });
@@ -573,24 +592,6 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         medium: 'display',
         campaign: 'Dubai Offplan Display Campaign',
       };
-    } else if (
-      userText && (
-        userText.includes('[META]') || 
-        userText.includes('[FB]') || 
-        userText.includes('[IG]') || 
-        userText.toLowerCase().includes('instagram') || 
-        userText.toLowerCase().includes('facebook') || 
-        userText.toLowerCase().includes('filled in your form') || 
-        userText.toLowerCase().includes('filled out your form') || 
-        userText.toLowerCase().includes('looking to invest in dubai property')
-      )
-    ) {
-      leadSource = 'FACEBOOK_ADS';
-      attributionObj = {
-        source: 'FACEBOOK_ADS',
-        medium: 'cpc',
-        campaign: 'Meta London Event Form',
-      };
     }
 
     const emailMatch = userText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
@@ -601,6 +602,28 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
 
     const phoneMatch = userText.match(/(?:phone\s*number|phone|mobile):\s*([+\d\s()-]{7,})/i);
     const extractedFormPhone = phoneMatch && phoneMatch[1].trim().length > 6 ? phoneMatch[1].replace(/[^\d+]/g, '').trim() : phone;
+
+    const isUkNumber = extractedFormPhone.startsWith('+44') || extractedFormPhone.startsWith('44') || phone.startsWith('+44') || phone.startsWith('44') || userText.includes('+44');
+
+    if (!attributionObj && userText && (
+        userText.includes('[META]') || 
+        userText.includes('[FB]') || 
+        userText.includes('[IG]') || 
+        userText.toLowerCase().includes('instagram') || 
+        userText.toLowerCase().includes('facebook') || 
+        userText.toLowerCase().includes('filled in your form') || 
+        userText.toLowerCase().includes('filled out your form') || 
+        userText.toLowerCase().includes('looking to invest in dubai property') ||
+        userText.toLowerCase().includes('signed up for this event')
+      )
+    ) {
+      leadSource = 'FACEBOOK_ADS';
+      attributionObj = {
+        source: 'FACEBOOK_ADS',
+        medium: 'cpc',
+        campaign: isUkNumber ? 'Danube_DubaiExpo_Leicester_Sept26-27' : 'Meta Instant Form',
+      };
+    }
 
     const lead = await LeadService.findOrCreateLead({
       phone: extractedFormPhone,
@@ -735,27 +758,44 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       const replyLower = aiResult.reply.toLowerCase();
       const userTextLower = userText.toLowerCase();
       const bookingLocationRaw = (aiResult.booking_details?.location || '').toLowerCase();
+      const isUkLead = 
+        phone.startsWith('+44') || 
+        phone.startsWith('44') || 
+        extractedFormPhone.startsWith('+44') || 
+        extractedFormPhone.startsWith('44') || 
+        userText.includes('+44') ||
+        Boolean(lead?.buyerLocation && /uk|united kingdom|leicester|london/i.test(lead.buyerLocation));
+
       const isLeicesterEvent = 
+        isUkLead ||
         replyLower.includes('leicester') || 
         replyLower.includes('marriott') || 
         replyLower.includes('expo') || 
         userTextLower.includes('leicester') || 
         userTextLower.includes('marriott') || 
         userTextLower.includes('expo') || 
+        userTextLower.includes('signed up for this event') ||
         bookingLocationRaw.includes('leicester') || 
-        bookingLocationRaw.includes('marriott');
+        bookingLocationRaw.includes('marriott') ||
+        Boolean(attributionObj?.campaign && attributionObj.campaign.toLowerCase().includes('leicester'));
 
       const isLondonEvent = 
-        replyLower.includes('london') || 
         replyLower.includes('brompton') || 
         replyLower.includes('knightsbridge') || 
-        userTextLower.includes('london') || 
         userTextLower.includes('knightsbridge') || 
-        bookingLocationRaw.includes('london') || 
         bookingLocationRaw.includes('knightsbridge');
 
+      const isOnlineChosen = 
+        userTextLower.includes('online') || 
+        userTextLower.includes('google meet') || 
+        userTextLower.includes('video call') || 
+        userTextLower.includes('zoom') ||
+        bookingLocationRaw.includes('google meet');
+
       let bookingLocation = 'Google Meet';
-      if (isLeicesterEvent) {
+      if (isOnlineChosen) {
+        bookingLocation = 'Google Meet';
+      } else if (isLeicesterEvent) {
         bookingLocation = 'Marriott Hotel, Smith Way, Leicester LE19 1SW, United Kingdom';
         meetingTime.setFullYear(2026);
         meetingTime.setMonth(8); // September
@@ -775,7 +815,7 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         if (meetingTime.getHours() === 0) {
           meetingTime.setHours(18, 0, 0, 0);
         }
-      } else if (replyLower.includes('bluewaters') || replyLower.includes('pods') || bookingLocationRaw.includes('bluewaters')) {
+      } else if (!isUkLead && (replyLower.includes('bluewaters') || replyLower.includes('pods') || bookingLocationRaw.includes('bluewaters'))) {
         bookingLocation = 'The Pods, Bluewaters Island, Dubai';
       } else if (
         rawDateStr.includes('burlington') || 
