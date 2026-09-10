@@ -683,8 +683,41 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       if (aiResult.lead_updates.timeline) updates.timeline = aiResult.lead_updates.timeline;
       if (aiResult.lead_updates.meeting_preference) updates.meetingPreference = aiResult.lead_updates.meeting_preference;
       if (extractedEmail) updates.email = extractedEmail;
+      if (isUkNumber) updates.buyerLocation = 'United Kingdom (Leicester Expo)';
       if (Object.keys(updates).length > 0) {
         await prisma.lead.update({ where: { id: lead.id }, data: updates });
+      }
+    } else if (isUkNumber && lead.buyerLocation !== 'United Kingdom (Leicester Expo)') {
+      await prisma.lead.update({
+        where: { id: lead.id },
+        data: { buyerLocation: 'United Kingdom (Leicester Expo)' }
+      });
+    }
+
+    // Sync extracted name & email back to ManyChat so ManyChat does not display a blank/dot name
+    const manychatSubId = body.id || body.subscriber_id || body.user_id || body.contact_id;
+    const manychatToken = process.env.MANYCHAT_API_TOKEN;
+    if (manychatSubId && extractedName && extractedName !== 'VIP Client' && manychatToken) {
+      const parts = extractedName.trim().split(/\s+/);
+      const firstName = parts[0];
+      const lastName = parts.slice(1).join(' ') || '';
+      try {
+        await fetch('https://api.manychat.com/fb/subscriber/updateSubscriber', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${manychatToken}`,
+          },
+          body: JSON.stringify({
+            subscriber_id: Number(manychatSubId) || manychatSubId,
+            first_name: firstName,
+            last_name: lastName,
+            ...(extractedEmail ? { email: extractedEmail } : {}),
+          }),
+        });
+        console.log(`[MANYCHAT SYNC] Updated subscriber ${manychatSubId} name to ${firstName} ${lastName}`);
+      } catch (mcErr: any) {
+        console.warn('[MANYCHAT SYNC WARNING]', mcErr?.message || mcErr);
       }
     }
 
