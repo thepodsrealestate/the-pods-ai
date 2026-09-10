@@ -2995,11 +2995,11 @@ export default function MasterDashboardPage() {
             </div>
 
             {/* Content Container (2-Column in Fullscreen, 1-Column in Drawer) */}
-            <div className={`flex-1 overflow-hidden ${advisorFullscreen ? "grid grid-cols-1 lg:grid-cols-12" : "flex flex-col overflow-y-auto"}`}>
+            <div className={`flex-1 min-h-0 overflow-hidden ${advisorFullscreen ? "grid grid-cols-1 lg:grid-cols-12" : "flex flex-col overflow-y-auto"}`}>
               {/* LEFT PANEL (Analytics & Prompts) */}
               <div
-                className={`space-y-5 p-5 overflow-y-auto ${
-                  advisorFullscreen ? "lg:col-span-5 border-b lg:border-b-0 lg:border-r border-[#1E2230] bg-[#0E1018]" : "space-y-6"
+                className={`space-y-5 p-5 overflow-y-auto min-h-0 ${
+                  advisorFullscreen ? "lg:col-span-5 border-b lg:border-b-0 lg:border-r border-[#1E2230] bg-[#0E1018]" : "space-y-6 shrink-0"
                 }`}
               >
                 {/* SECTION 1: VISUAL MULTI-CHANNEL AD ROI COMPARISON GRAPH & SCORECARDS */}
@@ -3137,7 +3137,13 @@ export default function MasterDashboardPage() {
               </div>
 
               {/* RIGHT PANEL (Chat Console & Input) */}
-              <div className={`flex flex-col ${advisorFullscreen ? "lg:col-span-7 h-full bg-[#111420]" : "flex-1 px-5 pb-5 space-y-4"}`}>
+              <div
+                className={`flex flex-col min-h-0 ${
+                  advisorFullscreen
+                    ? "lg:col-span-7 h-full bg-[#111420] overflow-hidden"
+                    : "flex-1 px-5 pb-5 space-y-4"
+                }`}
+              >
                 <div className="p-4 border-b border-[#1E2230] bg-[#151824] flex items-center justify-between shrink-0">
                   <h4 className="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center space-x-2">
                     <MessageSquare className="w-4 h-4 text-[#C5A059]" />
@@ -3149,9 +3155,11 @@ export default function MasterDashboardPage() {
                 </div>
 
                 {/* Messages Container with Beautiful Formatting */}
-                <div className={`flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-[#1E2230] scrollbar-track-[#0D0F17] ${
-                  advisorFullscreen ? "max-h-[calc(94vh-185px)]" : "max-h-96"
-                }`}>
+                <div
+                  className={`flex-1 min-h-0 overflow-y-auto p-4 sm:p-5 space-y-4 scrollbar-thin scrollbar-thumb-[#1E2230] scrollbar-track-[#0D0F17] ${
+                    advisorFullscreen ? "" : "max-h-96"
+                  }`}
+                >
                   {advisorMessages.map((m, idx) => (
                     <div
                       key={idx}
@@ -3182,8 +3190,12 @@ export default function MasterDashboardPage() {
                   )}
                 </div>
 
-                {/* Input Bar */}
-                <div className="p-3 sm:p-4 border-t border-[#1E2230] bg-[#151824] shrink-0">
+                {/* Input Bar (Cleanly Pinned with Safe Bottom Padding) */}
+                <div
+                  className={`p-3.5 sm:p-4 border-t border-[#1E2230] bg-[#151824] shrink-0 ${
+                    advisorFullscreen ? "pb-4 sm:pb-5 rounded-br-3xl" : "pb-4"
+                  }`}
+                >
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
