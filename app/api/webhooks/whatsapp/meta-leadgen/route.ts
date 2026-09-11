@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { LeadService } from '@/lib/services/leadService';
+import { getCampaignForLead } from '@/lib/config/campaigns';
 
 const VERIFY_TOKEN = process.env.META_WEBHOOK_VERIFY_TOKEN || 'pods_leadgen_secret_2026';
 const META_ACCESS_TOKEN = process.env.META_ACCESS_TOKEN || process.env.META_PAGE_ACCESS_TOKEN;
@@ -73,7 +74,13 @@ export async function POST(req: NextRequest) {
             phone = `+meta_${leadgenId}`;
           }
 
+          // Dynamically resolve active campaign for this lead (auto-expiry built in)
+          const matchedCampaign = getCampaignForLead({ phone });
           const isUkPhone = phone.startsWith('+44') || phone.startsWith('44');
+          const campaignName = matchedCampaign.type === 'event' ? matchedCampaign.name : 'Meta Instant Form';
+          const buyerLocation = matchedCampaign.type === 'event' 
+            ? `${matchedCampaign.location.country} (${matchedCampaign.displayName})`
+            : (matchedCampaign.timezone === 'Europe/London' ? 'United Kingdom' : (matchedCampaign.id === 'uae-default' ? 'Dubai / UAE' : 'International'));
 
           // Save / Upsert Lead in Supabase using valid schema keys
           const lead = await LeadService.findOrCreateLead({
@@ -83,19 +90,19 @@ export async function POST(req: NextRequest) {
             attribution: {
               source: 'FACEBOOK_ADS',
               medium: 'cpc',
-              campaign: isUkPhone ? 'Danube_DubaiExpo_Leicester_Sept26-27' : 'Meta Instant Form',
+              campaign: campaignName,
               adId: String(leadgenId),
             },
           });
 
           // Update Email & Budget Details if available
-          if (email || budgetMax || isUkPhone) {
+          if (email || budgetMax || buyerLocation) {
             await prisma.lead.update({
               where: { id: lead.id },
               data: {
                 ...(email ? { email } : {}),
                 ...(budgetMax ? { budgetMax } : {}),
-                buyerLocation: isUkPhone ? 'United Kingdom (Leicester Expo)' : 'International',
+                buyerLocation,
               },
             });
           }

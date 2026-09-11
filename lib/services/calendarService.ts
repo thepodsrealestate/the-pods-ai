@@ -7,6 +7,7 @@ export interface BookingInput {
   meetingTime: Date;
   location?: string;
   notes?: string;
+  timezone?: string;
 }
 
 export class CalendarService {
@@ -58,14 +59,27 @@ export class CalendarService {
     // Insert Event directly into Minesh Patel's Google Calendar
     try {
       const isUkEvent = (booking.location || '').toLowerCase().includes('leicester') || (booking.location || '').toLowerCase().includes('london') || (booking.location || '').toLowerCase().includes('united kingdom');
+      const resolvedTimeZone = input.timezone || (isUkEvent ? 'Europe/London' : 'Asia/Dubai');
+      const localTimeLabel = resolvedTimeZone === 'Europe/London' ? 'UK Time (BST)' : 'Dubai Time (GST)';
+      const formattedLocalTime = new Intl.DateTimeFormat('en-GB', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: resolvedTimeZone,
+      }).format(booking.meetingTime);
+
       const gcalResult = await GoogleCalendarService.insertEvent({
         summary: `VIP Investor Consultation - ${booking.lead.fullName || 'VIP Client'}`,
-        description: `Investor Meeting with Minesh Patel (The Pods Real Estate)\n\nLead Name: ${booking.lead.fullName || 'VIP Client'}\nPhone: ${booking.lead.phone}\nEmail: ${booking.lead.email || 'N/A'}\nPurpose: ${booking.lead.purchasePurpose || 'Luxury Real Estate Investment'}\nBudget: ${booking.lead.budgetMax ? `AED ${booking.lead.budgetMax}` : 'HNW'}\n\nLocation: ${booking.location}`,
+        description: `Investor Meeting with Minesh Patel (The Pods Real Estate)\n\nLead Name: ${booking.lead.fullName || 'VIP Client'}\nPhone: ${booking.lead.phone}\nEmail: ${booking.lead.email || 'N/A'}\nScheduled Time: ${formattedLocalTime} ${localTimeLabel}\nPurpose: ${booking.lead.purchasePurpose || 'Luxury Real Estate Investment'}\nBudget: ${booking.lead.budgetMax ? `AED ${booking.lead.budgetMax}` : 'HNW'}\n\nLocation: ${booking.location}`,
         location: booking.location,
         startTime: booking.meetingTime,
         attendeeEmail: booking.lead.email || undefined,
         attendeeName: booking.lead.fullName || undefined,
-        timeZone: isUkEvent ? 'Europe/London' : 'Asia/Dubai',
+        timeZone: resolvedTimeZone,
       });
 
       if (gcalResult?.eventId) {

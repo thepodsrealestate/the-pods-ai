@@ -7,6 +7,7 @@ import { NotificationService } from '@/lib/services/notificationService';
 import { CalendarService } from '@/lib/services/calendarService';
 import { WhisperService } from '@/lib/services/whisperService';
 import { LeadStatus } from '@prisma/client';
+import { getCampaignForLead, CampaignConfig } from '@/lib/config/campaigns';
 
 // Sliding Window Rate Limiter (tracks phone -> request timestamps)
 const requestTracker = new Map<string, number[]>();
@@ -822,26 +823,15 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       const replyLower = aiResult.reply.toLowerCase();
       const userTextLower = userText.toLowerCase();
       const bookingLocationRaw = (aiResult.booking_details?.location || '').toLowerCase();
-      const isUkLead = 
-        phone.startsWith('+44') || 
-        phone.startsWith('44') || 
-        extractedFormPhone.startsWith('+44') || 
-        extractedFormPhone.startsWith('44') || 
-        userText.includes('+44') ||
-        Boolean(lead?.buyerLocation && /uk|united kingdom|leicester|london/i.test(lead.buyerLocation));
 
-      const isLeicesterEvent = 
-        isUkLead ||
-        replyLower.includes('leicester') || 
-        replyLower.includes('marriott') || 
-        replyLower.includes('expo') || 
-        userTextLower.includes('leicester') || 
-        userTextLower.includes('marriott') || 
-        userTextLower.includes('expo') || 
-        userTextLower.includes('signed up for this event') ||
-        bookingLocationRaw.includes('leicester') || 
-        bookingLocationRaw.includes('marriott') ||
-        Boolean(attributionObj?.campaign && attributionObj.campaign.toLowerCase().includes('leicester'));
+      // Dynamic Campaign Resolution for Booking (auto-expiry built in)
+      const bookingCampaign = getCampaignForLead({
+        phone,
+        userText: userTextLower,
+        buyerLocation: lead?.buyerLocation || undefined,
+        campaignName: attributionObj?.campaign || leadSource,
+        conversationHistory: replyLower,
+      });
 
       const isOnlineChosen = 
         userTextLower.includes('online') || 
@@ -850,17 +840,40 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         userTextLower.includes('zoom') ||
         bookingLocationRaw.includes('google meet');
 
-      let bookingLocation = 'Google Meet';
+      let bookingLocation = bookingCampaign.location.calendarLocation;
+      let bookingTimezone = bookingCampaign.timezone;
+
       if (isOnlineChosen) {
         bookingLocation = 'Google Meet';
-      } else if (isLeicesterEvent) {
-        bookingLocation = 'Marriott Hotel, Smith Way, Leicester LE19 1SW, United Kingdom';
-        const isSunday = userTextLower.includes('sunday') || userTextLower.includes('27') || rawDateStr.includes('sunday') || rawDateStr.includes('27');
-        const eventDay = isSunday ? 27 : 26;
-        // BST (UTC+1): targetHour BST = targetHour-1 UTC. Date.UTC handles negative hours correctly.
-        meetingTime = new Date(Date.UTC(2026, 8, eventDay, targetHour - 1, targetMin, 0));
-      } else if (!isUkLead && (replyLower.includes('bluewaters') || replyLower.includes('pods') || bookingLocationRaw.includes('bluewaters'))) {
+        bookingTimezone = 'Asia/Dubai';
+      } else if (bookingCampaign.type === 'event') {
+        // For event-type campaigns, use specific event dates
+        bookingLocation = bookingCampaign.location.calendarLocation;
+        
+        // Parse event dates from campaign config
+        const eventStartDate = new Date(bookingCampaign.dates.start);
+        const eventEndDate = new Date(bookingCampaign.dates.end);
+        const startDay = eventStartDate.getUTCDate();
+        const endDay = eventEndDate.getUTCDate();
+        const eventMonth = eventStartDate.getUTCMonth(); // 0-indexed
+        const eventYear = eventStartDate.getUTCFullYear();
+
+        // Determine which day of the event
+        let eventDay = startDay; // Default to first day
+        if (startDay !== endDay) {
+          const isSecondDay = userTextLower.includes('sunday') || userTextLower.includes(String(endDay)) || 
+                             rawDateStr.includes('sunday') || rawDateStr.includes(String(endDay));
+          if (isSecondDay) eventDay = endDay;
+        }
+
+        // Use campaign timezone for proper local time calculation
+        // For BST (UTC+1): local hour - 1 = UTC hour. Date.UTC handles negative hours correctly.
+        const tzOffset = bookingCampaign.timezone === 'Europe/London' ? 1 : 
+                         bookingCampaign.timezone === 'Asia/Dubai' ? 4 : 0;
+        meetingTime = new Date(Date.UTC(eventYear, eventMonth, eventDay, targetHour - tzOffset, targetMin, 0));
+      } else if (bookingLocationRaw.includes('bluewaters') || bookingLocationRaw.includes('pods')) {
         bookingLocation = 'The Pods, Bluewaters Island, Dubai';
+        bookingTimezone = 'Asia/Dubai';
       } else if (
         rawDateStr.includes('burlington') || 
         rawDateStr.includes('business bay') || 
@@ -869,6 +882,7 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         bookingLocationRaw.includes('ellington')
       ) {
         bookingLocation = 'Ellington Properties, Burlington Tower, Business Bay, Dubai';
+        bookingTimezone = 'Asia/Dubai';
       } else if (aiResult.booking_details?.location && aiResult.booking_details.location.trim().length > 3 && !aiResult.booking_details.location.toLowerCase().includes('google meet')) {
         bookingLocation = aiResult.booking_details.location.trim();
       }
@@ -877,9 +891,10 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         leadId: lead.id,
         meetingTime,
         location: bookingLocation,
+        timezone: bookingTimezone,
       });
 
-      console.log('[BG-LOG] ✅ Meeting Booking created & Google Calendar invite dispatched to', lead.email, 'at', bookingLocation, 'on', meetingTime.toISOString());
+      console.log('[BG-LOG] ✅ Meeting Booking created & Google Calendar invite dispatched to', lead.email, 'at', bookingLocation, '(TZ:', bookingTimezone, ') on', meetingTime.toISOString());
     } else if (aiResult.action === 'HANDOFF') {
       await prisma.lead.update({
         where: { id: lead.id },

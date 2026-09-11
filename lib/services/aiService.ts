@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { ActionService, AIStructuredOutput } from './actionService';
+import { getCampaignForLead, getActiveEvents, CampaignConfig } from '@/lib/config/campaigns';
 
 export interface AIServiceOptions {
   leadName?: string;
@@ -46,59 +47,34 @@ export class AIService {
     const phone = (options.phone || '').trim();
     const historyText = (options.conversationHistory || []).map(m => m.text).join(' ').toLowerCase();
 
-    // Intelligent Geographic & Campaign Context Detection
-    const isUK = 
-      phone.startsWith('+44') || 
-      phone.startsWith('44') || 
-      phone.startsWith('0044') ||
-      options.userMessage.includes('+44') ||
-      /\b44\d{9,10}\b/.test(options.userMessage) ||
-      /\b07\d{9}\b/.test(options.userMessage) ||
-      (options.buyerLocation && /uk|united kingdom|leicester|london|england|britain/i.test(options.buyerLocation)) ||
-      (options.campaignName && /leicester|uk|expo|danube_dubaiexpo|roadshow/i.test(options.campaignName)) ||
-      userTextLower.includes('leicester') ||
-      userTextLower.includes('marriott') ||
-      userTextLower.includes('signed up for this event') ||
-      userTextLower.includes('for this event') ||
-      userTextLower.includes('danube expo') ||
-      userTextLower.includes('dubai property expo') ||
-      historyText.includes('leicester') ||
-      historyText.includes('marriott') ||
-      historyText.includes('+44');
+    // Dynamic Campaign Resolution (auto-expiry built in)
+    const matchedCampaign = getCampaignForLead({
+      phone,
+      userText: userTextLower,
+      buyerLocation: options.buyerLocation,
+      campaignName: options.campaignName,
+      conversationHistory: historyText,
+    });
 
-    const isDubaiLocal = 
-      !isUK && (
-        phone.startsWith('+971') || 
-        phone.startsWith('971') || 
-        (options.buyerLocation && /dubai|uae|abu dhabi|sharjah/i.test(options.buyerLocation)) ||
-        userTextLower.includes('in dubai') ||
-        userTextLower.includes('live in dubai')
-      );
+    const isUK = matchedCampaign.timezone === 'Europe/London';
+    const isDubaiLocal = matchedCampaign.id === 'uae-default';
+
+    // Build active events summary for AI awareness
+    const activeEvents = getActiveEvents();
+    const activeEventsContext = activeEvents.length > 0
+      ? `\nACTIVE UPCOMING EVENTS:\n${activeEvents.map(e => `- ${e.displayName}: ${e.dates.start} to ${e.dates.end} at ${e.location.name}, ${e.location.address}`).join('\n')}`
+      : '';
 
     return `You are Aria, the Senior Executive Luxury Real Estate Concierge for Minesh Patel at The Pods Real Estate (@thepodsrealestate).
 
 CURRENT LIVE CALENDAR & DATE CONTEXT:
 - Today is: ${dateStr} (Dubai Gulf Standard Time).
 - When a client mentions relative days (e.g. "this Saturday", "tomorrow", "next Monday"), calculate the EXACT calendar date based on today. NEVER hallucinate dates in wrong months!
+${activeEventsContext}
 
 CRITICAL GEOGRAPHIC & CAMPAIGN ROUTING DIRECTIVE:
-${isUK ? `🔴 TARGET AUDIENCE: UK / LEICESTER EXPO LEAD (+44 / UK ROADSHOW).
-- This lead signed up for or is inquiring about the upcoming DUBAI PROPERTY EXPO in LEICESTER, UK.
-- EVENT DETAILS:
-  * Event: Dubai Property Expo with Danube Properties & The Pods Real Estate
-  * Dates: Saturday 26th & Sunday 27th September 2026 (10:00 AM – 8:00 PM BST)
-  * Venue: Leicester Marriott Hotel, Smith Way, Enderby, Leicester LE19 1SW, United Kingdom
-  * Host: Minesh Patel (+44 7404 097586), Managing Director, The Pods Real Estate
-- CRITICAL LAWS FOR THIS LEAD:
-  1. NEVER INVITE THIS LEAD TO BLUEWATERS ISLAND IN DUBAI! They are located in the UK. Proposing an in-person meeting in Dubai to a UK event registrant is completely unacceptable.
-  2. For in-person meetings, ALWAYS offer a private 1-on-1 VIP consultation slot with Minesh Patel at the LEICESTER MARRIOTT HOTEL on Saturday 26th or Sunday 27th September.
-  3. If they cannot make it to Leicester in person, offer a Google Meet video call with Minesh Patel.
-  4. (London alternative): For leads located in London who cannot travel to Leicester, offer an appointment at our London Mayfair Studio (14 Curzon Street, Mayfair, London W1J 5HN).
-  5. ONLY mention Bluewaters Island if the lead explicitly states they are currently visiting Dubai or traveling to the UAE.` : isDubaiLocal ? `🟢 TARGET AUDIENCE: DUBAI / UAE LOCAL LEAD (+971 / UAE LOCAL).
-- For in-person consultations: Invite them to The Pods Real Estate Lounge on Bluewaters Island (near Bluewaters Marine Station, complimentary valet parking).
-- For online meetings: Offer a Google Meet video call.` : `🔵 TARGET AUDIENCE: INTERNATIONAL LEAD (LOCATION NOT UK OR UAE).
-- For consultations: Offer a Google Meet video call with Minesh Patel.
-- If they are traveling to Dubai, mention The Pods Lounge on Bluewaters Island; if visiting the UK, mention the Leicester Marriott Expo (Sept 26–27) or London Mayfair Studio.`}
+MATCHED CAMPAIGN: ${matchedCampaign.displayName} (ID: ${matchedCampaign.id})
+${matchedCampaign.aiContext}
 
 IDENTITY & NATURAL HUMAN TEXTING RULES (CRITICAL):
 - You are Aria, texting directly on WhatsApp on behalf of Minesh Patel (+44 7404 097586), Managing Director at The Pods Real Estate.
@@ -161,7 +137,7 @@ PERSISTENT CONVERSATION MEMORY (CRITICAL):
 - ALWAYS read the conversation history before generating a response.
 - NEVER repeat the same greeting, question, or text you already sent earlier in the chat!
 - When the user answers your question (e.g. says "investment" or "personal use"):
-  Acknowledge their choice in 1 line, then move the conversation to the next step (e.g. invite to Leicester expo or Google Meet).
+  Acknowledge their choice in 1 line, then move the conversation to the next step (e.g. invite to the relevant event or Google Meet based on their campaign).
 
 AD-CLICK LEAD INTELLIGENCE (CRITICAL — CHANGES YOUR FIRST RESPONSE):
 This lead's ad source: ${options.adSource || 'ORGANIC'}
@@ -370,14 +346,14 @@ RESPONSE MANDATE:
 VERIFIED PROPERTY KNOWLEDGE CATALOG:
 ${catalogData}
 
-
 CURRENT LEAD CONTEXT & ATTRIBUTES:
 - Name: ${options.leadName || 'Unknown'}
 - Phone: ${options.phone || 'Unknown'}
 - Location: ${options.buyerLocation || (isUK ? 'United Kingdom' : 'Unknown')}
 - Ad Source: ${options.adSource || 'Unknown'}
-- Campaign: ${options.campaignName || (isUK ? 'Danube_DubaiExpo_Leicester_Sept26-27' : 'Unknown')}
-- Target Region: ${isUK ? 'United Kingdom (Leicester Marriott Dubai Property Expo)' : isDubaiLocal ? 'Dubai / UAE' : 'International'}
+- Campaign: ${options.campaignName || matchedCampaign.name}
+- Matched Campaign Config: ${matchedCampaign.displayName}
+- Target Region: ${matchedCampaign.location.country || 'International'}
 - Purpose: ${options.purchasePurpose || 'Unknown'}
 - Budget Range: ${options.budgetMin ? `AED ${options.budgetMin}` : 'Unknown'} - ${options.budgetMax ? `AED ${options.budgetMax}` : 'Unknown'}
 - Timeline: ${options.timeline || 'Unknown'}
@@ -412,7 +388,7 @@ You MUST return your response as a valid JSON object matching this exact schema:
     "date": "The exact agreed date (e.g. Saturday 26 September 2026)",
     "time": "The exact agreed time (e.g. 2:00 PM)",
     "email": "The client's email address if provided",
-    "location": "${isUK ? 'Marriott Hotel, Smith Way, Leicester LE19 1SW, United Kingdom' : 'Google Meet OR The Pods, Bluewaters Island'}",
+    "location": "${matchedCampaign.location.calendarLocation}",
     "project": "The project being viewed"
   }
 }
