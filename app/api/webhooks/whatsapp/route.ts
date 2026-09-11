@@ -871,20 +871,34 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         const tzOffset = bookingCampaign.timezone === 'Europe/London' ? 1 : 
                          bookingCampaign.timezone === 'Asia/Dubai' ? 4 : 0;
         meetingTime = new Date(Date.UTC(eventYear, eventMonth, eventDay, targetHour - tzOffset, targetMin, 0));
-      } else if (bookingLocationRaw.includes('bluewaters') || bookingLocationRaw.includes('pods')) {
-        bookingLocation = 'The Pods, Bluewaters Island, Dubai';
-        bookingTimezone = 'Asia/Dubai';
-      } else if (
-        rawDateStr.includes('burlington') || 
-        rawDateStr.includes('business bay') || 
-        rawDateStr.includes('ellington') ||
-        bookingLocationRaw.includes('burlington') ||
-        bookingLocationRaw.includes('ellington')
-      ) {
-        bookingLocation = 'Ellington Properties, Burlington Tower, Business Bay, Dubai';
-        bookingTimezone = 'Asia/Dubai';
-      } else if (aiResult.booking_details?.location && aiResult.booking_details.location.trim().length > 3 && !aiResult.booking_details.location.toLowerCase().includes('google meet')) {
-        bookingLocation = aiResult.booking_details.location.trim();
+      } else {
+        if (bookingLocationRaw.includes('bluewaters') || bookingLocationRaw.includes('pods')) {
+          bookingLocation = 'The Pods, Bluewaters Island, Dubai';
+          bookingTimezone = 'Asia/Dubai';
+        } else if (
+          rawDateStr.includes('burlington') || 
+          rawDateStr.includes('business bay') || 
+          rawDateStr.includes('ellington') ||
+          bookingLocationRaw.includes('burlington') ||
+          bookingLocationRaw.includes('ellington')
+        ) {
+          bookingLocation = 'Ellington Properties, Burlington Tower, Business Bay, Dubai';
+          bookingTimezone = 'Asia/Dubai';
+        } else if (aiResult.booking_details?.location && aiResult.booking_details.location.trim().length > 3 && !aiResult.booking_details.location.toLowerCase().includes('google meet')) {
+          bookingLocation = aiResult.booking_details.location.trim();
+        }
+
+        // Align target hour to timezone offset for non-event meetings
+        const tzOffset = bookingTimezone === 'Europe/London' ? 1 : 
+                         bookingTimezone === 'Asia/Dubai' ? 4 : 0;
+        meetingTime = new Date(Date.UTC(
+          meetingTime.getFullYear(),
+          meetingTime.getMonth(),
+          meetingTime.getDate(),
+          targetHour - tzOffset,
+          targetMin,
+          0
+        ));
       }
 
       await CalendarService.createBooking({

@@ -277,10 +277,25 @@ function matchesCampaign(
   campaignName: string,
   history: string,
 ): boolean {
-  // Phone prefix match
+  const cleanDigits = phone.replace(/\D/g, '');
+
+  // Phone prefix match (checks both raw phone and cleaned digits)
   if (c.matchRules.phonePrefix.length > 0) {
-    const phoneMatch = c.matchRules.phonePrefix.some(prefix => phone.startsWith(prefix));
+    const phoneMatch = c.matchRules.phonePrefix.some(prefix => {
+      const cleanPrefix = prefix.replace(/\D/g, '');
+      return phone.startsWith(prefix) || (cleanPrefix.length > 0 && cleanDigits.startsWith(cleanPrefix));
+    });
     if (phoneMatch) return true;
+
+    // Special domestic UK mobile format (07xxx xxxxxx = 11 digits)
+    if (c.timezone === 'Europe/London' && (phone.startsWith('07') || cleanDigits.startsWith('07')) && cleanDigits.length === 11) {
+      return true;
+    }
+
+    // Special domestic UAE mobile format (05x xxx xxxx = 10 digits)
+    if (c.timezone === 'Asia/Dubai' && (phone.startsWith('05') || cleanDigits.startsWith('05')) && cleanDigits.length === 10) {
+      return true;
+    }
   }
 
   // Keyword match in user text or history
@@ -289,15 +304,30 @@ function matchesCampaign(
     if (keywordMatch) return true;
   }
 
+  // Country code indicator in message text
+  if (c.timezone === 'Europe/London' && (text.includes('+44') || history.includes('+44'))) {
+    return true;
+  }
+  if (c.timezone === 'Asia/Dubai' && (text.includes('+971') || history.includes('+971'))) {
+    return true;
+  }
+
   // Campaign name pattern match
   if (c.matchRules.campaignPatterns.length > 0 && campaignName) {
     const campaignMatch = c.matchRules.campaignPatterns.some(pat => campaignName.includes(pat));
     if (campaignMatch) return true;
   }
 
-  // Buyer location match
-  if (c.matchRules.locationPatterns.length > 0 && location) {
-    const locationMatch = c.matchRules.locationPatterns.some(pat => location.includes(pat));
+  // Buyer location or message text/history mentioning location
+  if (c.matchRules.locationPatterns.length > 0) {
+    const combinedSearch = `${location} ${text} ${history}`.toLowerCase();
+    const locationMatch = c.matchRules.locationPatterns.some(pat => {
+      if (pat.length <= 3) {
+        const regex = new RegExp(`\\b${pat}\\b`, 'i');
+        return regex.test(combinedSearch);
+      }
+      return combinedSearch.includes(pat);
+    });
     if (locationMatch) return true;
   }
 
