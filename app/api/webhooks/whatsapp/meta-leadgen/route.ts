@@ -28,7 +28,23 @@ export async function GET(req: NextRequest) {
 // 2. Meta Inbound Lead Ingestion
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const rawBody = await req.text();
+
+    // Graceful HMAC Verification (active if META_APP_SECRET is configured)
+    const appSecret = process.env.META_APP_SECRET;
+    if (appSecret) {
+      const signature = req.headers.get('x-hub-signature-256');
+      if (signature) {
+        const crypto = await import('crypto');
+        const expectedSig = 'sha256=' + crypto.createHmac('sha256', appSecret).update(rawBody).digest('hex');
+        if (signature !== expectedSig) {
+          console.warn('[META SECURITY] Webhook signature mismatch rejected');
+          return new Response('Invalid signature', { status: 401 });
+        }
+      }
+    }
+
+    const body = rawBody ? JSON.parse(rawBody) : {};
 
     if (body.object !== 'page') {
       return NextResponse.json({ status: 'ignored' }, { status: 200 });

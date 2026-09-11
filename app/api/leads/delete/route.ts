@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: 'Lead ID is required' }, { status: 400 });
     }
 
-    const validPasscode = process.env.DASHBOARD_PASSCODE || process.env.NEXT_PUBLIC_DASHBOARD_PASSCODE || 'MineshPods0070';
+    const validPasscode = process.env.DASHBOARD_PASSCODE || 'MineshPods0070';
 
     if (!passcode || passcode.trim() !== validPasscode.trim()) {
       return NextResponse.json({ success: false, message: 'Invalid admin passcode. Deletion aborted.' }, { status: 403 });
