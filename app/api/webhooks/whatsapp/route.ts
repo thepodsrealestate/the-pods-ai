@@ -736,10 +736,13 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
 
       const rawDateStr = ((aiResult.booking_details?.date || '') + ' ' + (aiResult.booking_details?.time || '') + ' ' + userText + ' ' + aiResult.reply).toLowerCase();
       
+      let dateResolvedByRelative = false;
       if (rawDateStr.includes('tomorrow') || rawDateStr.includes('tom')) {
         meetingTime = new Date(Date.now() + 86400000);
+        dateResolvedByRelative = true;
       } else if (rawDateStr.includes('today')) {
         meetingTime = new Date();
+        dateResolvedByRelative = true;
       } else {
         const weekdaysMap: Record<string, number> = {
           sunday: 0, monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6
@@ -750,31 +753,35 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
             let daysToAdd = (targetDayNum - currentDayNum + 7) % 7;
             if (daysToAdd === 0) daysToAdd = 7; // Next occurrence
             meetingTime = new Date(Date.now() + daysToAdd * 86400000);
+            dateResolvedByRelative = true;
             break;
           }
         }
       }
 
-      const monthsMap: Record<string, number> = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
-      
-      const dayFirstMatch = rawDateStr.match(/(\d{1,2})(?:st|nd|rd|th)?\s+(?:of\s+)?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*(?:\s+(\d{4}))?/i);
-      const monthFirstMatch = rawDateStr.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s*,?\s*(\d{4}))?/i);
+      // Only parse explicit "26th September" / "September 27" style dates if no relative date was found
+      if (!dateResolvedByRelative) {
+        const monthsMap: Record<string, number> = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
+        
+        const dayFirstMatch = rawDateStr.match(/(\d{1,2})(?:st|nd|rd|th)?\s+(?:of\s+)?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*(?:\s+(\d{4}))?/i);
+        const monthFirstMatch = rawDateStr.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s*,?\s*(\d{4}))?/i);
 
-      if (dayFirstMatch) {
-        const dayNum = parseInt(dayFirstMatch[1], 10);
-        const mKey = dayFirstMatch[2].toLowerCase().slice(0, 3);
-        const yr = dayFirstMatch[3] ? parseInt(dayFirstMatch[3], 10) : meetingTime.getFullYear();
-        const mIdx = monthsMap[mKey];
-        if (mIdx !== undefined && dayNum >= 1 && dayNum <= 31) {
-          meetingTime.setFullYear(yr, mIdx, dayNum);
-        }
-      } else if (monthFirstMatch) {
-        const mKey = monthFirstMatch[1].toLowerCase().slice(0, 3);
-        const dayNum = parseInt(monthFirstMatch[2], 10);
-        const yr = monthFirstMatch[3] ? parseInt(monthFirstMatch[3], 10) : meetingTime.getFullYear();
-        const mIdx = monthsMap[mKey];
-        if (mIdx !== undefined && dayNum >= 1 && dayNum <= 31) {
-          meetingTime.setFullYear(yr, mIdx, dayNum);
+        if (dayFirstMatch) {
+          const dayNum = parseInt(dayFirstMatch[1], 10);
+          const mKey = dayFirstMatch[2].toLowerCase().slice(0, 3);
+          const yr = dayFirstMatch[3] ? parseInt(dayFirstMatch[3], 10) : meetingTime.getFullYear();
+          const mIdx = monthsMap[mKey];
+          if (mIdx !== undefined && dayNum >= 1 && dayNum <= 31) {
+            meetingTime.setFullYear(yr, mIdx, dayNum);
+          }
+        } else if (monthFirstMatch) {
+          const mKey = monthFirstMatch[1].toLowerCase().slice(0, 3);
+          const dayNum = parseInt(monthFirstMatch[2], 10);
+          const yr = monthFirstMatch[3] ? parseInt(monthFirstMatch[3], 10) : meetingTime.getFullYear();
+          const mIdx = monthsMap[mKey];
+          if (mIdx !== undefined && dayNum >= 1 && dayNum <= 31) {
+            meetingTime.setFullYear(yr, mIdx, dayNum);
+          }
         }
       }
 
@@ -836,12 +843,6 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         bookingLocationRaw.includes('marriott') ||
         Boolean(attributionObj?.campaign && attributionObj.campaign.toLowerCase().includes('leicester'));
 
-      const isLondonEvent = 
-        replyLower.includes('brompton') || 
-        replyLower.includes('knightsbridge') || 
-        userTextLower.includes('knightsbridge') || 
-        bookingLocationRaw.includes('knightsbridge');
-
       const isOnlineChosen = 
         userTextLower.includes('online') || 
         userTextLower.includes('google meet') || 
@@ -856,14 +857,8 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         bookingLocation = 'Marriott Hotel, Smith Way, Leicester LE19 1SW, United Kingdom';
         const isSunday = userTextLower.includes('sunday') || userTextLower.includes('27') || rawDateStr.includes('sunday') || rawDateStr.includes('27');
         const eventDay = isSunday ? 27 : 26;
-        // Leicester UK is in BST (UTC+1). 14:00 BST = 13:00 UTC.
-        const utcHour = (targetHour - 1 + 24) % 24;
-        meetingTime = new Date(Date.UTC(2026, 8, eventDay, utcHour, targetMin, 0));
-      } else if (isLondonEvent) {
-        bookingLocation = 'Danube Properties, 44 Brompton Rd, Knightsbridge, London SW3 1BW, UK';
-        // 18:00 BST = 17:00 UTC
-        const utcHour = (targetHour - 1 + 24) % 24;
-        meetingTime = new Date(Date.UTC(2026, 8, 3, utcHour, targetMin, 0));
+        // BST (UTC+1): targetHour BST = targetHour-1 UTC. Date.UTC handles negative hours correctly.
+        meetingTime = new Date(Date.UTC(2026, 8, eventDay, targetHour - 1, targetMin, 0));
       } else if (!isUkLead && (replyLower.includes('bluewaters') || replyLower.includes('pods') || bookingLocationRaw.includes('bluewaters'))) {
         bookingLocation = 'The Pods, Bluewaters Island, Dubai';
       } else if (

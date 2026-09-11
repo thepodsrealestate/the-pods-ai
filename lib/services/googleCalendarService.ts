@@ -137,7 +137,7 @@ export class GoogleCalendarService {
 
       this.cachedToken = {
         token: tokenData.access_token,
-        expiresAt: now + (tokenData.expires_in || 3600),
+        expiresAt: now + (Number(tokenData.expires_in) || 3600),
       };
 
       return this.cachedToken.token;
