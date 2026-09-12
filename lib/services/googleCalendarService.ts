@@ -257,4 +257,32 @@ export class GoogleCalendarService {
       return false;
     }
   }
+
+  /**
+   * Deletes an event from Google Calendar
+   */
+  static async deleteEvent(calendarEventId: string): Promise<boolean> {
+    try {
+      const accessToken = await this.getAccessToken();
+      if (!accessToken) return false;
+      const calendarId = encodeURIComponent(process.env.GOOGLE_CALENDAR_ID || 'primary');
+
+      const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${calendarEventId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!res.ok && res.status !== 404 && res.status !== 410) {
+        console.error('[GCAL] Delete error status:', res.status);
+        return false;
+      }
+      console.log('[GCAL] Event deleted successfully:', calendarEventId);
+      return true;
+    } catch (err: any) {
+      console.error('[GCAL] Failed to delete event:', err.message);
+      return false;
+    }
+  }
 }
