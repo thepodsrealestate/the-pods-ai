@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 export interface NotificationPayload {
   leadName: string;
   phone: string;
+  email?: string;
   meetingTime: Date;
   location?: string;
   voucherCode?: string;
@@ -13,6 +14,7 @@ export class NotificationService {
    * Send Instant Booking Notification to Minesh Patel
    */
   static async notifyMineshBooking(payload: NotificationPayload) {
+    const displayLeadName = (payload.leadName && payload.leadName !== '-' && payload.leadName !== '--' && payload.leadName.toLowerCase() !== 'unknown') ? payload.leadName : 'VIP Client';
     const timeFormatted = new Date(payload.meetingTime).toLocaleString('en-US', {
       timeZone: 'Asia/Dubai',
       weekday: 'short',
@@ -22,7 +24,7 @@ export class NotificationService {
       minute: '2-digit',
     });
 
-    const alertMessage = `🚨 NEW VIP MEETING BOOKED: ${payload.leadName} (${payload.phone}) scheduled for ${timeFormatted} at ${payload.location || 'The Pods, Bluewaters Island'}.${payload.voucherCode ? ` VIP Voucher: ${payload.voucherCode}` : ''}`;
+    const alertMessage = `🚨 NEW VIP MEETING BOOKED: ${displayLeadName} (${payload.phone}) scheduled for ${timeFormatted} at ${payload.location || 'The Pods, Bluewaters Island'}.${payload.email ? ` Email: ${payload.email}` : ''}${payload.voucherCode ? ` VIP Voucher: ${payload.voucherCode}` : ''}`;
 
     console.log(`[NOTIFICATION -> MINESH PATEL (+971523666495)]: ${alertMessage}`);
 
@@ -66,14 +68,15 @@ export class NotificationService {
           body: JSON.stringify({
             from: 'The Pods Real Estate AI <onboarding@resend.dev>',
             to: [targetEmail],
-            subject: `🚨 VIP Booking: ${payload.leadName} (${payload.phone})`,
+            subject: `🚨 VIP Booking: ${displayLeadName} (${payload.phone})`,
             html: `
               <div style="font-family: Arial, sans-serif; background-color: #0D0F17; color: #ffffff; padding: 24px; border-radius: 16px;">
                 <h2 style="color: #C5A059; margin-bottom: 8px;">VIP Presentation Booked</h2>
                 <p style="font-size: 14px; color: #94A3B8;">A client has scheduled a presentation with Minesh Patel.</p>
                 <div style="background-color: #151824; border: 1px solid #1E2230; padding: 16px; border-radius: 12px; margin: 16px 0;">
-                  <p style="margin: 4px 0;"><strong>Client Name:</strong> ${payload.leadName}</p>
+                  <p style="margin: 4px 0;"><strong>Client Name:</strong> ${displayLeadName}</p>
                   <p style="margin: 4px 0;"><strong>Phone:</strong> ${payload.phone}</p>
+                  <p style="margin: 4px 0;"><strong>Email:</strong> ${payload.email || 'N/A'}</p>
                   <p style="margin: 4px 0;"><strong>Scheduled Time:</strong> ${timeFormatted}</p>
                   <p style="margin: 4px 0;"><strong>Location / Format:</strong> ${payload.location || 'Google Meet Video Consultation'}</p>
                   ${payload.location?.toLowerCase().includes('google meet') || !payload.location ? `<p style="margin: 8px 0;"><a href="https://calendar.app.google/xGRVwZCTkrnZCypUA" style="color: #60A5FA; text-decoration: underline;">👉 Open Google Calendar & Meet Details</a></p>` : ''}

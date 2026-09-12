@@ -25,6 +25,20 @@ export interface CreateLeadInput {
   };
 }
 
+export function isRealName(name?: string | null): boolean {
+  if (!name) return false;
+  const trimmed = name.trim();
+  return (
+    trimmed.length > 1 &&
+    trimmed !== '-' &&
+    trimmed !== '--' &&
+    trimmed !== 'VIP Client' &&
+    trimmed.toLowerCase() !== 'unknown' &&
+    trimmed.toLowerCase() !== 'guest' &&
+    !/^[-_\s.]+$/.test(trimmed)
+  );
+}
+
 export class LeadService {
   /**
    * E.164 Phone Number Normalization
@@ -81,8 +95,8 @@ export class LeadService {
       lead = await prisma.lead.create({
         data: {
           phone: normalizedPhone,
-          fullName: input.fullName || null,
-          email: input.email || null,
+          fullName: isRealName(input.fullName) ? input.fullName!.trim() : null,
+          email: input.email && input.email.trim() ? input.email.trim().toLowerCase() : null,
           leadSource: input.leadSource || 'DIRECT',
           buyerLocation: input.buyerLocation || null,
           purchasePurpose: input.purchasePurpose || null,
@@ -114,14 +128,19 @@ export class LeadService {
     } else {
       // Update existing lead if real phone number or fuller name arrives from ManyChat webhook
       const updateData: any = {};
-      if (input.fullName && input.fullName !== 'VIP Client' && lead.fullName !== input.fullName) {
-        updateData.fullName = input.fullName;
+
+      // Only update name if incoming name is a valid real name AND either current name is invalid or incoming is more complete
+      if (isRealName(input.fullName)) {
+        if (!isRealName(lead.fullName) || (input.fullName!.length > (lead.fullName?.length || 0) && input.fullName!.toLowerCase().includes((lead.fullName || '').toLowerCase()))) {
+          updateData.fullName = input.fullName!.trim();
+        }
       }
+
       if (normalizedPhone && !normalizedPhone.startsWith('+lead_') && !normalizedPhone.startsWith('+mc_') && lead.phone !== normalizedPhone) {
         updateData.phone = normalizedPhone;
       }
-      if (input.email && !lead.email) {
-        updateData.email = input.email;
+      if (input.email && input.email.trim() && (!lead.email || lead.email.trim() === '')) {
+        updateData.email = input.email.trim().toLowerCase();
       }
 
       if (Object.keys(updateData).length > 0) {

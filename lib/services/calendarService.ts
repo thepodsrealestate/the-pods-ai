@@ -23,17 +23,28 @@ export class CalendarService {
    * Create Confirmed Meeting Booking & Notify Minesh + Insert to Google Calendar
    */
   static async createBooking(input: BookingInput) {
-    // Deduplication check: If a booking was already created for this lead in the last 2 minutes, suppress duplicate
+    // Deduplication check: If a confirmed booking was already created for this lead in the last 24 hours, update if needed and suppress duplicate
     const existingRecent = await prisma.booking.findFirst({
       where: {
         leadId: input.leadId,
-        createdAt: { gte: new Date(Date.now() - 2 * 60 * 1000) },
+        status: { in: ['CONFIRMED', 'PENDING_APPROVAL'] },
+        createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
       },
       include: { lead: true },
+      orderBy: { createdAt: 'desc' },
     });
 
     if (existingRecent) {
       console.log(`[CALENDAR] Duplicate booking suppressed for lead ${input.leadId} (already booked at ${existingRecent.createdAt})`);
+      if (input.meetingTime && (existingRecent.meetingTime.getTime() !== input.meetingTime.getTime() || (input.location && existingRecent.location !== input.location))) {
+        await prisma.booking.update({
+          where: { id: existingRecent.id },
+          data: {
+            meetingTime: input.meetingTime,
+            location: input.location || existingRecent.location,
+          },
+        });
+      }
       return existingRecent;
     }
 
@@ -96,6 +107,7 @@ export class CalendarService {
     await NotificationService.notifyMineshBooking({
       leadName: booking.lead.fullName || 'VIP Client',
       phone: booking.lead.phone,
+      email: booking.lead.email || undefined,
       meetingTime: booking.meetingTime,
       location: booking.location,
     });

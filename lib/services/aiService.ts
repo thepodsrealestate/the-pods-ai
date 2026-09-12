@@ -5,6 +5,7 @@ import { getCampaignForLead, getActiveEvents, CampaignConfig } from '@/lib/confi
 
 export interface AIServiceOptions {
   leadName?: string;
+  email?: string;
   phone?: string;
   buyerLocation?: string;
   purchasePurpose?: string;
@@ -96,11 +97,17 @@ IDENTITY & NATURAL HUMAN TEXTING RULES (CRITICAL):
   * Step 3 (Coordinate Time):
     When they say yes to attending:
     ${isUK ? `Example: "Brilliant! Would Saturday or Sunday work better for you, and morning or afternoon?"` : `Example: "Great! What day and time suits you best this week?"`}
-  * Step 4 (Confirm & Email Capture):
+  * Step 4 (Coordinate Time & Email Handling):
     When they choose day/time:
-    ${isUK ? `Example: "Done, I'll reserve a slot for you with Minesh Patel on [Day] [Morning/Afternoon]. What's the best email to send your event invitation and hotel details to?"` : `Example: "Done, I'll reserve that slot with Minesh. What's the best email for your calendar invitation?"`}
-  * Step 5 (Booking Confirmed):
-    When email is provided:
+    - CASE A: LEAD EMAIL IS ALREADY ON FILE (${options.email ? `Known: "${options.email}"` : 'None on file'}):
+      DO NOT ASK FOR THEIR EMAIL! They already provided it.
+      Immediately confirm the booking and set action: "BOOK_MEETING"!
+      ${isUK ? `Example: "All set, [Name]! I've reserved your slot with Minesh Patel on [Day] at [Time]. I'll send your event pass and hotel details to ${options.email || 'your email'}. Looking forward to seeing you at the Leicester Marriott!"` : `Example: "All set, [Name]! I've reserved that slot with Minesh. I'll send your calendar invitation to ${options.email || 'your email'}. Look forward to speaking with you!"`}
+    - CASE B: NO EMAIL ON FILE:
+      Ask for their email, and set action: "NONE" (CRITICAL: DO NOT set action to "BOOK_MEETING" yet until they give their email!):
+      ${isUK ? `Example: "Done, I'll reserve a slot for you with Minesh Patel on [Day] [Morning/Afternoon]. What's the best email to send your event invitation and hotel details to?"` : `Example: "Done, I'll reserve that slot with Minesh. What's the best email for your calendar invitation?"`}
+  * Step 5 (Booking Confirmed when email provided):
+    When the lead replies with their email:
     Set action: "BOOK_MEETING".
     ${isUK ? `Example: "All set, [Name]! Sent your pass to [Email]. Look forward to seeing you at the Leicester Marriott on [Day]!"` : `Example: "All set, [Name]! Sent your calendar invitation to [Email]. Look forward to speaking with you!"`}
   * If they CANNOT attend in person (e.g. too far, busy):
@@ -349,6 +356,7 @@ ${catalogData}
 CURRENT LEAD CONTEXT & ATTRIBUTES:
 - Name: ${options.leadName || 'Unknown'}
 - Phone: ${options.phone || 'Unknown'}
+- Email on file: ${options.email || 'None on file'}
 - Location: ${options.buyerLocation || (isUK ? 'United Kingdom' : 'Unknown')}
 - Ad Source: ${options.adSource || 'Unknown'}
 - Campaign: ${options.campaignName || matchedCampaign.name}
@@ -391,7 +399,7 @@ You MUST return your response as a valid JSON object matching this exact schema:
   "booking_details": {
     "date": "The exact agreed date (e.g. Saturday 26 September 2026)",
     "time": "The exact agreed time (e.g. 2:00 PM)",
-    "email": "The client's email address if provided",
+    "email": "${options.email || "The client's email address if provided"}",
     "location": "${matchedCampaign.location.calendarLocation}",
     "project": "The project being viewed"
   }

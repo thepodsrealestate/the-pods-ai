@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse, after } from 'next/server';
 import { AIService } from '@/lib/services/aiService';
 import { prisma } from '@/lib/prisma';
-import { LeadService } from '@/lib/services/leadService';
+import { LeadService, isRealName } from '@/lib/services/leadService';
 import { MessageService } from '@/lib/services/messageService';
 import { NotificationService } from '@/lib/services/notificationService';
 import { CalendarService } from '@/lib/services/calendarService';
@@ -115,7 +115,13 @@ export async function POST(req: NextRequest) {
         trimmed.includes('}}') || 
         trimmed.toLowerCase() === 'undefined' || 
         trimmed.toLowerCase() === 'null' || 
-        trimmed.toLowerCase() === 'unknown'
+        trimmed.toLowerCase() === 'unknown' ||
+        trimmed.toLowerCase() === 'guest' ||
+        trimmed.toLowerCase() === 'vip client' ||
+        trimmed === '-' ||
+        trimmed === '--' ||
+        trimmed === '---' ||
+        /^[-_\s.]+$/.test(trimmed)
       ) {
         return '';
       }
@@ -126,7 +132,7 @@ export async function POST(req: NextRequest) {
     const rawLastName = cleanField(body.last_name);
     const rawFullName = cleanField(body.name || body.full_name || body.sender_name || body.user_name || body.custom_fields?.name);
 
-    let senderName = "VIP Client";
+    let senderName = "";
     if (rawFirstName && rawLastName) {
       senderName = `${rawFirstName} ${rawLastName}`;
     } else if (rawFirstName) {
@@ -136,7 +142,7 @@ export async function POST(req: NextRequest) {
     }
 
     const subscriberId = body.id || body.subscriber_id || body.user_id || body.contact_id;
-    const nameSlug = senderName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const nameSlug = senderName ? senderName.toLowerCase().replace(/[^a-z0-9]/g, '') : '';
     const phone = rawPhone || (subscriberId ? `+mc_${subscriberId}` : (nameSlug && nameSlug !== 'vipclient' ? `+lead_${nameSlug}` : `+lead_guest`));
     let userText = body.last_input_text || body.payload?.text || body.text || body.message || "";
 
@@ -495,8 +501,14 @@ export async function POST(req: NextRequest) {
       const effectivePhone = normalizedPhone || phone || extractedFormPhone || undefined;
       const isUkPhone = effectivePhone && (effectivePhone.startsWith('+44') || effectivePhone.startsWith('44') || effectivePhone.startsWith('0044'));
 
+      const resolvedName = (isRealName(senderName) ? senderName : undefined) 
+        || (isRealName(existingLead?.fullName) ? existingLead.fullName : undefined);
+
+      const resolvedEmail = existingLead?.email || extractedFormEmail || undefined;
+
       const aiResult = await AIService.generateResponse({
-        leadName: senderName || existingLead?.fullName || undefined,
+        leadName: resolvedName,
+        email: resolvedEmail,
         phone: effectivePhone,
         buyerLocation: existingLead?.buyerLocation || (isUkPhone ? 'United Kingdom' : undefined),
         purchasePurpose: existingLead?.purchasePurpose || undefined,
@@ -553,7 +565,7 @@ export async function POST(req: NextRequest) {
 async function logToDatabase(body: any, userText: string, senderName: string, phone: string, aiResult: any) {
   try {
     const { prisma } = await import('@/lib/prisma');
-    const { LeadService } = await import('@/lib/services/leadService');
+    const { LeadService, isRealName } = await import('@/lib/services/leadService');
     const { MessageService } = await import('@/lib/services/messageService');
     const { SenderType } = await import('@prisma/client');
 
@@ -599,7 +611,7 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
     const extractedEmail = emailMatch ? emailMatch[0].toLowerCase().trim() : (aiResult.booking_details?.email?.toLowerCase().trim() || aiResult.lead_updates?.email?.toLowerCase().trim() || undefined);
 
     const nameMatch = userText.match(/(?:full\s*name|name):\s*([^\n\r,]+)/i);
-    const extractedName = nameMatch && nameMatch[1].trim().length > 1 ? nameMatch[1].trim() : senderName;
+    const extractedName = nameMatch && isRealName(nameMatch[1].trim()) ? nameMatch[1].trim() : (isRealName(senderName) ? senderName : undefined);
 
     const phoneMatch = userText.match(/(?:phone\s*number|phone|mobile):\s*([+\d\s()-]{7,})/i);
     const extractedFormPhone = phoneMatch && phoneMatch[1].trim().length > 6 ? phoneMatch[1].replace(/[^\d+]/g, '').trim() : phone;
@@ -698,8 +710,9 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
     // Sync extracted name & email back to ManyChat so ManyChat does not display a blank/dot name
     const manychatSubId = body.id || body.subscriber_id || body.user_id || body.contact_id;
     const manychatToken = process.env.MANYCHAT_API_TOKEN;
-    if (manychatSubId && extractedName && extractedName !== 'VIP Client' && manychatToken) {
-      const parts = extractedName.trim().split(/\s+/);
+    const finalNameForSync = isRealName(extractedName) ? extractedName : (isRealName(lead.fullName) ? lead.fullName : undefined);
+    if (manychatSubId && finalNameForSync && manychatToken) {
+      const parts = finalNameForSync.trim().split(/\s+/);
       const firstName = parts[0];
       const lastName = parts.slice(1).join(' ') || '';
       try {
