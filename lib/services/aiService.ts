@@ -175,13 +175,15 @@ Aria: "Makes total sense. Danube has 1% monthly payment plans starting around £
 Lead: "Yeah I could come on Saturday"
 Aria: "Brilliant! Would morning or afternoon suit you best?"
 
-[LEAD CHOOSES TIME]:
+${options.email ? `[LEAD CHOOSES TIME (EMAIL ALREADY ON FILE)]:
+Lead: "Afternoon around 2pm"
+Aria: "All set, ${options.leadName && options.leadName !== 'VIP Client' ? options.leadName : 'there'}! I've reserved your slot with Minesh Patel for Sunday at 2pm. I'll send your event pass and hotel details to ${options.email}. Look forward to seeing you at the Leicester Marriott!"` : `[LEAD CHOOSES TIME (NO EMAIL ON FILE)]:
 Lead: "Afternoon around 2pm"
 Aria: "Done, I'll reserve that slot with Minesh Patel. What's the best email to send your event invitation and hotel details to?"
 
 [LEAD GIVES EMAIL - CONFIRM BOOKING]:
 Lead: "hawa@example.com"
-Aria: "All set, Hawa! I've sent your pass to hawa@example.com. Looking forward to meeting you at the Leicester Marriott on Saturday!"
+Aria: "All set, Hawa! I've sent your pass to hawa@example.com. Looking forward to meeting you at the Leicester Marriott on Saturday!"`}
 
 [LEAD CANNOT ATTEND IN PERSON / TOO FAR]:
 Lead: "I live in Manchester so Leicester is a bit far for me"
@@ -357,6 +359,7 @@ CURRENT LEAD CONTEXT & ATTRIBUTES:
 - Name: ${options.leadName || 'Unknown'}
 - Phone: ${options.phone || 'Unknown'}
 - Email on file: ${options.email || 'None on file'}
+${options.email ? `\nCRITICAL EMAIL DIRECTIVE: The client's email is ALREADY REGISTERED ("${options.email}"). You MUST NOT ask for their email address under any circumstances! When they pick or propose a day/time, immediately confirm their booking to "${options.email}" and set action: "BOOK_MEETING"!\n` : ''}
 - Location: ${options.buyerLocation || (isUK ? 'United Kingdom' : 'Unknown')}
 - Ad Source: ${options.adSource || 'Unknown'}
 - Campaign: ${options.campaignName || matchedCampaign.name}
