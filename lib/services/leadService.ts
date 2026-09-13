@@ -5,6 +5,7 @@ export interface CreateLeadInput {
   phone: string;
   fullName?: string;
   email?: string;
+  manychatId?: string;
   leadSource?: string;
   buyerLocation?: string;
   purchasePurpose?: string;
@@ -97,6 +98,7 @@ export class LeadService {
           phone: normalizedPhone,
           fullName: isRealName(input.fullName) ? input.fullName!.trim() : null,
           email: input.email && input.email.trim() ? input.email.trim().toLowerCase() : null,
+          manychatId: input.manychatId || null,
           leadSource: input.leadSource || 'DIRECT',
           buyerLocation: input.buyerLocation || null,
           purchasePurpose: input.purchasePurpose || null,
@@ -126,8 +128,12 @@ export class LeadService {
         include: { attributions: true },
       });
     } else {
-      // Update existing lead if real phone number or fuller name arrives from ManyChat webhook
+      // Update existing lead if real phone number, fuller name, or ManyChat subscriber ID arrives
       const updateData: any = {};
+
+      if (input.manychatId && lead.manychatId !== input.manychatId) {
+        updateData.manychatId = input.manychatId;
+      }
 
       // Only update name if incoming name is a valid real name AND either current name is invalid or incoming is more complete
       if (isRealName(input.fullName)) {

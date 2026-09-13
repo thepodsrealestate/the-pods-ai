@@ -23,6 +23,7 @@ model Lead {
   phone              String            @unique
   fullName           String?
   email              String?
+  manychatId         String?
   leadSource         String            @default("DIRECT")
   buyerLocation      String?
   purchasePurpose    String?

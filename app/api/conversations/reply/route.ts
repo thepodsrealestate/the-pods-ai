@@ -31,10 +31,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'This lead does not have a deliverable WhatsApp phone number' }, { status: 422 });
     }
 
-    const subscriberId = await MessageService.findManyChatSubscriberId(phone);
+    let subscriberId = conversation.lead.manychatId;
+    if (!subscriberId) {
+      subscriberId = await MessageService.findManyChatSubscriberId(phone);
+      if (subscriberId) {
+        await prisma.lead.update({
+          where: { id: conversation.lead.id },
+          data: { manychatId: subscriberId },
+        }).catch(() => {});
+      }
+    }
 
     if (!subscriberId) {
-      return NextResponse.json({ error: 'WhatsApp contact was not found in ManyChat' }, { status: 404 });
+      return NextResponse.json({
+        error: 'WhatsApp contact was not found in ManyChat. The lead must send an inbound WhatsApp message first before manual replies can be sent.',
+      }, { status: 404 });
     }
 
     const sendRes = await fetch('https://api.manychat.com/fb/sending/sendContent', {
@@ -57,7 +68,8 @@ export async function POST(req: NextRequest) {
 
     if (!sendRes.ok || sendData?.status === 'error') {
       console.error('ManyChat outbound send failed:', sendRes.status, sendData);
-      return NextResponse.json({ error: 'WhatsApp rejected the outbound message' }, { status: 502 });
+      const errorDetail = sendData?.message || 'WhatsApp rejected the outbound message';
+      return NextResponse.json({ error: errorDetail }, { status: 502 });
     }
 
     const savedMsg = await MessageService.storeMessage({

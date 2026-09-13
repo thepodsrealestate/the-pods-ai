@@ -218,9 +218,12 @@ export async function POST(req: NextRequest) {
           payload: { phone: normalizedPhone, textSnippet, timeBucket },
         }
       });
-      // Fire-and-forget async cleanup of old locks (>2 hours)
+      // Fire-and-forget async cleanup of old locks (>2 hours) - strictly scoped to lock events
       prisma.webhookEvent.deleteMany({
-        where: { createdAt: { lt: new Date(Date.now() - 7200000) } }
+        where: {
+          eventType: 'INBOUND_WHATSAPP_LOCK',
+          createdAt: { lt: new Date(Date.now() - 7200000) }
+        }
       }).catch(() => {});
     } catch (lockErr: any) {
       console.log(`[DISTRIBUTED DB LOCK BLOCKED] Duplicate concurrent webhook call rejected for ${distributedLockKey}`);
@@ -638,10 +641,13 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       };
     }
 
+    const manychatSubId = body.id || body.subscriber_id || body.user_id || body.contact_id;
+
     const lead = await LeadService.findOrCreateLead({
       phone: extractedFormPhone,
       fullName: extractedName,
       email: extractedEmail,
+      manychatId: manychatSubId ? String(manychatSubId) : undefined,
       leadSource,
       attribution: attributionObj,
     });
@@ -697,24 +703,48 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       if (aiResult.lead_updates.meeting_preference) updates.meetingPreference = aiResult.lead_updates.meeting_preference;
       if (extractedEmail) updates.email = extractedEmail;
       if (isUkNumber) updates.buyerLocation = 'United Kingdom (Leicester Expo)';
+      if (manychatSubId && lead.manychatId !== String(manychatSubId)) updates.manychatId = String(manychatSubId);
       if (Object.keys(updates).length > 0) {
         await prisma.lead.update({ where: { id: lead.id }, data: updates });
       }
-    } else if (isUkNumber && lead.buyerLocation !== 'United Kingdom (Leicester Expo)') {
-      await prisma.lead.update({
-        where: { id: lead.id },
-        data: { buyerLocation: 'United Kingdom (Leicester Expo)' }
-      });
+    } else {
+      const fallbackUpdates: any = {};
+      if (isUkNumber && lead.buyerLocation !== 'United Kingdom (Leicester Expo)') {
+        fallbackUpdates.buyerLocation = 'United Kingdom (Leicester Expo)';
+      }
+      if (manychatSubId && lead.manychatId !== String(manychatSubId)) {
+        fallbackUpdates.manychatId = String(manychatSubId);
+      }
+      if (Object.keys(fallbackUpdates).length > 0) {
+        await prisma.lead.update({
+          where: { id: lead.id },
+          data: fallbackUpdates,
+        });
+      }
     }
 
-    // Sync extracted name & email back to ManyChat so ManyChat does not display a blank/dot name
-    const manychatSubId = body.id || body.subscriber_id || body.user_id || body.contact_id;
+    // Sync extracted name, phone & email back to ManyChat so ManyChat does not display a blank name and can be queried
     const manychatToken = process.env.MANYCHAT_API_TOKEN;
     const finalNameForSync = isRealName(extractedName) ? extractedName : (isRealName(lead.fullName) ? lead.fullName : undefined);
-    if (manychatSubId && finalNameForSync && manychatToken) {
-      const parts = finalNameForSync.trim().split(/\s+/);
-      const firstName = parts[0];
+    if (manychatSubId && manychatToken) {
+      const parts = (finalNameForSync || '').trim().split(/\s+/);
+      const firstName = parts[0] || '';
       const lastName = parts.slice(1).join(' ') || '';
+      const updatePayload: any = {
+        subscriber_id: Number(manychatSubId) || manychatSubId,
+      };
+      if (firstName) updatePayload.first_name = firstName;
+      if (lastName) updatePayload.last_name = lastName;
+      if (extractedEmail) {
+        updatePayload.email = extractedEmail;
+        updatePayload.has_opt_in_email = true;
+      }
+      if (extractedFormPhone && !extractedFormPhone.startsWith('+lead_') && !extractedFormPhone.startsWith('+mc_')) {
+        updatePayload.phone = extractedFormPhone.startsWith('+') ? extractedFormPhone : `+${extractedFormPhone}`;
+        updatePayload.has_opt_in_sms = true;
+        updatePayload.consent_phrase = 'Customer Consent';
+      }
+
       try {
         await fetch('https://api.manychat.com/fb/subscriber/updateSubscriber', {
           method: 'POST',
@@ -722,16 +752,33 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
             'Content-Type': 'application/json',
             Authorization: `Bearer ${manychatToken}`,
           },
-          body: JSON.stringify({
-            subscriber_id: Number(manychatSubId) || manychatSubId,
-            first_name: firstName,
-            last_name: lastName,
-            ...(extractedEmail ? { email: extractedEmail } : {}),
-          }),
+          body: JSON.stringify(updatePayload),
         });
-        console.log(`[MANYCHAT SYNC] Updated subscriber ${manychatSubId} name to ${firstName} ${lastName}`);
+        console.log(`[MANYCHAT SYNC] Updated subscriber ${manychatSubId}`);
       } catch (mcErr: any) {
         console.warn('[MANYCHAT SYNC WARNING]', mcErr?.message || mcErr);
+      }
+
+      // Also set custom field 14962965 (contact_phone) for reliable WhatsApp phone lookup
+      if (extractedFormPhone && !extractedFormPhone.startsWith('+lead_') && !extractedFormPhone.startsWith('+mc_')) {
+        const phoneToSet = extractedFormPhone.startsWith('+') ? extractedFormPhone : `+${extractedFormPhone}`;
+        try {
+          await fetch('https://api.manychat.com/fb/subscriber/setCustomField', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${manychatToken}`,
+            },
+            body: JSON.stringify({
+              subscriber_id: Number(manychatSubId) || manychatSubId,
+              field_id: 14962965,
+              field_value: phoneToSet,
+            }),
+          });
+          console.log(`[MANYCHAT SYNC] Set contact_phone on ManyChat subscriber ${manychatSubId} to ${phoneToSet}`);
+        } catch (cfErr: any) {
+          console.warn('[MANYCHAT CUSTOM FIELD SYNC WARNING]', cfErr?.message || cfErr);
+        }
       }
     }
 

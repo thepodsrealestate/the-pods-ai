@@ -40,7 +40,18 @@ export class MessageService {
 
     const cleanPhone = phone.replace(/[^0-9]/g, '');
 
-    // 1. Check if we logged an inbound WhatsApp webhook event with this subscriber ID
+    // 1. Direct Lead record in database (fastest, permanent, zero external API latency)
+    try {
+      const lead = await prisma.lead.findFirst({
+        where: {
+          phone: { in: [phone, `+${cleanPhone}`, cleanPhone] },
+        },
+        select: { id: true, manychatId: true },
+      });
+      if (lead?.manychatId) return lead.manychatId;
+    } catch (_) {}
+
+    // 2. Check if we logged an inbound WhatsApp webhook event with this subscriber ID
     try {
       const event = await prisma.webhookEvent.findFirst({
         where: {
@@ -52,13 +63,37 @@ export class MessageService {
         },
         orderBy: { createdAt: 'desc' },
       });
-      const subId = (event?.payload as any)?.subscriber_id;
-      if (subId) return String(subId);
+      const subId = (event?.payload as any)?.subscriber_id || (event?.payload as any)?.id;
+      if (subId) {
+        // Self-heal: persist to Lead table for instant future lookups
+        prisma.lead.updateMany({
+          where: { phone: { in: [phone, `+${cleanPhone}`, cleanPhone] }, manychatId: null },
+          data: { manychatId: String(subId) },
+        }).catch(() => {});
+        return String(subId);
+      }
     } catch (_) {}
 
-    // 2. Fallback to ManyChat system field
     const manychatToken = process.env.MANYCHAT_API_TOKEN;
     if (manychatToken) {
+      // 3. Look up by ManyChat custom field (contact_phone ID: 14962965)
+      try {
+        const cfRes = await fetch(
+          `https://api.manychat.com/fb/subscriber/findByCustomField?field_id=14962965&field_value=%2B${cleanPhone}`,
+          { headers: { Authorization: `Bearer ${manychatToken}` } }
+        );
+        const cfData = await cfRes.json().catch(() => ({}));
+        const cfSubId = cfData?.data?.[0]?.id || cfData?.data?.id;
+        if (cfSubId) {
+          prisma.lead.updateMany({
+            where: { phone: { in: [phone, `+${cleanPhone}`, cleanPhone] }, manychatId: null },
+            data: { manychatId: String(cfSubId) },
+          }).catch(() => {});
+          return String(cfSubId);
+        }
+      } catch (_) {}
+
+      // 4. Fallback to ManyChat system field
       try {
         const findRes = await fetch(
           `https://api.manychat.com/fb/subscriber/findBySystemField?phone=%2B${cleanPhone}`,
@@ -66,7 +101,13 @@ export class MessageService {
         );
         const findData = await findRes.json().catch(() => ({}));
         const subId = findData?.data?.id || findData?.data?.[0]?.id;
-        if (subId) return String(subId);
+        if (subId) {
+          prisma.lead.updateMany({
+            where: { phone: { in: [phone, `+${cleanPhone}`, cleanPhone] }, manychatId: null },
+            data: { manychatId: String(subId) },
+          }).catch(() => {});
+          return String(subId);
+        }
       } catch (_) {}
     }
 
