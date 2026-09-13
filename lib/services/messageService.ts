@@ -140,6 +140,7 @@ export class MessageService {
           data: {
             version: 'v2',
             content: {
+              type: 'whatsapp',
               messages: [{ type: 'text', text: text.trim() }],
             },
           },
