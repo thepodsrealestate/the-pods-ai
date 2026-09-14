@@ -207,23 +207,34 @@ export async function POST(req: NextRequest) {
 
     // 1. Distributed Database-Level Atomic Idempotency Lock (PostgreSQL ACID)
     // Prevents parallel Vercel Serverless Lambdas from ever processing the exact same message concurrently
-    const timeBucket = Math.floor(Date.now() / 8000); // 8-second idempotency window
-    const distributedLockKey = `LOCK_${normalizedPhone}_${textSnippet}_${timeBucket}`;
+    // Uses a boundary-free unique key with 15-second TTL to eliminate timeBucket split bugs
+    const distributedLockKey = `LOCK_${normalizedPhone}_${textSnippet}`;
+    const lockCutoff = new Date(Date.now() - 15000);
 
     try {
+      // Clear expired lock if more than 15 seconds old
+      await prisma.webhookEvent.deleteMany({
+        where: {
+          eventId: distributedLockKey,
+          createdAt: { lt: lockCutoff },
+        },
+      });
+
+      // Atomically claim the lock for this phone + message snippet
       await prisma.webhookEvent.create({
         data: {
           eventId: distributedLockKey,
           eventType: 'INBOUND_WHATSAPP_LOCK',
-          payload: { phone: normalizedPhone, textSnippet, timeBucket },
-        }
+          payload: { phone: normalizedPhone, textSnippet, timestamp: now },
+        },
       });
-      // Fire-and-forget async cleanup of old locks (>2 hours) - strictly scoped to lock events
+
+      // Fire-and-forget async cleanup of old locks (>1 hour)
       prisma.webhookEvent.deleteMany({
         where: {
           eventType: 'INBOUND_WHATSAPP_LOCK',
-          createdAt: { lt: new Date(Date.now() - 7200000) }
-        }
+          createdAt: { lt: new Date(Date.now() - 3600000) },
+        },
       }).catch(() => {});
     } catch (lockErr: any) {
       console.log(`[DISTRIBUTED DB LOCK BLOCKED] Duplicate concurrent webhook call rejected for ${distributedLockKey}`);
@@ -415,8 +426,9 @@ export async function POST(req: NextRequest) {
           where: { OR: searchConditions },
           include: {
             attributions: { take: 1, orderBy: { createdAt: 'desc' } },
+            bookings: { take: 1, orderBy: { createdAt: 'desc' } },
             conversations: {
-              orderBy: { updatedAt: 'desc' },
+              orderBy: { createdAt: 'asc' }, // Always bind to the primary conversation
               take: 1,
               include: {
                 messages: {
@@ -509,20 +521,64 @@ export async function POST(req: NextRequest) {
 
       const resolvedEmail = existingLead?.email || extractedFormEmail || undefined;
 
-      const aiResult = await AIService.generateResponse({
-        leadName: resolvedName,
-        email: resolvedEmail,
-        phone: effectivePhone,
-        buyerLocation: existingLead?.buyerLocation || (isUkPhone ? 'United Kingdom' : undefined),
-        purchasePurpose: existingLead?.purchasePurpose || undefined,
-        budgetMin: existingLead?.budgetMin || undefined,
-        budgetMax: existingLead?.budgetMax || undefined,
-        timeline: existingLead?.timeline || undefined,
-        adSource: adSource || existingLead?.attributions?.[0]?.source || undefined,
-        campaignName: campaignName || existingLead?.attributions?.[0]?.campaign || undefined,
-        conversationHistory,
-        userMessage: userText,
-      });
+      const existingBooking = existingLead?.bookings?.[0];
+      const isMeetingBooked = existingLead?.status === 'MEETING_BOOKED' || 
+        existingBooking?.status === 'CONFIRMED' || 
+        existingBooking?.status === 'PENDING_APPROVAL';
+
+      const bookingDetails = existingBooking ? {
+        meetingTime: existingBooking.meetingTime,
+        location: existingBooking.location,
+        timezone: existingBooking.timezone || undefined,
+      } : undefined;
+
+      const cleanUserMsg = userText.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+      const isAck = [
+        'thankyou', 'thanks', 'thankyousomuch', 'manythanks', 'thx', 'cheers',
+        'ok', 'okay', 'great', 'perfect', 'soundsgood', 'soundsgreat', 'seeyou',
+        'seeyouthen', 'seeyousoon', 'lookingforwardtoit', 'cantwait', 'done',
+        'cool', 'brilliant', 'awesome', 'yes', 'yep', 'yeah', 'right', 'noted'
+      ].includes(cleanUserMsg) || cleanUserMsg === '' || /^(\.|\?|!)+$/.test(userText.trim());
+
+      let aiResult: any;
+
+      if (isMeetingBooked && isAck) {
+        const leadDisplayName = resolvedName && resolvedName !== 'Guest' && resolvedName !== 'VIP Client' ? `, ${resolvedName}` : '';
+        const venueName = bookingDetails?.location || (isUkPhone ? 'Leicester Marriott Hotel' : 'The Pods Bluewaters');
+
+        let meetingDayStr = '';
+        if (bookingDetails?.meetingTime) {
+          try {
+            const mDate = new Date(bookingDetails.meetingTime);
+            meetingDayStr = ' on ' + mDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: bookingDetails.timezone || 'Europe/London' });
+          } catch (_) {}
+        }
+
+        const reply = `You're very welcome${leadDisplayName}! Looking forward to seeing you${meetingDayStr} at the ${venueName}. Let me know if you need any directions or questions before then!`;
+
+        aiResult = {
+          reply,
+          language: 'en',
+          action: 'NONE',
+        };
+      } else {
+        aiResult = await AIService.generateResponse({
+          leadName: resolvedName,
+          email: resolvedEmail,
+          phone: effectivePhone,
+          buyerLocation: existingLead?.buyerLocation || (isUkPhone ? 'United Kingdom' : undefined),
+          purchasePurpose: existingLead?.purchasePurpose || undefined,
+          budgetMin: existingLead?.budgetMin || undefined,
+          budgetMax: existingLead?.budgetMax || undefined,
+          timeline: existingLead?.timeline || undefined,
+          adSource: adSource || existingLead?.attributions?.[0]?.source || undefined,
+          campaignName: campaignName || existingLead?.attributions?.[0]?.campaign || undefined,
+          isMeetingBooked,
+          bookingDetails,
+          conversationHistory,
+          userMessage: userText,
+        });
+      }
 
       const latency = Date.now() - startTime;
       console.log(`[FAST] AI replied in ${latency}ms: "${aiResult.reply.substring(0, 80)}..."`);

@@ -20,7 +20,7 @@ export class MessageService {
       if (existing) return existing;
     }
 
-    return await prisma.message.create({
+    const message = await prisma.message.create({
       data: {
         conversationId: input.conversationId,
         senderType: input.senderType,
@@ -29,6 +29,14 @@ export class MessageService {
         deliveredAt: new Date(),
       },
     });
+
+    // Touch conversation updatedAt so active conversation sorting reflects latest activity
+    await prisma.conversation.update({
+      where: { id: input.conversationId },
+      data: { updatedAt: new Date() },
+    }).catch(() => {});
+
+    return message;
   }
 
   /**

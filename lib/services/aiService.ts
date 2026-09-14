@@ -14,6 +14,12 @@ export interface AIServiceOptions {
   timeline?: string;
   adSource?: string;
   campaignName?: string;
+  isMeetingBooked?: boolean;
+  bookingDetails?: {
+    meetingTime?: Date | string;
+    location?: string;
+    timezone?: string;
+  };
   conversationHistory: { sender: string; text: string }[];
   userMessage: string;
 }
@@ -60,6 +66,21 @@ export class AIService {
     const isUK = matchedCampaign.timezone === 'Europe/London';
     const isDubaiLocal = matchedCampaign.id === 'uae-default';
 
+    const bookedContext = options.isMeetingBooked ? `
+CRITICAL POST-BOOKING DIRECTIVE (MEETING ALREADY CONFIRMED):
+- A consultation/meeting has ALREADY BEEN CONFIRMED for this client:
+  * Scheduled Time: ${options.bookingDetails?.meetingTime ? new Date(options.bookingDetails.meetingTime).toLocaleString('en-GB', { timeZone: options.bookingDetails?.timezone || 'Europe/London' }) : 'Confirmed'}
+  * Venue / Location: ${options.bookingDetails?.location || (isUK ? 'Leicester Marriott Hotel' : 'The Pods Bluewaters Island / Google Meet')}
+- ABSOLUTE PROHIBITION: DO NOT ASK THEM TO BOOK AGAIN!
+- NEVER ask "Would Saturday or Sunday work better?", "Morning or afternoon?", or "Would you like to meet Minesh?".
+- NEVER ask for their email again.
+- If the client says "thank you", "thanks", "ok", "great", "see you then", "cheers", or acknowledges:
+  Respond warmly and concisely confirming you look forward to seeing them (e.g. "You're very welcome${options.leadName && options.leadName !== 'VIP Client' ? `, ${options.leadName}` : ''}! Really looking forward to seeing you at the ${options.bookingDetails?.location || 'Leicester Marriott'}. Let me know if you need any directions or questions before then!").
+- If the client asks a practical question (parking, directions, projects, attendees):
+  Answer directly and concisely, keeping in mind their appointment is already booked!
+- Set action: "NONE".
+` : '';
+
     // Build active events summary for AI awareness
     const activeEvents = getActiveEvents();
     const activeEventsContext = activeEvents.length > 0
@@ -76,6 +97,7 @@ ${activeEventsContext}
 CRITICAL GEOGRAPHIC & CAMPAIGN ROUTING DIRECTIVE:
 MATCHED CAMPAIGN: ${matchedCampaign.displayName} (ID: ${matchedCampaign.id})
 ${matchedCampaign.aiContext}
+${bookedContext}
 
 IDENTITY & NATURAL HUMAN TEXTING RULES (CRITICAL):
 - You are Aria, texting directly on WhatsApp on behalf of Minesh Patel (+44 7404 097586), Managing Director at The Pods Real Estate.
@@ -145,6 +167,7 @@ PERSISTENT CONVERSATION MEMORY (CRITICAL):
 - NEVER repeat the same greeting, question, or text you already sent earlier in the chat!
 - When the user answers your question (e.g. says "investment" or "personal use"):
   Acknowledge their choice in 1 line, then move the conversation to the next step (e.g. invite to the relevant event or Google Meet based on their campaign).
+- If a meeting/consultation is ALREADY CONFIRMED (options.isMeetingBooked is true or confirmed in history), NEVER propose meeting dates or ask when they are free! Follow the CRITICAL POST-BOOKING DIRECTIVE above.
 
 AD-CLICK LEAD INTELLIGENCE (CRITICAL — CHANGES YOUR FIRST RESPONSE):
 This lead's ad source: ${options.adSource || 'ORGANIC'}
@@ -493,6 +516,17 @@ You MUST return your response as a valid JSON object matching this exact schema:
     }
 
     const leadGreeting = options.leadName && options.leadName !== 'Guest' && options.leadName !== 'Unknown' && options.leadName !== 'VIP Client' ? `Hey ${options.leadName}!` : 'Hey!';
+
+    if (options.isMeetingBooked) {
+      const isAck = /thank|thx|cheers|ok|okay|great|perfect|see you|sounds good|done|brilliant/i.test(text);
+      if (isAck) {
+        return {
+          reply: `You're very welcome${options.leadName && options.leadName !== 'VIP Client' ? `, ${options.leadName}` : ''}! Looking forward to seeing you at the ${options.bookingDetails?.location || (isUK ? 'Leicester Marriott' : 'The Pods')}. Let me know if you need any directions or questions before then!`,
+          language: 'en',
+          action: 'NONE',
+        };
+      }
+    }
 
     // Form submission mock response
     if (text.includes('filled in your form') || text.includes('filled out your form') || text.includes('signed up for this event')) {
