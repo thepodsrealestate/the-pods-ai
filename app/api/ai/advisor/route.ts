@@ -141,11 +141,51 @@ export async function POST(req: Request) {
     const activeCampaigns = allCampaigns.filter((c: any) => c.status === 'Active');
     const pausedCampaigns = allCampaigns.filter((c: any) => c.status !== 'Active');
 
-    // 3. Fetch active ad creative & image if an active campaign exists
-    let activeCreative: AdCreativeInfo | null = null;
-    if (activeCampaigns.length > 0 && activeCampaigns[0].campaignId) {
-      activeCreative = await fetchActiveAdCreative(activeCampaigns[0].campaignId);
+    // 3. Disambiguate if user is asking about a specific campaign by name, ID, or keywords
+    const queryLower = query.toLowerCase();
+    const sortedCampaignsByLen = [...allCampaigns].sort((a, b) => (b.campaignName?.length || 0) - (a.campaignName?.length || 0));
+    
+    let targetCampaign: any = null;
+    
+    // Direct campaign ID match
+    targetCampaign = allCampaigns.find(c => c.campaignId && query.includes(c.campaignId));
+
+    // Exact or partial campaign name match (longest string first so 'leads 2' matches before prefix)
+    if (!targetCampaign) {
+      for (const c of sortedCampaignsByLen) {
+        if (c.campaignName && queryLower.includes(c.campaignName.toLowerCase())) {
+          targetCampaign = c;
+          break;
+        }
+      }
     }
+
+    // Suffix / alias matching (e.g. "leads 2", "campaign 2", "second campaign", "ad 2")
+    if (!targetCampaign) {
+      if (queryLower.includes('leads 2') || queryLower.includes('campaign 2') || queryLower.includes('second campaign') || queryLower.includes('2nd campaign') || queryLower.includes('ad 2')) {
+        targetCampaign = allCampaigns.find(c => c.campaignName?.toLowerCase().includes('leads 2') || c.campaignName?.toLowerCase().endsWith(' 2'));
+      } else if (queryLower.includes('leads 1') || queryLower.includes('campaign 1') || queryLower.includes('first campaign') || queryLower.includes('1st campaign') || queryLower.includes('ad 1')) {
+        targetCampaign = allCampaigns.find(c => !c.campaignName?.toLowerCase().includes('leads 2') && (c.campaignName?.toLowerCase().includes('sept26-27') || c.campaignName?.toLowerCase().includes('leicester')));
+      }
+    }
+
+    // 4. Fetch active ad creatives in parallel
+    const campaignsToFetch = targetCampaign && targetCampaign.campaignId
+      ? [targetCampaign, ...activeCampaigns.filter((c: any) => c.campaignId !== targetCampaign.campaignId)].slice(0, 3)
+      : activeCampaigns.slice(0, 3);
+
+    const creativesWithCampaigns = await Promise.all(
+      campaignsToFetch.map(async (c: any) => ({
+        campaign: c,
+        creative: await fetchActiveAdCreative(c.campaignId),
+      }))
+    );
+
+    const primaryTargetItem = targetCampaign
+      ? creativesWithCampaigns.find(item => item.campaign.campaignId === targetCampaign.campaignId) || creativesWithCampaigns[0]
+      : creativesWithCampaigns[0];
+
+    const activeCreative = primaryTargetItem?.creative || null;
 
     let activeCampaignsSummary = '';
     if (activeCampaigns.length > 0) {
@@ -173,16 +213,27 @@ export async function POST(req: Request) {
     }
 
     let creativeSection = '';
-    if (activeCreative) {
+    if (creativesWithCampaigns.length > 0) {
+      const creativeDescriptions = creativesWithCampaigns
+        .filter(item => item.creative)
+        .map(item => {
+          const cr = item.creative!;
+          const isTarget = targetCampaign && item.campaign.campaignId === targetCampaign.campaignId;
+          return `CAMPAIGN: "${item.campaign.campaignName}" (${item.campaign.platform.toUpperCase()})${isTarget ? ' [PRIMARY TARGET OF USER QUERY]' : ''}
+- Ad Name: "${cr.adName || 'Active Ad'}"
+- Media Format: ${cr.format} (${cr.format === 'IMAGE' ? 'Static Graphic Image Flyer (Zero video motion)' : 'Video Creative'})
+- Live Headline / Title: "${cr.headline}"
+- Live Description: "${cr.description}"
+- Live Primary Text (Ad Copy): "${cr.body}"
+- Call To Action Button: "${cr.callToAction}"
+- Computer Vision Status: ${cr.imageBase64 ? 'Active ad image attached directly to this prompt via multimodal vision. Analyze the actual image pixels, text hierarchy, and aesthetics.' : 'Image metadata loaded.'}`;
+        })
+        .join('\n\n');
+
       creativeSection = `
-ACTIVE AD CREATIVE DETAILS (INSPECTED LIVE VIA META API):
-- Ad Name: "${activeCreative.adName || 'Active Ad'}"
-- Media Format: ${activeCreative.format} (${activeCreative.format === 'IMAGE' ? 'Static Graphic Image Flyer (Zero video motion)' : 'Video Creative'})
-- Live Headline: "${activeCreative.headline}"
-- Live Description: "${activeCreative.description}"
-- Live Primary Text (Ad Copy): "${activeCreative.body}"
-- Call To Action Button: "${activeCreative.callToAction}"
-- Computer Vision Status: ${activeCreative.imageBase64 ? 'Active ad image attached directly to this prompt via multimodal vision. Analyze the actual image pixels, text hierarchy, and aesthetics.' : 'Image metadata loaded.'}
+ACTIVE AD CREATIVE DETAILS (INSPECTED LIVE VIA META GRAPH API):
+${creativeDescriptions}
+${targetCampaign ? `\nUSER SPECIFIC FOCUS: The user specifically asked about campaign "${targetCampaign.campaignName}". Direct your primary analysis, visual critique, and diagnosis specifically to this campaign's creative and metrics!` : ''}
 `;
     }
 
@@ -239,23 +290,40 @@ Return a valid JSON object with:
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey || apiKey === 'dummy_key' || apiKey.includes('placeholder')) {
+      const campName = targetCampaign?.campaignName || activeCampaigns[0]?.campaignName || 'Danube_DubaiExpo_Leicester_Sept26-27';
+      const head = activeCreative?.headline || 'Dubai Property Expo';
       return NextResponse.json({
         success: true,
-        answer: `Your active campaign Danube_DubaiExpo_Leicester_Sept26-27 is using a static graphic flyer ad titled "${activeCreative?.headline || '21 Seats Left'}" with zero video motion. Across 16 clicks, CTR sits at 0.70% with zero lead conversions. In the UK market, static flyers look like corporate brochures; switching to a 15-second vertical video walkthrough of Danube's project with a prominent "Leicester Marriott Hotel" hook will significantly lift CTR above 1.5%.`,
+        answer: `Your active campaign ${campName} is using an ad titled "${head}".`,
         bullets: [
-          `Deploy a 15-second vertical video reel featuring Danube's 1% payment plan and private balcony pool to replace the current static flyer.`,
-          `Rewrite headline from "21 Seats Left" to "Danube Dubai Expo Leicester: Luxury Apartments From 1% Monthly" for clearer value.`,
-          `Streamline instant form fields to Full Name, WhatsApp, and Investment Budget to eliminate form drop-off across clicks.`,
+          `Deploy a 15-second vertical video reel featuring Danube's 1% payment plan to replace static visuals.`,
+          `Refine ad copy to emphasize the Leicester Marriott Hotel venue for higher local relevance.`,
+          `Streamline instant form fields to eliminate drop-off.`,
         ],
       });
     }
 
-    const userMessageContent = activeCreative?.imageBase64
-      ? [
-          { type: 'text', text: query },
-          { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${activeCreative.imageBase64}` } },
-        ]
-      : query;
+    const userMessageContent: any[] = [{ type: 'text', text: query }];
+
+    if (primaryTargetItem?.creative?.imageBase64) {
+      userMessageContent.push({
+        type: 'image_url',
+        image_url: { url: `data:image/jpeg;base64,${primaryTargetItem.creative.imageBase64}` },
+      });
+    } else {
+      for (const item of creativesWithCampaigns) {
+        if (item.creative?.imageBase64) {
+          userMessageContent.push({
+            type: 'text',
+            text: `[Live Ad Image for Campaign: "${item.campaign.campaignName}"]`,
+          });
+          userMessageContent.push({
+            type: 'image_url',
+            image_url: { url: `data:image/jpeg;base64,${item.creative.imageBase64}` },
+          });
+        }
+      }
+    }
 
     const aiRes = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
