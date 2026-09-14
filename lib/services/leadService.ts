@@ -93,40 +93,48 @@ export class LeadService {
 
 
     if (!lead) {
-      lead = await prisma.lead.create({
-        data: {
-          phone: normalizedPhone,
-          fullName: isRealName(input.fullName) ? input.fullName!.trim() : null,
-          email: input.email && input.email.trim() ? input.email.trim().toLowerCase() : null,
-          manychatId: input.manychatId || null,
-          leadSource: input.leadSource || 'DIRECT',
-          buyerLocation: input.buyerLocation || null,
-          purchasePurpose: input.purchasePurpose || null,
-          budgetMin: input.budgetMin || null,
-          budgetMax: input.budgetMax || null,
-          timeline: input.timeline || null,
-          meetingPreference: input.meetingPreference || null,
-          status: LeadStatus.NEW,
-          aiEnabled: true,
-          handoffStatus: false,
-          attributions: input.attribution
-            ? {
-                create: {
-                  source: input.attribution.source || 'DIRECT',
-                  medium: input.attribution.medium || null,
-                  campaign: input.attribution.campaign || null,
-                  campaignId: input.attribution.campaignId || null,
-                  adSet: input.attribution.adSet || null,
-                  adId: input.attribution.adId || null,
-                  utmSource: input.attribution.utmSource || null,
-                  utmMedium: input.attribution.utmMedium || null,
-                  utmCampaign: input.attribution.utmCampaign || null,
-                },
-              }
-            : undefined,
-        },
-        include: { attributions: true },
-      });
+      try {
+        lead = await prisma.lead.create({
+          data: {
+            phone: normalizedPhone,
+            fullName: isRealName(input.fullName) ? input.fullName!.trim() : null,
+            email: input.email && input.email.trim() ? input.email.trim().toLowerCase() : null,
+            manychatId: input.manychatId || null,
+            leadSource: input.leadSource || 'DIRECT',
+            buyerLocation: input.buyerLocation || null,
+            purchasePurpose: input.purchasePurpose || null,
+            budgetMin: input.budgetMin || null,
+            budgetMax: input.budgetMax || null,
+            timeline: input.timeline || null,
+            meetingPreference: input.meetingPreference || null,
+            status: LeadStatus.NEW,
+            aiEnabled: true,
+            handoffStatus: false,
+            attributions: input.attribution
+              ? {
+                  create: {
+                    source: input.attribution.source || 'DIRECT',
+                    medium: input.attribution.medium || null,
+                    campaign: input.attribution.campaign || null,
+                    campaignId: input.attribution.campaignId || null,
+                    adSet: input.attribution.adSet || null,
+                    adId: input.attribution.adId || null,
+                    utmSource: input.attribution.utmSource || null,
+                    utmMedium: input.attribution.utmMedium || null,
+                    utmCampaign: input.attribution.utmCampaign || null,
+                  },
+                }
+              : undefined,
+          },
+          include: { attributions: true },
+        });
+      } catch (createErr: any) {
+        lead = await prisma.lead.findFirst({
+          where: { OR: searchConditions },
+          include: { attributions: true },
+        });
+        if (!lead) throw createErr;
+      }
     } else {
       // Update existing lead if real phone number, fuller name, or ManyChat subscriber ID arrives
       const updateData: any = {};
@@ -184,6 +192,27 @@ export class LeadService {
           orderBy: { createdAt: 'asc' },
         });
       }
+    }
+
+    // Failsafe: Guarantee strict 1-conversation-per-lead invariant
+    const allConvs = await prisma.conversation.findMany({
+      where: { leadId },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    if (allConvs.length > 1) {
+      const primary = allConvs[0];
+      const duplicates = allConvs.slice(1);
+      for (const dup of duplicates) {
+        await prisma.message.updateMany({
+          where: { conversationId: dup.id },
+          data: { conversationId: primary.id },
+        }).catch(() => {});
+        await prisma.conversation.delete({
+          where: { id: dup.id },
+        }).catch(() => {});
+      }
+      return primary;
     }
 
     return conversation!;

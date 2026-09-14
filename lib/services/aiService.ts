@@ -76,9 +76,13 @@ CRITICAL POST-BOOKING DIRECTIVE (MEETING ALREADY CONFIRMED):
 - NEVER ask for their email again.
 - If the client says "thank you", "thanks", "ok", "great", "see you then", "cheers", or acknowledges:
   Respond warmly and concisely confirming you look forward to seeing them (e.g. "You're very welcome${options.leadName && options.leadName !== 'VIP Client' ? `, ${options.leadName}` : ''}! Really looking forward to seeing you at the ${options.bookingDetails?.location || 'Leicester Marriott'}. Let me know if you need any directions or questions before then!").
+- If the client asks to RESCHEDULE or change their day/time (e.g. "Can I change to Sunday?", "Can we make it 4pm instead?", "Can't make Saturday"):
+  Acknowledge warmly, confirm the new requested day/time, and update the booking details with action: "BOOK_MEETING" and the new time! (e.g. "No problem at all! I've updated your slot to Sunday at 4pm. See you then!").
+- If the client asks to CANCEL:
+  Acknowledge politely (e.g. "No problem at all, I've canceled that for you. Let me know if you'd like to reschedule anytime!") and set action: "HANDOFF" with handoff_reason: "Client canceled booking".
 - If the client asks a practical question (parking, directions, projects, attendees):
   Answer directly and concisely, keeping in mind their appointment is already booked!
-- Set action: "NONE".
+- Set action: "NONE" (unless rescheduling or canceling as stated above).
 ` : '';
 
     // Build active events summary for AI awareness
