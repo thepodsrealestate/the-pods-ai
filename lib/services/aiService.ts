@@ -25,7 +25,7 @@ export interface AIServiceOptions {
 }
 
 export class AIService {
-  public static readonly PROMPT_VERSION = 'aria-v2.0';
+  public static readonly PROMPT_VERSION = 'aria-v2.1';
 
   /**
    * Load Published Property Catalog
@@ -172,6 +172,25 @@ PERSISTENT CONVERSATION MEMORY (CRITICAL):
 - When the user answers your question (e.g. says "investment" or "personal use"):
   Acknowledge their choice in 1 line, then move the conversation to the next step (e.g. invite to the relevant event or Google Meet based on their campaign).
 - If a meeting/consultation is ALREADY CONFIRMED (options.isMeetingBooked is true or confirmed in history), NEVER propose meeting dates or ask when they are free! Follow the CRITICAL POST-BOOKING DIRECTIVE above.
+
+STRICT ANTI-REPETITION & ANTI-FORCE RULES (CRITICAL):
+- NEVER repeat the exact same qualification question twice in a conversation!
+- If you already asked "Are you based in Dubai or looking from overseas?" or "Looking for rental income or personal use?", and the user does NOT answer or deflects with small talk/greetings, DO NOT REPEAT THE QUESTION!
+- Real humans never badger contacts with repetitive sales questions. If they ask a question (e.g. "How is work?", "How are you?"), answer them naturally and genuinely like a normal person without forcing a sales pitch at the end.
+
+PERSONAL ACQUAINTANCES & CASUAL CATCH-UP DIRECTIVE (CRITICAL):
+- When someone reaches out directly on WhatsApp with personal, warm, or informal expressions like:
+  * "brother", "bro", "sister"
+  * "long time", "long time ooo", "it's been a while"
+  * "you don forget me", "you don't remember me", "remember me?"
+  * "how is the family", "how is work", "how have you been"
+  * casual catch-up greetings with NO mention of wanting to buy real estate:
+- ONLY IF they have NO active interest or inquiry about real estate/property:
+  * DO NOT PITCH REAL ESTATE! Do NOT ask if they want to buy property in Dubai.
+  * Reply warmly and politely as Minesh's team/concierge:
+    Example: "Hey! Great to hear from you! Minesh is in meetings right now, but I'll let him know you messaged so he can catch up with you directly here shortly."
+  * Set action: "HANDOFF" and handoff_reason: "Personal acquaintance / casual catch-up on WhatsApp".
+- NOTE: If someone says "Hey brother, what is the price of Bayz 102?", they ARE asking about property! Answer their property question normally with action: "NONE" or "UPDATE_LEAD".
 
 AD-CLICK LEAD INTELLIGENCE (CRITICAL — CHANGES YOUR FIRST RESPONSE):
 This lead's ad source: ${options.adSource || 'ORGANIC'}
@@ -516,6 +535,24 @@ You MUST return your response as a valid JSON object matching this exact schema:
         language: 'en',
         action: 'HANDOFF',
         handoff_reason: 'Lead explicitly requested human contact',
+      };
+    }
+
+    // Personal acquaintance / casual catch-up detection (direct WhatsApp)
+    const isPersonalCatchup = 
+      text.includes('long time') || 
+      text.includes('forget me') || 
+      text.includes('remember me') || 
+      text.includes('how is work') || 
+      text.includes('how is the family') ||
+      (text.includes('brother') && !text.includes('property') && !text.includes('buy') && !text.includes('price') && !text.includes('danube') && !text.includes('binghatti'));
+
+    if (isPersonalCatchup && (options.adSource === 'WHATSAPP_DIRECT' || options.adSource === 'ORGANIC' || !options.adSource)) {
+      return {
+        reply: `Hey${options.leadName && options.leadName !== 'VIP Client' ? ` ${options.leadName}` : ''}! Great to hear from you! Minesh is in meetings right now, but I'll let him know you reached out so he can catch up with you directly shortly.`,
+        language: 'en',
+        action: 'HANDOFF',
+        handoff_reason: 'Personal contact / casual catch-up on WhatsApp',
       };
     }
 
