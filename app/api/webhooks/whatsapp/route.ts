@@ -484,9 +484,9 @@ export async function POST(req: NextRequest) {
       } else if (body.campaign_id || body.ad_id) {
         adSource = 'FACEBOOK_ADS';
         campaignName = utmCampaign || 'Meta Ad Campaign';
-      } else if (userText.includes('[GADS]') || userText === 'Can I get more info on this?' || userText === 'Hello! Can I get more info on this?' || (userTextLower.includes('can i get more info') && conversationHistory.length === 0)) {
+      } else if (userText.includes('[GADS') || userText === 'Can I get more info on this?' || userText === 'Hello! Can I get more info on this?' || (userTextLower.includes('can i get more info') && conversationHistory.length === 0)) {
         adSource = 'GOOGLE_ADS';
-        campaignName = 'Google Display Campaign';
+        campaignName = userTextLower.includes('leicester') ? 'Danube_DubaiExpo_Leicester_Sept26-27' : 'Google Demand Gen Video';
       } else if (
         userText.includes('[META]') || 
         userText.includes('[FB]') || 
@@ -657,12 +657,12 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         utmMedium: utmMedium || undefined,
         utmCampaign: utmCampaign || undefined,
       };
-    } else if (userText && (userText.includes('[GADS]') || userText.toLowerCase().includes('google') || userText.includes('Can I get more info on this?'))) {
+    } else if (userText && (userText.includes('[GADS') || userText.toLowerCase().includes('google') || userText.includes('Can I get more info on this?'))) {
       leadSource = 'GOOGLE_ADS';
       attributionObj = {
         source: 'GOOGLE_ADS',
-        medium: 'display',
-        campaign: 'Dubai Offplan Display Campaign',
+        medium: 'video',
+        campaign: userText.toLowerCase().includes('leicester') ? 'Danube_DubaiExpo_Leicester_Sept26-27' : 'Google Demand Gen Video',
       };
     }
 
