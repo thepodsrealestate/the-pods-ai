@@ -7,7 +7,7 @@ import { NotificationService } from '@/lib/services/notificationService';
 import { CalendarService } from '@/lib/services/calendarService';
 import { WhisperService } from '@/lib/services/whisperService';
 import { LeadStatus } from '@prisma/client';
-import { getCampaignForLead, CampaignConfig } from '@/lib/config/campaigns';
+import { getCampaignForLead, getActiveEvents, CampaignConfig } from '@/lib/config/campaigns';
 
 // Sliding Window Rate Limiter (tracks phone -> request timestamps)
 const requestTracker = new Map<string, number[]>();
@@ -187,12 +187,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ status: 'error', reply: 'Welcome to The Pods Real Estate! How can I help?' });
     }
 
+    // STRICT SUPPRESSION OF EMPTY/BLANK INBOUND WEBHOOKS
+    // ManyChat often fires a secondary contact-update trigger with empty text ("") immediately after a lead form.
+    if (!userText || userText.trim().length === 0) {
+      console.log(`[IGNORE EMPTY] No message content or audio for ${phone} — suppressing reply generation`);
+      return NextResponse.json({ status: 'empty_ignored', reply: '' });
+    }
+
     // Rate Limiting (max 10 requests per minute per phone number)
     if (!checkRateLimit(phone, 10, 60000)) {
       console.warn(`[RATE LIMIT] Throttled ${phone}`);
       return NextResponse.json({
         status: 'rate_limited',
-        reply: 'Thank you for contacting The Pods Real Estate. Our team is preparing your details.',
+        reply: '',
       }, { status: 429 });
     }
 
@@ -202,17 +209,15 @@ export async function POST(req: NextRequest) {
     } catch (_) { /* fallback to raw phone */ }
 
     const now = Date.now();
-    const textSnippet = userText.trim().toLowerCase().substring(0, 30).replace(/[^a-z0-9]/g, '');
-    const dedupKey = `${normalizedPhone}_${textSnippet}`;
+    const dedupKey = normalizedPhone;
 
     // 1. Distributed Database-Level Atomic Idempotency Lock (PostgreSQL ACID)
-    // Prevents parallel Vercel Serverless Lambdas from ever processing the exact same message concurrently
-    // Uses a boundary-free unique key with 15-second TTL to eliminate timeBucket split bugs
-    const distributedLockKey = `LOCK_${normalizedPhone}_${textSnippet}`;
-    const lockCutoff = new Date(Date.now() - 15000);
+    // Locked strictly by normalizedPhone with 10-second TTL to prevent duplicate concurrent webhooks for the same lead
+    const distributedLockKey = `LOCK_${normalizedPhone}`;
+    const lockCutoff = new Date(Date.now() - 10000);
 
     try {
-      // Clear expired lock if more than 15 seconds old
+      // Clear expired lock if more than 10 seconds old
       await prisma.webhookEvent.deleteMany({
         where: {
           eventId: distributedLockKey,
@@ -220,12 +225,12 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Atomically claim the lock for this phone + message snippet
+      // Atomically claim the lock for this phone number
       await prisma.webhookEvent.create({
         data: {
           eventId: distributedLockKey,
           eventType: 'INBOUND_WHATSAPP_LOCK',
-          payload: { phone: normalizedPhone, textSnippet, timestamp: now },
+          payload: { phone: normalizedPhone, userText: userText.substring(0, 50), timestamp: now },
         },
       });
 
@@ -244,11 +249,14 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 2. In-Memory Level Fast Cache
+    // 2. In-Memory Level Fast Cache (phone-level cooldown)
     const recent = recentCompletedResponses.get(dedupKey);
-    if (recent && now - recent.timestamp < 6000) {
-      console.log(`[DEDUP] In-memory duplicate request from ${normalizedPhone} within 6s — returning cached response`);
-      return NextResponse.json(recent.response);
+    if (recent && now - recent.timestamp < 10000) {
+      console.log(`[DEDUP] In-memory duplicate request from ${normalizedPhone} within 10s — returning empty reply`);
+      return NextResponse.json({
+        status: 'dedup_suppressed',
+        reply: '',
+      });
     }
 
     const processExecution = async () => {
@@ -455,6 +463,24 @@ export async function POST(req: NextRequest) {
             sender: m.senderType === 'LEAD' ? 'LEAD' : 'AI',
             text: m.content,
           }));
+
+          // CRITICAL DOUBLE-SEND GUARD: If an AI message was already sent to this lead in the last 12 seconds, suppress duplicate
+          const lastAiMsg = existingLead.conversations[0].messages.find((m: any) => m.senderType === 'AI');
+          if (lastAiMsg) {
+            const timeSinceLastAi = Date.now() - new Date(lastAiMsg.createdAt).getTime();
+            if (timeSinceLastAi < 12000) {
+              console.log(`[RAPID AI SUPPRESSION] Bot already messaged ${normalizedPhone} ${timeSinceLastAi}ms ago — suppressing duplicate message`);
+              return {
+                status: 'duplicate_suppressed',
+                reply: '',
+                ai_reply: '',
+                text: '',
+                action: 'NONE',
+                language: 'en',
+                latency_ms: Date.now() - startTime,
+              };
+            }
+          }
         }
 
         // CRITICAL: If AI is toggled OFF for this lead, save the message but DO NOT generate AI reply
@@ -494,7 +520,8 @@ export async function POST(req: NextRequest) {
         campaignName = utmCampaign || 'Meta Ad Campaign';
       } else if (userText.includes('[GADS') || userText === 'Can I get more info on this?' || userText === 'Hello! Can I get more info on this?' || (userTextLower.includes('can i get more info') && conversationHistory.length === 0)) {
         adSource = 'GOOGLE_ADS';
-        campaignName = userTextLower.includes('leicester') ? 'Danube_DubaiExpo_Leicester_Sept26-27' : 'Google Demand Gen Video';
+        const matchedCamp = getCampaignForLead({ phone: normalizedPhone || phone, userText: userTextLower });
+        campaignName = matchedCamp.type === 'event' ? matchedCamp.name : 'Google Demand Gen Video';
       } else if (
         userText.includes('[META]') || 
         userText.includes('[FB]') || 
@@ -513,7 +540,8 @@ export async function POST(req: NextRequest) {
           userTextLower.includes('marriott') || 
           userTextLower.includes('event');
 
-        campaignName = isUkOrLeicester ? 'Danube_DubaiExpo_Leicester_Sept26-27' : 'Meta Ad Campaign';
+        const matchedCamp = getCampaignForLead({ phone: normalizedPhone || phone, userText: userTextLower });
+        campaignName = matchedCamp.type === 'event' ? matchedCamp.name : (isUkOrLeicester ? 'Meta UK Campaign' : 'Meta Ad Campaign');
       }
 
       // Check if existing lead has campaign attribution
@@ -552,7 +580,7 @@ export async function POST(req: NextRequest) {
 
       if (isMeetingBooked && isAck) {
         const leadDisplayName = resolvedName && resolvedName !== 'Guest' && resolvedName !== 'VIP Client' ? `, ${resolvedName}` : '';
-        const venueName = bookingDetails?.location || (isUkPhone ? 'Leicester Marriott Hotel' : 'The Pods Bluewaters');
+        const venueName = bookingDetails?.location || (isUkPhone ? (getActiveEvents().length > 0 ? 'Leicester Marriott Hotel' : 'Google Meet') : 'The Pods Bluewaters');
 
         let meetingDayStr = '';
         if (bookingDetails?.meetingTime) {
@@ -698,10 +726,11 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       )
     ) {
       leadSource = 'FACEBOOK_ADS';
+      const matchedCamp = getCampaignForLead({ phone: extractedFormPhone, userText: userText.toLowerCase() });
       attributionObj = {
         source: 'FACEBOOK_ADS',
         medium: 'cpc',
-        campaign: isUkNumber ? 'Danube_DubaiExpo_Leicester_Sept26-27' : 'Meta Instant Form',
+        campaign: matchedCamp.type === 'event' ? matchedCamp.name : (isUkNumber ? 'Meta UK Campaign' : 'Meta Instant Form'),
       };
     }
 
@@ -766,15 +795,20 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       if (aiResult.lead_updates.timeline) updates.timeline = aiResult.lead_updates.timeline;
       if (aiResult.lead_updates.meeting_preference) updates.meetingPreference = aiResult.lead_updates.meeting_preference;
       if (extractedEmail) updates.email = extractedEmail;
-      if (isUkNumber) updates.buyerLocation = 'United Kingdom (Leicester Expo)';
+      if (isUkNumber) {
+        const activeCamp = getCampaignForLead({ phone: extractedFormPhone });
+        updates.buyerLocation = activeCamp.type === 'event' ? `United Kingdom (${activeCamp.displayName})` : 'United Kingdom';
+      }
       if (manychatSubId && lead.manychatId !== String(manychatSubId)) updates.manychatId = String(manychatSubId);
       if (Object.keys(updates).length > 0) {
         await prisma.lead.update({ where: { id: lead.id }, data: updates });
       }
     } else {
       const fallbackUpdates: any = {};
-      if (isUkNumber && lead.buyerLocation !== 'United Kingdom (Leicester Expo)') {
-        fallbackUpdates.buyerLocation = 'United Kingdom (Leicester Expo)';
+      if (isUkNumber) {
+        const activeCamp = getCampaignForLead({ phone: extractedFormPhone });
+        const expectedLoc = activeCamp.type === 'event' ? `United Kingdom (${activeCamp.displayName})` : 'United Kingdom';
+        if (lead.buyerLocation !== expectedLoc) fallbackUpdates.buyerLocation = expectedLoc;
       }
       if (manychatSubId && lead.manychatId !== String(manychatSubId)) {
         fallbackUpdates.manychatId = String(manychatSubId);

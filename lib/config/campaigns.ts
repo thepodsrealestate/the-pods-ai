@@ -200,10 +200,18 @@ export const CAMPAIGNS: CampaignConfig[] = [
  * Check if a campaign is currently active (not expired)
  */
 export function isCampaignActive(campaign: CampaignConfig): boolean {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const endDate = new Date(campaign.dates.end + 'T23:59:59');
-  return endDate >= today;
+  try {
+    const tz = campaign.timezone || 'Europe/London';
+    const nowStr = new Date().toLocaleString('en-US', { timeZone: tz });
+    const nowInTz = new Date(nowStr);
+    const endDate = new Date(campaign.dates.end + 'T23:59:59');
+    return endDate >= nowInTz;
+  } catch (_) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const endDate = new Date(campaign.dates.end + 'T23:59:59');
+    return endDate >= today;
+  }
 }
 
 /**

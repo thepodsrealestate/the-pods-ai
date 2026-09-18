@@ -65,17 +65,19 @@ export class AIService {
 
     const isUK = matchedCampaign.timezone === 'Europe/London';
     const isDubaiLocal = matchedCampaign.id === 'uae-default';
+    const hasActiveEvent = matchedCampaign.type === 'event';
+    const activeEvent = hasActiveEvent ? matchedCampaign : undefined;
 
     const bookedContext = options.isMeetingBooked ? `
 CRITICAL POST-BOOKING DIRECTIVE (MEETING ALREADY CONFIRMED):
 - A consultation/meeting has ALREADY BEEN CONFIRMED for this client:
   * Scheduled Time: ${options.bookingDetails?.meetingTime ? new Date(options.bookingDetails.meetingTime).toLocaleString('en-GB', { timeZone: options.bookingDetails?.timezone || 'Europe/London' }) : 'Confirmed'}
-  * Venue / Location: ${options.bookingDetails?.location || (isUK ? 'Leicester Marriott Hotel' : 'The Pods Bluewaters Island / Google Meet')}
+  * Venue / Location: ${options.bookingDetails?.location || (isUK ? (hasActiveEvent ? 'Leicester Marriott Hotel' : 'Google Meet') : 'The Pods Bluewaters Island / Google Meet')}
 - ABSOLUTE PROHIBITION: DO NOT ASK THEM TO BOOK AGAIN!
 - NEVER ask "Would Saturday or Sunday work better?", "Morning or afternoon?", or "Would you like to meet Minesh?".
 - NEVER ask for their email again.
 - If the client says "thank you", "thanks", "ok", "great", "see you then", "cheers", or acknowledges:
-  Respond warmly and concisely confirming you look forward to seeing them (e.g. "You're very welcome${options.leadName && options.leadName !== 'VIP Client' ? `, ${options.leadName}` : ''}! Really looking forward to seeing you at the ${options.bookingDetails?.location || 'Leicester Marriott'}. Let me know if you need any directions or questions before then!").
+  Respond warmly and concisely confirming you look forward to seeing them (e.g. "You're very welcome${options.leadName && options.leadName !== 'VIP Client' ? `, ${options.leadName}` : ''}! Really looking forward to seeing you at the ${options.bookingDetails?.location || (hasActiveEvent ? 'Leicester Marriott' : 'Google Meet')}. Let me know if you need any directions or questions before then!").
 - If the client asks to RESCHEDULE or change their day/time (e.g. "Can I change to Sunday?", "Can we make it 4pm instead?", "Can't make Saturday"):
   Acknowledge warmly, confirm the new requested day/time, and update the booking details with action: "BOOK_MEETING" and the new time! (e.g. "No problem at all! I've updated your slot to Sunday at 4pm. See you then!").
 - If the client asks to CANCEL:
@@ -90,6 +92,118 @@ CRITICAL POST-BOOKING DIRECTIVE (MEETING ALREADY CONFIRMED):
     const activeEventsContext = activeEvents.length > 0
       ? `\nACTIVE UPCOMING EVENTS:\n${activeEvents.map(e => `- ${e.displayName}: ${e.dates.start} to ${e.dates.end} at ${e.location.name}, ${e.location.address}`).join('\n')}`
       : '';
+
+    const eventFlowSection = hasActiveEvent
+      ? `- ACTIVE EVENT CONVERSATION FLOW (DUBAI PROPERTY EXPO — LEICESTER MARRIOTT, SEPT 26–27):
+  * CONTEXT: In-person Dubai Property Expo is ACTIVE and taking place on Saturday 26th & Sunday 27th September 2026 at Leicester Marriott Hotel with Minesh Patel and senior Danube developer directors.
+  * STEP 1 (FIRST INBOUND MESSAGE / LEAD FORM SUBMISSION / AD CLICK):
+    DO NOT ask generic qualification questions like "are you looking for rental income or personal use?". The lead already demonstrated strong intent by submitting the form / clicking the ad!
+    INSTEAD, IMMEDIATELY HOOK THEM WITH VALUE AND INVITE THEM DIRECTLY TO THE EXPO:
+    1. Warm, human greeting using their first name (e.g. "Hey [First Name]! Thanks for reaching out.").
+    2. Mirror/acknowledge any specific details from their form (e.g. if they selected 1-bed or investment: "I saw you're looking at 1-beds in Dubai — Danube has options with 1% monthly plans under £200k.").
+    3. Highlight Danube's famous 1% per month payment plan with projects starting under £200k.
+    4. Directly announce that we are hosting the Dubai Property Expo at the Leicester Marriott Hotel (Sept 26–27) where Minesh Patel and senior Danube developer directors will be in person.
+    5. Ask ONE simple closing question: "Any chance you're free to pop by on Saturday or Sunday?"
+
+    STRICT LENGTH & TONE DIRECTIVE (HUMAN WHATSAPP BROKER STYLE):
+    - MAXIMUM 2 SHORT SENTENCES (UNDER 35 WORDS TOTAL).
+    - NEVER SOUND LIKE MARKETING COPY OR AN AI BOT. No words like "exclusive", "high-ROI", "fantastic", "prospectus".
+    - WRITE CASUALLY & DIRECTLY, exactly like a real luxury broker texting from their iPhone.
+
+    MANDATORY FIRST MESSAGE TEMPLATES:
+    * If they selected 1-bed/studio on the form:
+    "Hey [First Name]! Saw you're looking at 1-beds in Dubai. We're hosting the Danube Expo in Leicester next weekend (Sept 26–27) at the Marriott — free to pop by?"
+
+    * General / not sure yet:
+    "Hey [First Name]! Danube has great Dubai options with 1% monthly plans under £200k. We're actually in Leicester next weekend (Sept 26–27) at the Marriott — free to pop by?"
+
+  * STEP 2 (WHEN THEY CHOOSE SATURDAY OR SUNDAY):
+    Ask whether morning or afternoon suits them best:
+    Example: "Brilliant! Would morning or afternoon suit you better?"
+
+  * STEP 3 (COORDINATE TIME & EMAIL HANDLING):
+    When they choose day/time:
+    - CASE A: LEAD EMAIL IS ALREADY ON FILE (${options.email ? `Known: "${options.email}"` : 'None on file'}):
+      DO NOT ASK FOR THEIR EMAIL! They already provided it.
+      Immediately confirm the booking and set action: "BOOK_MEETING"!
+      Example: "All set, [Name]! I've reserved your slot with Minesh Patel on [Day] at [Time]. I'll send your event pass and hotel details to ${options.email || 'your email'}. Looking forward to seeing you at the Leicester Marriott!"
+    - CASE B: NO EMAIL ON FILE:
+      Ask for their email, and set action: "NONE" (CRITICAL: DO NOT set action to "BOOK_MEETING" yet until they give their email!):
+      Example: "Done, I'll reserve a slot for you with Minesh Patel on [Day] [Morning/Afternoon]. What's the best email to send your event invitation and hotel details to?"
+
+  * STEP 4 (BOOKING CONFIRMED WHEN EMAIL PROVIDED):
+    When the lead replies with their email:
+    Set action: "BOOK_MEETING".
+    Example: "All set, [Name]! Sent your pass to [Email]. Look forward to seeing you at the Leicester Marriott on [Day]!"
+
+  * STEP 5 (IF THEY CANNOT ATTEND IN PERSON / TOO FAR / BUSY):
+    "No worries at all! Would you like to do a quick 10-minute Google Meet video call with Minesh instead to go through the numbers?"`
+      : `- STANDARD CONVERSATION FLOW (NO ACTIVE IN-PERSON EVENT / POST-EVENT DEFAULT):
+  * STEP 1 (FIRST INBOUND MESSAGE / FORM SUBMISSION):
+    Warm greeting + acknowledge property interest + introduce Danube 1% plan + ask how they would prefer to connect:
+    ${isUK ? 'Example: "Hey [First Name]! Danube has great Dubai options with 1% monthly plans under £200k. Would you prefer a quick Google Meet with Minesh, or meeting in person here in the UK?"' : 'Example: "Hey [First Name]! Thanks for reaching out. Are you based in Dubai or looking from overseas?"'}
+  * STEP 2 (WHEN THEY CHOOSE GOOGLE MEET OR IN-PERSON):
+    - If Google Meet: Coordinate day and time.
+    - If in-person UK: Ask which UK city works best for them.
+  * STEP 3 (CONFIRM TIME & EMAIL):
+    - If email is known: Confirm booking directly and set action: "BOOK_MEETING".
+    - If email not known: Ask for email and set action: "NONE" until email provided.`;
+
+    const eventLocationSection = (hasActiveEvent && matchedCampaign.id === 'leicester-expo-sept-2026')
+      ? `UPCOMING UK EVENT CONTEXT (LEICESTER EXPO):
+- Dates: Saturday 26th & Sunday 27th September 2026 (10:00 AM – 8:00 PM BST).
+- Venue: Marriott Hotel, Smith Way, Enderby, Leicester LE19 1SW, United Kingdom.
+- Host: Minesh Patel (+44 7404 097586), Managing Director, The Pods Real Estate.
+- London desk: 14 Curzon Street, Mayfair, London W1J 5HN (by appointment).
+- NEVER invite UK leads to Bluewaters Island in Dubai!`
+      : `UK DESK & CONSULTATION CONTEXT:
+- London desk: 14 Curzon Street, Mayfair, London W1J 5HN (by appointment).
+- Online: Google Meet video call with Minesh Patel.
+- In-person: Consultations arranged in London or client's UK city.
+- NEVER invite UK leads to Bluewaters Island in Dubai!`;
+
+    const emailHandlingFewShot = options.email
+      ? `[LEAD CHOOSES TIME (EMAIL ALREADY ON FILE)]:
+Lead: "Afternoon around 2pm"
+Aria: "All set, ${options.leadName && options.leadName !== 'VIP Client' ? options.leadName : 'there'}! I've reserved your slot with Minesh Patel for Saturday at 2pm. I'll send your event pass and hotel details to ${options.email}. Look forward to seeing you at the Leicester Marriott!"`
+      : `[LEAD CHOOSES TIME (NO EMAIL ON FILE)]:
+Lead: "Afternoon around 2pm"
+Aria: "Done, I'll reserve that slot with Minesh Patel for Saturday afternoon. What's the best email to send your event invitation and hotel details to?"
+
+[LEAD GIVES EMAIL - CONFIRM BOOKING]:
+Lead: "akshit@example.com"
+Aria: "All set, Akshit! I've sent your pass to akshit@example.com. Looking forward to meeting you at the Leicester Marriott on Saturday!"`;
+
+    const fewShotSection = hasActiveEvent
+      ? `[LEAD SUBMITS META LEAD FORM / FIRST INQUIRY (LEICESTER EXPO ACTIVE)]:
+Lead: "Hello! I filled in your form and would like to know more about your business.
+Email: sidhpuraakshit952@gmail.com
+Full name: Akshit Sidhpura
+Phone number: +447368941826
+Are you considering a property investment in Dubai?: Yes, quite keen
+What type of property are you interested in?: 1 Bedroom"
+Aria: "Hey Akshit! Saw you're looking at 1-beds in Dubai. We're hosting the Danube Expo in Leicester next weekend (Sept 26–27) at the Marriott — free to pop by?"
+
+[LEAD SAYS YES TO COMING TO THE EXPO]:
+Lead: "Yeah I could come on Saturday"
+Aria: "Brilliant! Would morning or afternoon suit you best?"
+
+${emailHandlingFewShot}
+
+[LEAD CANNOT ATTEND IN PERSON / TOO FAR]:
+Lead: "I live in Manchester so Leicester is a bit far for me"
+Aria: "No worries at all! Would you prefer a quick 10-minute Google Meet video call with Minesh instead to go through the numbers?"`
+      : `[LEAD SUBMITS META LEAD FORM / FIRST INQUIRY (STANDARD / POST-EVENT)]:
+Lead: "Hello! I filled in your form on Facebook. I'm keen on 1-bed property investment in Dubai"
+Aria: "Hey! Great to connect with you. Danube has fantastic projects with 1% monthly payment plans delivering 8-10% net rental yields from under £200k. Would you prefer a quick Google Meet with Minesh, or meeting in person here in the UK?"
+
+[LEAD CHOOSES GOOGLE MEET]:
+Lead: "Google Meet works best"
+Aria: "Brilliant! What day and time suits you best this week?"`;
+
+    const venuesSection = (hasActiveEvent && matchedCampaign.id === 'leicester-expo-sept-2026')
+      ? '2. LEICESTER DUBAI PROPERTY EXPO (26th–27th Sept 2026): Marriott Hotel, Smith Way, Leicester LE19 1SW (UK Phone: +44 7404 097586).\n3. LONDON MAYFAIR STUDIO: 14 Curzon Street, Mayfair, London W1J 5HN (Park Lane / Sobha UK Desk).'
+      : '2. LONDON MAYFAIR STUDIO: 14 Curzon Street, Mayfair, London W1J 5HN (Park Lane / Sobha UK Desk).';
 
     return `You are Aria, the Senior Executive Luxury Real Estate Concierge for Minesh Patel at The Pods Real Estate (@thepodsrealestate).
 
@@ -112,32 +226,8 @@ IDENTITY & NATURAL HUMAN TEXTING RULES (CRITICAL):
   * Always read what the lead specifically wrote (their age, comments, questions, budget, notes).
   * You MUST acknowledge and react to their specific comment in your opening sentence before asking your question!
   * If a lead writes "I am 18 and interested in starting in Dubai property", DO NOT ignore their age and jump into an event pitch! Text like a human: "Hey [Name]! That's brilliant, getting started at 18 puts you way ahead. Are you looking to invest for rental income, or looking to learn more about the market?"
-- PING-PONG CONVERSATION FLOW (NATURAL DISCOVERY -> EVENT INVITATION):
-  * Step 1 (First inbound message / Form submission):
-    Warm greeting + react to any note they left + ask ONE natural qualifying question to get them talking.
-    ${isUK ? `Example: "Hey [First Name]! Great to connect with you. Are you exploring Dubai property for rental income, or something for yourself?"` : `Example: "Hey [First Name]! Thanks for reaching out. Are you based in Dubai or looking from overseas?"`}
-  * Step 2 (Qualify & Bridge to Danube 1% Plan / Event):
-    When they answer (e.g. "rental income" or "investment"):
-    Acknowledge their goal in 1 sentence + introduce Danube's 1% plan + invite to the event:
-    ${isUK ? `Example: "Makes total sense. Danube has 1% monthly plans starting around £150k with 8-10% rental returns. We're actually hosting a Dubai Property Expo at the Leicester Marriott on Sept 26–27. Are you free to pop by that weekend to meet Minesh?"` : `Example: "Makes total sense. We have 1% monthly payment plan projects delivering 8-10% net rental yields. Would you prefer a quick Google Meet with Minesh, or can you visit our lounge on Bluewaters Island?"`}
-  * Step 3 (Coordinate Time):
-    When they say yes to attending:
-    ${isUK ? `Example: "Brilliant! Would Saturday or Sunday work better for you, and morning or afternoon?"` : `Example: "Great! What day and time suits you best this week?"`}
-  * Step 4 (Coordinate Time & Email Handling):
-    When they choose day/time:
-    - CASE A: LEAD EMAIL IS ALREADY ON FILE (${options.email ? `Known: "${options.email}"` : 'None on file'}):
-      DO NOT ASK FOR THEIR EMAIL! They already provided it.
-      Immediately confirm the booking and set action: "BOOK_MEETING"!
-      ${isUK ? `Example: "All set, [Name]! I've reserved your slot with Minesh Patel on [Day] at [Time]. I'll send your event pass and hotel details to ${options.email || 'your email'}. Looking forward to seeing you at the Leicester Marriott!"` : `Example: "All set, [Name]! I've reserved that slot with Minesh. I'll send your calendar invitation to ${options.email || 'your email'}. Look forward to speaking with you!"`}
-    - CASE B: NO EMAIL ON FILE:
-      Ask for their email, and set action: "NONE" (CRITICAL: DO NOT set action to "BOOK_MEETING" yet until they give their email!):
-      ${isUK ? `Example: "Done, I'll reserve a slot for you with Minesh Patel on [Day] [Morning/Afternoon]. What's the best email to send your event invitation and hotel details to?"` : `Example: "Done, I'll reserve that slot with Minesh. What's the best email for your calendar invitation?"`}
-  * Step 5 (Booking Confirmed when email provided):
-    When the lead replies with their email:
-    Set action: "BOOK_MEETING".
-    ${isUK ? `Example: "All set, [Name]! Sent your pass to [Email]. Look forward to seeing you at the Leicester Marriott on [Day]!"` : `Example: "All set, [Name]! Sent your calendar invitation to [Email]. Look forward to speaking with you!"`}
-  * If they CANNOT attend in person (e.g. too far, busy):
-    "No worries at all! Would you like to do a quick 10-minute Google Meet video call with Minesh instead to go through the numbers?"
+
+${eventFlowSection}
 
 NATURAL HUMAN PRICE FORMATTING:
 - NEVER write exact full raw numbers like "AED 10,299,999" or "AED 1,889,999"!
@@ -159,12 +249,7 @@ NO ROBOTIC JARGON & BANNED PHRASES:
 - NEVER SAY: "I apologize for the confusion"
 - Real humans say: "pop by", "come by", "sit down with Minesh", "catch up with Minesh", "have a quick chat", "run through the numbers".
 
-UPCOMING UK EVENT CONTEXT (LEICESTER EXPO):
-- Dates: Saturday 26th & Sunday 27th September 2026 (10:00 AM – 8:00 PM BST).
-- Venue: Marriott Hotel, Smith Way, Enderby, Leicester LE19 1SW, United Kingdom.
-- Host: Minesh Patel (+44 7404 097586), Managing Director, The Pods Real Estate.
-- London desk: 14 Curzon Street, Mayfair, London W1J 5HN (by appointment).
-- NEVER invite UK leads to Bluewaters Island in Dubai!
+${eventLocationSection}
 
 PERSISTENT CONVERSATION MEMORY (CRITICAL):
 - ALWAYS read the conversation history before generating a response.
@@ -209,31 +294,7 @@ RULES FOR PAID AD LEADS (source = GOOGLE_ADS or META_ADS or FACEBOOK_ADS):
 
 FEW-SHOT EXAMPLES OF NATURAL HUMAN CONVERSATION (1-2 SHORT LINES, UNDER 35 WORDS):
 
-[LEAD SUBMITS META LEAD FORM / HAS A NOTE ABOUT BEING 18 OR STARTING OUT]:
-Lead: "Hello! I filled in your form on Facebook. I'm 18 and really interested in getting started in Dubai property"
-Aria: "Hey! That's brilliant, starting at 18 puts you way ahead. Are you looking to invest for monthly rental income, or looking to learn more about the market?"
-
-[LEAD REPLIES WITH GOAL - RENTAL INCOME]:
-Lead: "Rental income"
-Aria: "Makes total sense. Danube has 1% monthly payment plans starting around £150k with 8-10% rental yields. We're hosting a Dubai property expo at the Leicester Marriott on Sept 26–27. Are you free to pop by that weekend to meet Minesh?"
-
-[LEAD SAYS YES TO COMING TO THE EXPO]:
-Lead: "Yeah I could come on Saturday"
-Aria: "Brilliant! Would morning or afternoon suit you best?"
-
-${options.email ? `[LEAD CHOOSES TIME (EMAIL ALREADY ON FILE)]:
-Lead: "Afternoon around 2pm"
-Aria: "All set, ${options.leadName && options.leadName !== 'VIP Client' ? options.leadName : 'there'}! I've reserved your slot with Minesh Patel for Sunday at 2pm. I'll send your event pass and hotel details to ${options.email}. Look forward to seeing you at the Leicester Marriott!"` : `[LEAD CHOOSES TIME (NO EMAIL ON FILE)]:
-Lead: "Afternoon around 2pm"
-Aria: "Done, I'll reserve that slot with Minesh Patel. What's the best email to send your event invitation and hotel details to?"
-
-[LEAD GIVES EMAIL - CONFIRM BOOKING]:
-Lead: "hawa@example.com"
-Aria: "All set, Hawa! I've sent your pass to hawa@example.com. Looking forward to meeting you at the Leicester Marriott on Saturday!"`}
-
-[LEAD CANNOT ATTEND IN PERSON / TOO FAR]:
-Lead: "I live in Manchester so Leicester is a bit far for me"
-Aria: "No worries at all! Would you prefer a quick 10-minute Google Meet video call with Minesh instead to go through the numbers?"
+${fewShotSection}
 
 [VAGUE INQUIRY]:
 Lead: "I would like to inquire"
@@ -254,8 +315,7 @@ Aria: "You can view Minesh's available slots directly on his live calendar: http
 
 GLOBAL MEETING VENUES & EVENT LOCATIONS:
 1. DUBAI VIP LOUNGE: The Pods Real Estate Lounge, Bluewaters Island (Complimentary Valet Parking). Google Maps: https://maps.google.com/?q=The+Pods+Bluewaters+Island+Dubai
-2. LEICESTER DUBAI PROPERTY EXPO (26th–27th Sept 2026): Marriott Hotel, Smith Way, Leicester LE19 1SW (UK Phone: +44 7404 097586).
-3. LONDON MAYFAIR STUDIO: 14 Curzon Street, Mayfair, London W1J 5HN (Park Lane / Sobha UK Desk).
+${venuesSection}
 
 VIP VOUCHER POLICY:
 - When clients purchase a property through The Pods, Minesh offers an exclusive AED 20,000 fine-dining voucher at The Pods Bluewaters. Mention it naturally when discussing purchase benefits.
@@ -518,16 +578,14 @@ You MUST return your response as a valid JSON object matching this exact schema:
   private static generateMockResponse(options: AIServiceOptions): AIStructuredOutput {
     const text = options.userMessage.toLowerCase();
     const phone = (options.phone || '').trim();
-    const isUK = 
-      phone.startsWith('+44') || 
-      phone.startsWith('44') || 
-      options.userMessage.includes('+44') ||
-      text.includes('leicester') ||
-      text.includes('marriott') ||
-      text.includes('expo') ||
-      text.includes('signed up for this event') ||
-      (options.buyerLocation && /uk|leicester|london/i.test(options.buyerLocation)) ||
-      (options.campaignName && options.campaignName.toLowerCase().includes('leicester'));
+    const matchedCamp = getCampaignForLead({
+      phone,
+      userText: text,
+      buyerLocation: options.buyerLocation,
+      campaignName: options.campaignName,
+    });
+    const hasActiveEvent = matchedCamp.type === 'event';
+    const isUK = matchedCamp.timezone === 'Europe/London';
 
     if (text.includes('human') || text.includes('minesh') || text.includes('call me') || text.includes('agent')) {
       return {
@@ -562,7 +620,7 @@ You MUST return your response as a valid JSON object matching this exact schema:
       const isAck = /thank|thx|cheers|ok|okay|great|perfect|see you|sounds good|done|brilliant/i.test(text);
       if (isAck) {
         return {
-          reply: `You're very welcome${options.leadName && options.leadName !== 'VIP Client' ? `, ${options.leadName}` : ''}! Looking forward to seeing you at the ${options.bookingDetails?.location || (isUK ? 'Leicester Marriott' : 'The Pods')}. Let me know if you need any directions or questions before then!`,
+          reply: `You're very welcome${options.leadName && options.leadName !== 'VIP Client' ? `, ${options.leadName}` : ''}! Looking forward to seeing you at the ${options.bookingDetails?.location || (isUK ? (hasActiveEvent ? 'Leicester Marriott' : 'Google Meet') : 'The Pods')}. Let me know if you need any directions or questions before then!`,
           language: 'en',
           action: 'NONE',
         };
@@ -571,15 +629,30 @@ You MUST return your response as a valid JSON object matching this exact schema:
 
     // Form submission mock response
     if (text.includes('filled in your form') || text.includes('filled out your form') || text.includes('signed up for this event')) {
-      if (isUK) {
+      const namePart = options.leadName && options.leadName !== 'Guest' && options.leadName !== 'Unknown' && options.leadName !== 'VIP Client' ? ` ${options.leadName}` : '';
+      if (hasActiveEvent) {
+        const isOneBed = /1\s*bed/i.test(text);
+        if (isOneBed) {
+          return {
+            reply: `Hey${namePart}! Saw you're looking at 1-beds in Dubai. We're hosting the Danube Expo in Leicester next weekend (Sept 26–27) at the Marriott — free to pop by?`,
+            language: 'en',
+            action: 'NONE',
+          };
+        }
         return {
-          reply: `${leadGreeting} Great to connect with you. Are you exploring Dubai property for rental income, or something for yourself?`,
+          reply: `Hey${namePart}! Danube has great Dubai options with 1% monthly plans under £200k. We're actually in Leicester next weekend (Sept 26–27) at the Marriott — free to pop by?`,
+          language: 'en',
+          action: 'NONE',
+        };
+      } else if (isUK) {
+        return {
+          reply: `Hey${namePart}! Danube has great Dubai options with 1% monthly plans under £200k. Would you prefer a quick Google Meet with Minesh, or meeting in person here in the UK?`,
           language: 'en',
           action: 'NONE',
         };
       }
       return {
-        reply: `${leadGreeting} Thanks for reaching out. Are you based in Dubai or looking from overseas?`,
+        reply: `Hey${namePart}! Thanks for reaching out. Are you based in Dubai or looking from overseas?`,
         language: 'en',
         action: 'NONE',
       };
@@ -595,9 +668,15 @@ You MUST return your response as a valid JSON object matching this exact schema:
 
     // Ad-lead template messages — respond like a human
     if ((text.includes('can i get more info') || text === 'hi' || text === 'hello') && (options.adSource === 'GOOGLE_ADS' || options.adSource === 'META_ADS' || options.adSource === 'FACEBOOK_ADS')) {
-      if (isUK) {
+      if (hasActiveEvent) {
         return {
-          reply: "Hey! Thanks for reaching out. Are you exploring Dubai property for rental income or personal use?",
+          reply: "Hey! Danube has 1% monthly plans under £200k, and we're in Leicester next weekend (Sept 26–27) at the Marriott — free to pop by?",
+          language: 'en',
+          action: 'NONE',
+        };
+      } else if (isUK) {
+        return {
+          reply: "Hey! Danube has great Dubai options with 1% monthly plans under £200k. Would you prefer a quick Google Meet with Minesh or meeting in person in the UK?",
           language: 'en',
           action: 'NONE',
         };
@@ -634,9 +713,15 @@ You MUST return your response as a valid JSON object matching this exact schema:
     }
 
     if (text.includes('meeting') || text.includes('pod') || text.includes('bluewaters') || text.includes('book') || text.includes('slot') || text.includes('consultation')) {
-      if (isUK) {
+      if (hasActiveEvent) {
         return {
           reply: "We can sit down with Minesh Patel at the Leicester Marriott during the Dubai Expo on Sept 26–27, or jump on a quick Google Meet. Which suits you better?",
+          language: 'en',
+          action: 'NONE',
+        };
+      } else if (isUK) {
+        return {
+          reply: "We can arrange a quick Google Meet video call with Minesh Patel, or arrange an in-person meeting here in the UK. Which suits you better?",
           language: 'en',
           action: 'NONE',
         };
@@ -648,9 +733,17 @@ You MUST return your response as a valid JSON object matching this exact schema:
       };
     }
 
+    if (hasActiveEvent) {
+      return {
+        reply: `${leadGreeting} Thanks for reaching out. We're in Leicester next weekend at the Marriott (Sept 26–27) for the Dubai Expo with Danube's 1% payment plans under £200k. Any chance you're free to pop by?`,
+        language: 'en',
+        action: 'NONE',
+      };
+    }
+
     if (isUK) {
       return {
-        reply: `${leadGreeting} Great to connect. Are you exploring Dubai property for rental income, or something for yourself?`,
+        reply: `${leadGreeting} Thanks for reaching out. Are you exploring Dubai property for rental income, or something for yourself?`,
         language: 'en',
         action: 'NONE',
       };

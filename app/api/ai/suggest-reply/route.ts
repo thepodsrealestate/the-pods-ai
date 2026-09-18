@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { AIService } from '@/lib/services/aiService';
 
+import { getActiveEvents } from '@/lib/config/campaigns';
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -27,6 +29,8 @@ export async function POST(req: NextRequest) {
     }
 
     const fullHistoryText = chatHistory.join('\n');
+    const activeEvents = getActiveEvents();
+    const hasActiveEvent = activeEvents.length > 0;
     const isUkLead = 
       (leadData?.phone && (leadData.phone.startsWith('+44') || leadData.phone.startsWith('44'))) ||
       fullHistoryText.includes('+44') ||
@@ -41,7 +45,7 @@ ${fullHistoryText}
 GUIDELINES:
 - Option 1 (Direct & Professional): Brief, polite, luxury tone answering the client's latest query.
 - Option 2 (ROI & Property Focus): Highlights Danube 1% monthly payment plan, capital appreciation, high rental yields (8-10%), or 0% UK property tax.
-- Option 3 (VIP Presentation Call to Action): ${isUkLead ? 'Invites the client to reserve a private 1-on-1 VIP consultation with Minesh Patel at the Dubai Property Expo at the Leicester Marriott Hotel on Saturday 26th & Sunday 27th September (or Google Meet). NEVER suggest Bluewaters Island in Dubai to UK leads!' : 'Invites the client for a private consultation at The Pods Bluewaters Island or via Google Meet.'}
+- Option 3 (VIP Presentation Call to Action): ${isUkLead ? (hasActiveEvent ? 'Invites the client to pop by to meet Minesh Patel at the Dubai Property Expo at the Leicester Marriott Hotel on Saturday 26th or Sunday 27th September (or Google Meet).' : 'Invites the client for a Google Meet video call with Minesh Patel or in-person UK consultation.') : 'Invites the client for a private consultation at The Pods Bluewaters Island or via Google Meet.'}
 
 Return ONLY a JSON array with 3 objects:
 [
@@ -54,7 +58,7 @@ Return ONLY a JSON array with 3 objects:
       leadName: leadData?.fullName || 'Client',
       phone: leadData?.phone || undefined,
       buyerLocation: leadData?.buyerLocation || (isUkLead ? 'United Kingdom' : undefined),
-      campaignName: isUkLead ? 'Danube_DubaiExpo_Leicester_Sept26-27' : undefined,
+      campaignName: isUkLead ? (hasActiveEvent ? 'Danube_DubaiExpo_Leicester_Sept26-27' : 'UK_Default') : undefined,
       conversationHistory: [],
       userMessage: prompt,
     });
