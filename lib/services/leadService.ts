@@ -71,6 +71,14 @@ export class LeadService {
         cleaned = '+' + cleaned;
       }
     }
+
+    // Strip country code national trunk zero (e.g. UK +4407... -> +447..., UAE +97105... -> +9715...)
+    if (cleaned.startsWith('+440')) {
+      cleaned = '+44' + cleaned.substring(4);
+    } else if (cleaned.startsWith('+9710')) {
+      cleaned = '+971' + cleaned.substring(5);
+    }
+
     return cleaned;
   }
 
@@ -80,8 +88,14 @@ export class LeadService {
   static async findOrCreateLead(input: CreateLeadInput) {
     const normalizedPhone = this.normalizePhone(input.phone, input.fullName);
 
-    // Names are not stable identifiers; only merge contacts by phone or email.
+    // Names are not stable identifiers; only merge contacts by phone, email, or ManyChat subscriber ID.
     const searchConditions: any[] = [{ phone: normalizedPhone }];
+    if (normalizedPhone.startsWith('+44')) {
+      searchConditions.push({ phone: '+440' + normalizedPhone.substring(3) });
+    }
+    if (input.manychatId) {
+      searchConditions.push({ manychatId: String(input.manychatId) });
+    }
     if (input.email && input.email.trim()) {
       searchConditions.push({ email: { equals: input.email.trim(), mode: 'insensitive' } });
     }

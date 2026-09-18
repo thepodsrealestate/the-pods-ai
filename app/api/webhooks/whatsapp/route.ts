@@ -416,6 +416,14 @@ export async function POST(req: NextRequest) {
         }
 
         const searchConditions: any[] = [{ phone: normalizedPhone }, { phone }];
+        if (normalizedPhone.startsWith('+44')) {
+          searchConditions.push({ phone: '+440' + normalizedPhone.substring(3) });
+        } else if (normalizedPhone.startsWith('+440')) {
+          searchConditions.push({ phone: '+44' + normalizedPhone.substring(4) });
+        }
+        if (subscriberId) {
+          searchConditions.push({ manychatId: String(subscriberId) });
+        }
         if (extractedFormPhone) {
           searchConditions.push({ phone: extractedFormPhone });
         }
