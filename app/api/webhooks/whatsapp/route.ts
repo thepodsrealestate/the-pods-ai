@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse, after } from 'next/server';
+import crypto from 'crypto';
 import { AIService } from '@/lib/services/aiService';
 import { prisma } from '@/lib/prisma';
 import { LeadService, isRealName } from '@/lib/services/leadService';
@@ -158,6 +159,9 @@ export async function POST(req: NextRequest) {
       } catch (audioErr: any) {
         console.error('Audio Transcription Error:', audioErr?.message || audioErr);
       }
+      if (!userText || userText.trim().length === 0) {
+        userText = '[Voice Note]';
+      }
     }
 
     // Form field extraction from WhatsApp text payload
@@ -209,15 +213,20 @@ export async function POST(req: NextRequest) {
     } catch (_) { /* fallback to raw phone */ }
 
     const now = Date.now();
-    const dedupKey = normalizedPhone;
+    
+    // Message-level deduplication: ONLY suppress IDENTICAL duplicate webhook calls for the exact same message
+    // Different messages ("Yes", "Afternoon", "2pm") have different hashes and are NEVER suppressed!
+    const cleanUserMsg = (userText || '').trim().toLowerCase();
+    const msgHash = crypto.createHash('md5').update(cleanUserMsg).digest('hex').substring(0, 8);
+    const dedupKey = `${normalizedPhone}_${msgHash}`;
 
     // 1. Distributed Database-Level Atomic Idempotency Lock (PostgreSQL ACID)
-    // Locked strictly by normalizedPhone with 10-second TTL to prevent duplicate concurrent webhooks for the same lead
-    const distributedLockKey = `LOCK_${normalizedPhone}`;
-    const lockCutoff = new Date(Date.now() - 10000);
+    // Locked strictly by PHONE + MESSAGE HASH with 3-second TTL to prevent concurrent duplicate ManyChat webhook firings of the exact same message
+    const distributedLockKey = `LOCK_${normalizedPhone}_${msgHash}`;
+    const lockCutoff = new Date(Date.now() - 3000);
 
     try {
-      // Clear expired lock if more than 10 seconds old
+      // Clear expired lock if more than 3 seconds old
       await prisma.webhookEvent.deleteMany({
         where: {
           eventId: distributedLockKey,
@@ -225,7 +234,7 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Atomically claim the lock for this phone number
+      // Atomically claim the lock for this specific message from this phone
       await prisma.webhookEvent.create({
         data: {
           eventId: distributedLockKey,
@@ -249,10 +258,10 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 2. In-Memory Level Fast Cache (phone-level cooldown)
+    // 2. In-Memory Level Fast Cache (cooldown strictly for IDENTICAL message text within 3s)
     const recent = recentCompletedResponses.get(dedupKey);
-    if (recent && now - recent.timestamp < 10000) {
-      console.log(`[DEDUP] In-memory duplicate request from ${normalizedPhone} within 10s — returning empty reply`);
+    if (recent && now - recent.timestamp < 3000) {
+      console.log(`[DEDUP] In-memory duplicate request for ${dedupKey} within 3s — returning empty reply`);
       return NextResponse.json({
         status: 'dedup_suppressed',
         reply: '',
