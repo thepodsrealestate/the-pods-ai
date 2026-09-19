@@ -139,7 +139,7 @@ export async function POST(req: NextRequest) {
                   campaign: matchedCampaign.type === 'event' ? matchedCampaign.displayName : (isUkPhone ? 'Meta UK Lead' : 'Meta Lead Form'),
                   propertyInterest: 'Apartment',
                   budget: budgetMax ? `£${budgetMax.toLocaleString()}` : '£200,000 - £600,000',
-                  meetingSlot: matchedCampaign.type === 'event' ? '26-27 Sept Leicester Marriott' : 'Google Meet / TBD',
+                  meetingSlot: matchedCampaign.type === 'event' ? '26-27 Sept Leicester Marriott (LE19 1SW)' : 'Google Meet / TBD',
                   leadStatus: 'New Lead',
                   assignedAgent: 'Minesh Patel',
                   notes: matchedCampaign.type === 'event' ? `${matchedCampaign.displayName} Lead` : (isUkPhone ? 'Meta UK Lead' : 'Meta Instant Form'),

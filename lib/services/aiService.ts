@@ -90,19 +90,19 @@ CRITICAL POST-BOOKING DIRECTIVE (MEETING ALREADY CONFIRMED):
     // Build active events summary for AI awareness
     const activeEvents = getActiveEvents();
     const activeEventsContext = activeEvents.length > 0
-      ? `\nACTIVE UPCOMING EVENTS:\n${activeEvents.map(e => `- ${e.displayName}: ${e.dates.start} to ${e.dates.end} at ${e.location.name}, ${e.location.address}`).join('\n')}`
+      ? `\nACTIVE UPCOMING EVENTS:\n${activeEvents.map(e => `- ${e.displayName}: ${e.dates.start} to ${e.dates.end} (10:00 AM – 8:00 PM BST) at ${e.location.name}, ${e.location.address}, United Kingdom (Postcode: LE19 1SW)`).join('\n')}`
       : '';
 
     const eventFlowSection = hasActiveEvent
       ? `- ACTIVE EVENT CONVERSATION FLOW (DUBAI PROPERTY EXPO — LEICESTER MARRIOTT, SEPT 26–27):
-  * CONTEXT: In-person Dubai Property Expo is ACTIVE and taking place on Saturday 26th & Sunday 27th September 2026 at Leicester Marriott Hotel with Minesh Patel and senior Danube developer directors.
+  * CONTEXT: In-person Dubai Property Expo is ACTIVE and taking place on Saturday 26th & Sunday 27th September 2026 (10:00 AM – 8:00 PM BST) at Leicester Marriott Hotel, Smith Way, Grove Park, Enderby, Leicester LE19 1SW with Minesh Patel and senior Danube developer directors.
   * STEP 1 (FIRST INBOUND MESSAGE / LEAD FORM SUBMISSION / AD CLICK):
     DO NOT ask generic qualification questions like "are you looking for rental income or personal use?". The lead already demonstrated strong intent by submitting the form / clicking the ad!
     INSTEAD, IMMEDIATELY HOOK THEM WITH VALUE AND INVITE THEM DIRECTLY TO THE EXPO:
     1. Warm, human greeting using their first name (e.g. "Hey [First Name]! Thanks for reaching out.").
     2. Mirror/acknowledge any specific details from their form (e.g. if they selected 1-bed or investment: "I saw you're looking at 1-beds in Dubai — Danube has options with 1% monthly plans under £200k.").
     3. Highlight Danube's famous 1% per month payment plan with projects starting under £200k.
-    4. Directly announce that we are hosting the Dubai Property Expo at the Leicester Marriott Hotel (Sept 26–27) where Minesh Patel and senior Danube developer directors will be in person.
+    4. Directly announce that we are hosting the Dubai Property Expo at the Leicester Marriott Hotel, Smith Way, Leicester LE19 1SW (Sept 26–27) where Minesh Patel and senior Danube developer directors will be in person.
     5. Ask ONE simple closing question: "Any chance you're free to pop by on Saturday or Sunday?"
 
     STRICT LENGTH & TONE DIRECTIVE (HUMAN WHATSAPP BROKER STYLE):
@@ -126,7 +126,7 @@ CRITICAL POST-BOOKING DIRECTIVE (MEETING ALREADY CONFIRMED):
     - CASE A: LEAD EMAIL IS ALREADY ON FILE (${options.email ? `Known: "${options.email}"` : 'None on file'}):
       DO NOT ASK FOR THEIR EMAIL! They already provided it.
       Immediately confirm the booking and set action: "BOOK_MEETING"!
-      Example: "All set, [Name]! I've reserved your slot with Minesh Patel on [Day] at [Time]. I'll send your event pass and hotel details to ${options.email || 'your email'}. Looking forward to seeing you at the Leicester Marriott!"
+      Example: "All set, [Name]! I've reserved your slot with Minesh Patel on [Day] at [Time]. I'll send your event pass and hotel details (Leicester Marriott, Smith Way, LE19 1SW) to ${options.email || 'your email'}. Looking forward to seeing you!"
     - CASE B: NO EMAIL ON FILE:
       Ask for their email, and set action: "NONE" (CRITICAL: DO NOT set action to "BOOK_MEETING" yet until they give their email!):
       Example: "Done, I'll reserve a slot for you with Minesh Patel on [Day] [Morning/Afternoon]. What's the best email to send your event invitation and hotel details to?"
@@ -134,7 +134,7 @@ CRITICAL POST-BOOKING DIRECTIVE (MEETING ALREADY CONFIRMED):
   * STEP 4 (BOOKING CONFIRMED WHEN EMAIL PROVIDED):
     When the lead replies with their email:
     Set action: "BOOK_MEETING".
-    Example: "All set, [Name]! Sent your pass to [Email]. Look forward to seeing you at the Leicester Marriott on [Day]!"
+    Example: "All set, [Name]! Sent your pass to [Email]. Look forward to seeing you at Leicester Marriott (Smith Way, LE19 1SW) on [Day]!"
 
   * STEP 5 (IF THEY CANNOT ATTEND IN PERSON / TOO FAR / BUSY):
     "No worries at all! Would you like to do a quick 10-minute Google Meet video call with Minesh instead to go through the numbers?"`
@@ -152,10 +152,21 @@ CRITICAL POST-BOOKING DIRECTIVE (MEETING ALREADY CONFIRMED):
     const eventLocationSection = (hasActiveEvent && matchedCampaign.id === 'leicester-expo-sept-2026')
       ? `UPCOMING UK EVENT CONTEXT (LEICESTER EXPO):
 - Dates: Saturday 26th & Sunday 27th September 2026 (10:00 AM – 8:00 PM BST).
-- Venue: Marriott Hotel, Smith Way, Enderby, Leicester LE19 1SW, United Kingdom.
+- Official Venue & Complete UK Address (CRITICAL):
+  * Venue Name: Leicester Marriott Hotel
+  * Street / Road Name: Smith Way, Grove Park
+  * Town / District: Enderby, Leicester
+  * UK Postcode (PIN Code): LE19 1SW
+  * Complete Postal Address: Leicester Marriott Hotel, Smith Way, Grove Park, Enderby, Leicester LE19 1SW, United Kingdom.
 - Host: Minesh Patel (+44 7404 097586), Managing Director, The Pods Real Estate.
 - London desk: 14 Curzon Street, Mayfair, London W1J 5HN (by appointment).
-- NEVER invite UK leads to Bluewaters Island in Dubai!`
+- NEVER invite UK leads to Bluewaters Island in Dubai!
+
+MANDATORY VENUE, ROAD & UK POSTCODE DIRECTIVE (NUMBER ONE ADDRESS RULE):
+- Whenever a lead asks for the location, address, where the event is taking place, directions, or postcode:
+  ALWAYS state the FULL ADDRESS including street name, city, and UK postcode:
+  "Leicester Marriott Hotel, Smith Way, Grove Park, Enderby, Leicester LE19 1SW" (Open 10:00 AM – 8:00 PM).
+  NEVER respond with just "at Leicester Marriott" or omit Smith Way or postcode LE19 1SW!`
       : `UK DESK & CONSULTATION CONTEXT:
 - London desk: 14 Curzon Street, Mayfair, London W1J 5HN (by appointment).
 - Online: Google Meet video call with Minesh Patel.
@@ -165,14 +176,14 @@ CRITICAL POST-BOOKING DIRECTIVE (MEETING ALREADY CONFIRMED):
     const emailHandlingFewShot = options.email
       ? `[LEAD CHOOSES TIME (EMAIL ALREADY ON FILE)]:
 Lead: "Afternoon around 2pm"
-Aria: "All set, ${options.leadName && options.leadName !== 'VIP Client' ? options.leadName : 'there'}! I've reserved your slot with Minesh Patel for Saturday at 2pm. I'll send your event pass and hotel details to ${options.email}. Look forward to seeing you at the Leicester Marriott!"`
+Aria: "All set, ${options.leadName && options.leadName !== 'VIP Client' ? options.leadName : 'there'}! I've reserved your slot with Minesh Patel for Saturday at 2pm. I'll send your event pass and hotel details (Leicester Marriott, Smith Way, LE19 1SW) to ${options.email}. Look forward to seeing you!"`
       : `[LEAD CHOOSES TIME (NO EMAIL ON FILE)]:
 Lead: "Afternoon around 2pm"
 Aria: "Done, I'll reserve that slot with Minesh Patel for Saturday afternoon. What's the best email to send your event invitation and hotel details to?"
 
 [LEAD GIVES EMAIL - CONFIRM BOOKING]:
 Lead: "akshit@example.com"
-Aria: "All set, Akshit! I've sent your pass to akshit@example.com. Looking forward to meeting you at the Leicester Marriott on Saturday!"`;
+Aria: "All set, Akshit! I've sent your pass to akshit@example.com. Looking forward to meeting you at Leicester Marriott (Smith Way, LE19 1SW) on Saturday!"`;
 
     const fewShotSection = hasActiveEvent
       ? `[LEAD SUBMITS META LEAD FORM / FIRST INQUIRY (LEICESTER EXPO ACTIVE)]:
@@ -190,6 +201,14 @@ Aria: "Brilliant! Would morning or afternoon suit you best?"
 
 ${emailHandlingFewShot}
 
+[LEAD ASKS FOR FULL ADDRESS / POSTCODE / VENUE DETAILS]:
+Lead: "Where is the expo taking place?"
+Aria: "It's at Leicester Marriott Hotel, Smith Way, Grove Park, Enderby, Leicester LE19 1SW (open 10am–8pm on Sept 26–27). Free to pop by on Saturday or Sunday?"
+
+[LEAD INQUIRES ABOUT THE EXPO IN GENERAL]:
+Lead: "Can you tell me about the expo in Leicester?"
+Aria: "The Dubai Property Expo is on 26–27 September (10am–8pm) at Leicester Marriott Hotel, Smith Way, Grove Park, Enderby, Leicester LE19 1SW. Are you free to pop by on Saturday or Sunday?"
+
 [LEAD CANNOT ATTEND IN PERSON / TOO FAR]:
 Lead: "I live in Manchester so Leicester is a bit far for me"
 Aria: "No worries at all! Would you prefer a quick 10-minute Google Meet video call with Minesh instead to go through the numbers?"`
@@ -202,7 +221,7 @@ Lead: "Google Meet works best"
 Aria: "Brilliant! What day and time suits you best this week?"`;
 
     const venuesSection = (hasActiveEvent && matchedCampaign.id === 'leicester-expo-sept-2026')
-      ? '2. LEICESTER DUBAI PROPERTY EXPO (26th–27th Sept 2026): Marriott Hotel, Smith Way, Leicester LE19 1SW (UK Phone: +44 7404 097586).\n3. LONDON MAYFAIR STUDIO: 14 Curzon Street, Mayfair, London W1J 5HN (Park Lane / Sobha UK Desk).'
+      ? '2. LEICESTER DUBAI PROPERTY EXPO (26th–27th Sept 2026, 10:00 AM – 8:00 PM): Leicester Marriott Hotel, Smith Way, Grove Park, Enderby, Leicester LE19 1SW, United Kingdom (UK Postcode: LE19 1SW | Phone: +44 7404 097586).\n3. LONDON MAYFAIR STUDIO: 14 Curzon Street, Mayfair, London W1J 5HN (Park Lane / Sobha UK Desk).'
       : '2. LONDON MAYFAIR STUDIO: 14 Curzon Street, Mayfair, London W1J 5HN (Park Lane / Sobha UK Desk).';
 
     return `You are Aria, the Senior Executive Luxury Real Estate Concierge for Minesh Patel at The Pods Real Estate (@thepodsrealestate).
@@ -620,7 +639,7 @@ You MUST return your response as a valid JSON object matching this exact schema:
       const isAck = /thank|thx|cheers|ok|okay|great|perfect|see you|sounds good|done|brilliant/i.test(text);
       if (isAck) {
         return {
-          reply: `You're very welcome${options.leadName && options.leadName !== 'VIP Client' ? `, ${options.leadName}` : ''}! Looking forward to seeing you at the ${options.bookingDetails?.location || (isUK ? (hasActiveEvent ? 'Leicester Marriott' : 'Google Meet') : 'The Pods')}. Let me know if you need any directions or questions before then!`,
+          reply: `You're very welcome${options.leadName && options.leadName !== 'VIP Client' ? `, ${options.leadName}` : ''}! Looking forward to seeing you at the ${options.bookingDetails?.location || (isUK ? (hasActiveEvent ? 'Leicester Marriott Hotel, Smith Way, Leicester LE19 1SW' : 'Google Meet') : 'The Pods')}. Let me know if you need any directions or questions before then!`,
           language: 'en',
           action: 'NONE',
         };
@@ -712,10 +731,20 @@ You MUST return your response as a valid JSON object matching this exact schema:
       };
     }
 
+    if (text.includes('address') || text.includes('location') || text.includes('postcode') || text.includes('pin code') || text.includes('where is') || text.includes('directions') || text.includes('where at') || text.includes('which hotel') || text.includes('what hotel')) {
+      if (hasActiveEvent) {
+        return {
+          reply: "The Dubai Property Expo is at Leicester Marriott Hotel, Smith Way, Grove Park, Enderby, Leicester LE19 1SW (open 10am–8pm on Sept 26–27). Free to pop by on Saturday or Sunday?",
+          language: 'en',
+          action: 'NONE',
+        };
+      }
+    }
+
     if (text.includes('meeting') || text.includes('pod') || text.includes('bluewaters') || text.includes('book') || text.includes('slot') || text.includes('consultation')) {
       if (hasActiveEvent) {
         return {
-          reply: "We can sit down with Minesh Patel at the Leicester Marriott during the Dubai Expo on Sept 26–27, or jump on a quick Google Meet. Which suits you better?",
+          reply: "We can sit down with Minesh Patel at Leicester Marriott Hotel (Smith Way, Leicester LE19 1SW) during the Dubai Expo on Sept 26–27, or jump on a quick Google Meet. Which suits you better?",
           language: 'en',
           action: 'NONE',
         };

@@ -580,7 +580,7 @@ export async function POST(req: NextRequest) {
 
       if (isMeetingBooked && isAck) {
         const leadDisplayName = resolvedName && resolvedName !== 'Guest' && resolvedName !== 'VIP Client' ? `, ${resolvedName}` : '';
-        const venueName = bookingDetails?.location || (isUkPhone ? (getActiveEvents().length > 0 ? 'Leicester Marriott Hotel' : 'Google Meet') : 'The Pods Bluewaters');
+        const venueName = bookingDetails?.location || (isUkPhone ? (getActiveEvents().length > 0 ? 'Leicester Marriott Hotel, Smith Way, Grove Park, Enderby, Leicester LE19 1SW' : 'Google Meet') : 'The Pods Bluewaters');
 
         let meetingDayStr = '';
         if (bookingDetails?.meetingTime) {

@@ -77,7 +77,7 @@ Return ONLY a JSON array with 3 objects:
       suggestions: isUkLead ? [
         {
           type: "Professional",
-          text: "Hey! Thanks for registering for the Dubai Property Expo with Danube Properties. Are you planning to attend the event in person at the Leicester Marriott Hotel on September 26th–27th?",
+          text: "Hey! Thanks for registering for the Dubai Property Expo with Danube Properties. Are you planning to attend the event in person at Leicester Marriott Hotel (Smith Way, Leicester LE19 1SW) on September 26th–27th?",
         },
         {
           type: "ROI & Investment",
@@ -85,7 +85,7 @@ Return ONLY a JSON array with 3 objects:
         },
         {
           type: "VIP Presentation Invite",
-          text: "We are scheduling private 1-on-1 VIP consultations with Minesh Patel at the Leicester Marriott Hotel on Saturday 26th & Sunday 27th September. Would Saturday or Sunday suit you best, or would you prefer a quick Google Meet?",
+          text: "We can sit down for a consultation with Minesh Patel at Leicester Marriott Hotel (Smith Way, Leicester LE19 1SW) on Saturday 26th & Sunday 27th September. Would Saturday or Sunday suit you best, or would you prefer a quick Google Meet?",
         },
       ] : [
         {

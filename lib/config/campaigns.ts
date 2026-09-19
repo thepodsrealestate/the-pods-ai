@@ -48,9 +48,9 @@ export const CAMPAIGNS: CampaignConfig[] = [
     type: 'event',
     location: {
       name: 'Leicester Marriott Hotel',
-      address: 'Smith Way, Enderby, Leicester LE19 1SW',
+      address: 'Smith Way, Grove Park, Enderby, Leicester LE19 1SW',
       country: 'United Kingdom',
-      calendarLocation: 'Marriott Hotel, Smith Way, Leicester LE19 1SW, United Kingdom',
+      calendarLocation: 'Leicester Marriott Hotel, Smith Way, Grove Park, Enderby, Leicester LE19 1SW, United Kingdom',
     },
     dates: {
       start: '2026-09-26',
@@ -66,16 +66,21 @@ export const CAMPAIGNS: CampaignConfig[] = [
     },
     aiContext: `🔴 TARGET AUDIENCE: UK / LEICESTER EXPO LEAD (+44 / UK ROADSHOW).
 - This lead signed up for or is inquiring about the upcoming DUBAI PROPERTY EXPO in LEICESTER, UK.
-- EVENT DETAILS:
+- OFFICIAL EVENT DETAILS:
   * Event: Dubai Property Expo with Danube Properties & The Pods Real Estate
   * Dates: Saturday 26th & Sunday 27th September 2026 (10:00 AM – 8:00 PM BST)
-  * Venue: Leicester Marriott Hotel, Smith Way, Enderby, Leicester LE19 1SW, United Kingdom
+  * Venue Name: Leicester Marriott Hotel
+  * Street / Road Name: Smith Way, Grove Park
+  * Town / District: Enderby, Leicester
+  * UK Postcode (PIN Code): LE19 1SW
+  * FULL VENUE ADDRESS: Leicester Marriott Hotel, Smith Way, Grove Park, Enderby, Leicester LE19 1SW, United Kingdom
   * Host: Minesh Patel (+44 7404 097586), Managing Director, The Pods Real Estate
 - CRITICAL RULES FOR THIS LEAD:
   1. NEVER INVITE THIS LEAD TO BLUEWATERS ISLAND IN DUBAI! They are in the UK.
-  2. For in-person meetings, ALWAYS offer a VIP consultation slot at the LEICESTER MARRIOTT on Saturday 26th or Sunday 27th September.
+  2. For in-person meetings, ALWAYS offer a VIP consultation slot at the LEICESTER MARRIOTT (Smith Way, Leicester LE19 1SW) on Saturday 26th or Sunday 27th September.
   3. If they cannot attend in Leicester, offer a Google Meet video call with Minesh Patel.
-  4. ONLY mention Bluewaters Island if the lead explicitly says they are visiting Dubai.
+  4. FULL ADDRESS & UK POSTCODE (PIN CODE) LAW: If the lead asks where the expo is, asks for the address, postcode, road name, location, or directions, ALWAYS provide the FULL ADDRESS with road name and UK postcode: "Leicester Marriott Hotel, Smith Way, Grove Park, Enderby, Leicester LE19 1SW" (Open 10:00 AM – 8:00 PM). NEVER say just "Leicester Marriott" or "in Leicester" without providing Smith Way and postcode LE19 1SW!
+  5. ONLY mention Bluewaters Island if the lead explicitly says they are visiting Dubai.
 - BOOKING FLOW: Ask which day (Saturday or Sunday), then morning or afternoon, then get their email to send the calendar invite.`,
     bookingDefaults: {
       defaultHour: 14,

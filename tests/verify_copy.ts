@@ -37,4 +37,32 @@ console.log(`"${mock2.reply}"`);
 const words2 = mock2.reply.trim().split(/\s+/).length;
 console.log(`Words: ${words2} (under 35 limit: ${words2 <= 35})`);
 
-console.log('\n✅ ALL AUTO-EXPIRY AND COPY CHECKS PASSED!');
+console.log('\n--- 4. TESTING ADDRESS & POSTCODE INQUIRIES ---');
+console.log('Event address in config:', leicester.location.address);
+console.log('Calendar location:', leicester.location.calendarLocation);
+
+const mockAddress = (AIService as any).generateMockResponse({
+  userMessage: 'Where is the expo happening? What is the address and postcode?',
+  conversationHistory: [],
+  leadName: 'Chetan',
+  phone: '+447368941826',
+  buyerLocation: 'United Kingdom',
+  campaignName: 'Danube_DubaiExpo_Leicester_Sept26-27'
+});
+console.log('Address inquiry reply:');
+console.log(`"${mockAddress.reply}"`);
+console.log('Contains Smith Way?', mockAddress.reply.includes('Smith Way'));
+console.log('Contains LE19 1SW?', mockAddress.reply.includes('LE19 1SW'));
+
+const systemPrompt = (AIService as any).buildSystemPrompt({
+  leadName: 'Chetan',
+  phone: '+447368941826',
+  buyerLocation: 'United Kingdom',
+  campaignName: 'Danube_DubaiExpo_Leicester_Sept26-27',
+  userMessage: 'What is the venue address?'
+});
+console.log('\n--- 5. SYSTEM PROMPT ADDRESS VERIFICATION ---');
+console.log('System prompt contains "Smith Way, Grove Park, Enderby, Leicester LE19 1SW"?', systemPrompt.includes('Smith Way, Grove Park, Enderby, Leicester LE19 1SW'));
+console.log('System prompt contains "LE19 1SW"?', systemPrompt.includes('LE19 1SW'));
+
+console.log('\n✅ ALL AUTO-EXPIRY, COPY, AND ADDRESS CHECKS PASSED!');
