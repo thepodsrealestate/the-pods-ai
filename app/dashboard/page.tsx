@@ -250,6 +250,15 @@ export default function MasterDashboardPage() {
   const [leadSearchQuery, setLeadSearchQuery] = useState<string>("");
   const [leadAiFilter, setLeadAiFilter] = useState<string>("ALL");
 
+  // Lead Pagination State
+  const [leadPage, setLeadPage] = useState<number>(1);
+  const [leadPageSize, setLeadPageSize] = useState<number>(25); // 25, 50, 100, 0 (0 = All)
+
+  // Auto-reset pagination to Page 1 when filter, search or page size changes
+  useEffect(() => {
+    setLeadPage(1);
+  }, [leadSearchQuery, leadStatusFilter, leadAiFilter, leadPageSize]);
+
   // Conversation Search & Filter State
   const [convSearchQuery, setConvSearchQuery] = useState<string>("");
   const [convFilter, setConvFilter] = useState<string>("ALL");
@@ -882,6 +891,15 @@ export default function MasterDashboardPage() {
     return true;
   });
 
+  // Lead Matrix Pagination
+  const effectivePageSize = leadPageSize === 0 ? Math.max(1, filteredLeads.length) : leadPageSize;
+  const leadTotalPages = Math.max(1, Math.ceil(filteredLeads.length / effectivePageSize));
+  const safeLeadPage = Math.min(Math.max(1, leadPage), leadTotalPages);
+  const leadStartIndex = (safeLeadPage - 1) * effectivePageSize;
+  const paginatedLeads = leadPageSize === 0
+    ? filteredLeads
+    : filteredLeads.slice(leadStartIndex, leadStartIndex + effectivePageSize);
+
   // Dynamic filtered conversations list based on search & mode
   const filteredConversations = conversations.filter((conv: any) => {
     const lead = conv.lead;
@@ -1326,7 +1344,16 @@ export default function MasterDashboardPage() {
 
                 <div className="flex items-center space-x-3">
                   <span className="text-xs text-slate-400 font-mono">
-                    Showing <strong className="text-white">{filteredLeads.length}</strong> of {stats.totalLeads || leads.length} leads
+                    {filteredLeads.length > 0 ? (
+                      <>
+                        Showing <strong className="text-white">{leadStartIndex + 1}–{Math.min(leadStartIndex + paginatedLeads.length, filteredLeads.length)}</strong> of <strong className="text-white">{filteredLeads.length}</strong> leads
+                        {filteredLeads.length !== (stats.totalLeads || leads.length) && (
+                          <span className="text-slate-500"> ({stats.totalLeads || leads.length} total)</span>
+                        )}
+                      </>
+                    ) : (
+                      <>Showing <strong className="text-white">0</strong> leads</>
+                    )}
                   </span>
                   <a
                     href="/api/export/csv"
@@ -1427,7 +1454,7 @@ export default function MasterDashboardPage() {
                           </td>
                         </tr>
                       ) : (
-                        filteredLeads.map((lead: any) => {
+                        paginatedLeads.map((lead: any) => {
                           const attribution = lead.attributions?.[0];
                           const source = lead.leadSource || attribution?.source || "DIRECT";
                           const campaign = attribution?.campaign || attribution?.utmCampaign || null;
@@ -1552,6 +1579,106 @@ export default function MasterDashboardPage() {
                     </tbody>
                   </table>
                 </div>
+
+                {/* Pagination & Controls Bar */}
+                {filteredLeads.length > 0 && (
+                  <div className="px-6 py-4 bg-[#151824]/60 border-t border-[#1E2230] flex flex-col sm:flex-row items-center justify-between gap-4">
+                    {/* Left: Page Size Selector & Count Info */}
+                    <div className="flex flex-wrap items-center gap-3">
+                      <div className="flex items-center space-x-2 text-xs text-slate-400">
+                        <span>Show:</span>
+                        <div className="flex items-center space-x-1 bg-[#0D0F17] p-1 rounded-xl border border-[#1E2230]">
+                          {[
+                            { label: "25", value: 25 },
+                            { label: "50", value: 50 },
+                            { label: "100", value: 100 },
+                            { label: "All", value: 0 },
+                          ].map((opt) => (
+                            <button
+                              key={opt.label}
+                              onClick={() => setLeadPageSize(opt.value)}
+                              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all ${
+                                leadPageSize === opt.value
+                                  ? "bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black shadow-sm"
+                                  : "text-slate-400 hover:text-white hover:bg-[#1E2230]"
+                              }`}
+                            >
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <span className="text-xs text-slate-400 font-mono hidden md:inline">
+                        Showing <strong className="text-white">{leadStartIndex + 1}</strong> to{" "}
+                        <strong className="text-white">
+                          {Math.min(leadStartIndex + paginatedLeads.length, filteredLeads.length)}
+                        </strong>{" "}
+                        of <strong className="text-white">{filteredLeads.length}</strong> leads
+                      </span>
+                    </div>
+
+                    {/* Right: Page Navigation Controls */}
+                    {leadPageSize !== 0 && leadTotalPages > 1 && (
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => setLeadPage((p) => Math.max(1, p - 1))}
+                          disabled={safeLeadPage <= 1}
+                          className="px-3 py-1.5 rounded-xl border border-[#1E2230] bg-[#0D0F17] text-xs font-semibold text-slate-300 hover:text-white hover:bg-[#1E2230] disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center space-x-1"
+                        >
+                          <ChevronLeft className="w-3.5 h-3.5" />
+                          <span>Prev</span>
+                        </button>
+
+                        <div className="flex items-center space-x-1">
+                          {Array.from({ length: leadTotalPages }, (_, i) => i + 1).map((pageNum) => {
+                            // If more than 7 pages, compress with smart ellipsis
+                            if (leadTotalPages > 7) {
+                              const isFirst = pageNum === 1;
+                              const isLast = pageNum === leadTotalPages;
+                              const isNearCurrent = Math.abs(pageNum - safeLeadPage) <= 1;
+
+                              if (!isFirst && !isLast && !isNearCurrent) {
+                                if (pageNum === safeLeadPage - 2 || pageNum === safeLeadPage + 2) {
+                                  return (
+                                    <span key={pageNum} className="px-1 text-xs text-slate-500 font-bold">
+                                      …
+                                    </span>
+                                  );
+                                }
+                                return null;
+                              }
+                            }
+
+                            const isActive = pageNum === safeLeadPage;
+                            return (
+                              <button
+                                key={pageNum}
+                                onClick={() => setLeadPage(pageNum)}
+                                className={`w-8 h-8 rounded-xl text-xs font-bold transition-all ${
+                                  isActive
+                                    ? "bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black shadow-md"
+                                    : "bg-[#0D0F17] border border-[#1E2230] text-slate-400 hover:text-white hover:bg-[#1E2230]"
+                                }`}
+                              >
+                                {pageNum}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        <button
+                          onClick={() => setLeadPage((p) => Math.min(leadTotalPages, p + 1))}
+                          disabled={safeLeadPage >= leadTotalPages}
+                          className="px-3 py-1.5 rounded-xl border border-[#1E2230] bg-[#0D0F17] text-xs font-semibold text-slate-300 hover:text-white hover:bg-[#1E2230] disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center space-x-1"
+                        >
+                          <span>Next</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}
