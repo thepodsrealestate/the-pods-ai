@@ -160,8 +160,12 @@ export async function POST(req: NextRequest) {
         console.error('Audio Transcription Error:', audioErr?.message || audioErr);
       }
       if (!userText || userText.trim().length === 0) {
-        userText = '[Voice Note]';
+        userText = '🎤 Voice note';
       }
+    } else if (!userText && (body.type === 'audio' || body.type === 'voice' || body.content_type === 'audio' || body.payload?.type === 'audio')) {
+      userText = '🎤 Voice note';
+    } else if (!userText && (body.type === 'image' || body.content_type === 'image' || body.payload?.type === 'image')) {
+      userText = '📷 Photo attachment';
     }
 
     // Form field extraction from WhatsApp text payload
@@ -191,11 +195,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ status: 'error', reply: 'Welcome to The Pods Real Estate! How can I help?' });
     }
 
-    // STRICT SUPPRESSION OF EMPTY/BLANK INBOUND WEBHOOKS
-    // ManyChat often fires a secondary contact-update trigger with empty text ("") immediately after a lead form.
+    // STRICT SUPPRESSION OF EMPTY/BLANK INBOUND WEBHOOKS ONLY (preserve audio / media)
     if (!userText || userText.trim().length === 0) {
-      console.log(`[IGNORE EMPTY] No message content or audio for ${phone} — suppressing reply generation`);
-      return NextResponse.json({ status: 'empty_ignored', reply: '' });
+      if (audioUrl || body.type === 'audio' || body.type === 'voice') {
+        userText = '🎤 Voice note';
+      } else if (body.type === 'image') {
+        userText = '📷 Photo attachment';
+      } else {
+        console.log(`[IGNORE EMPTY] No message content or audio for ${phone} — suppressing reply generation`);
+        return NextResponse.json({ status: 'empty_ignored', reply: '' });
+      }
     }
 
     // Rate Limiting (max 10 requests per minute per phone number)
@@ -473,23 +482,7 @@ export async function POST(req: NextRequest) {
             text: m.content,
           }));
 
-          // CRITICAL DOUBLE-SEND GUARD: If an AI message was already sent to this lead in the last 12 seconds, suppress duplicate
-          const lastAiMsg = existingLead.conversations[0].messages.find((m: any) => m.senderType === 'AI');
-          if (lastAiMsg) {
-            const timeSinceLastAi = Date.now() - new Date(lastAiMsg.createdAt).getTime();
-            if (timeSinceLastAi < 12000) {
-              console.log(`[RAPID AI SUPPRESSION] Bot already messaged ${normalizedPhone} ${timeSinceLastAi}ms ago — suppressing duplicate message`);
-              return {
-                status: 'duplicate_suppressed',
-                reply: '',
-                ai_reply: '',
-                text: '',
-                action: 'NONE',
-                language: 'en',
-                latency_ms: Date.now() - startTime,
-              };
-            }
-          }
+          // Message history extracted for context
         }
 
         // CRITICAL: If AI is toggled OFF for this lead, save the message but DO NOT generate AI reply
@@ -761,7 +754,7 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         where: {
           conversationId: conversation.id,
           senderType: SenderType.LEAD,
-          createdAt: { gte: new Date(Date.now() - 10000) },
+          createdAt: { gte: new Date(Date.now() - 3000) },
         },
         orderBy: { createdAt: 'desc' },
       });
