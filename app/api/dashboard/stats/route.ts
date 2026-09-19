@@ -21,7 +21,7 @@ export async function GET() {
       prisma.booking.count(),
       prisma.voucher.count(),
       prisma.lead.findMany({
-        take: 50,
+        take: 500,
         orderBy: { createdAt: "desc" },
         include: { attributions: true }
       }),

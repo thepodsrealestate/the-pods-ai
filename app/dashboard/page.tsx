@@ -1326,7 +1326,7 @@ export default function MasterDashboardPage() {
 
                 <div className="flex items-center space-x-3">
                   <span className="text-xs text-slate-400 font-mono">
-                    Showing <strong className="text-white">{filteredLeads.length}</strong> of {leads.length} leads
+                    Showing <strong className="text-white">{filteredLeads.length}</strong> of {stats.totalLeads || leads.length} leads
                   </span>
                   <a
                     href="/api/export/csv"
