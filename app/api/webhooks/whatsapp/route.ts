@@ -634,7 +634,8 @@ export async function POST(req: NextRequest) {
             meetingDayStr = ' on ' + mDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: bookingDetails.timezone || 'Europe/London' });
           } catch (_) {}
         }
-        const reply = `Wonderful to meet you, ${firstName}! I've updated your event pass with your name. Really looking forward to seeing you${meetingDayStr} at the ${venueName}! Let me know if you need anything before then.`;
+        const passText = getActiveEvents().length > 0 ? 'event pass' : 'consultation';
+        const reply = `Wonderful to meet you, ${firstName}! I've updated your ${passText} with your name. Really looking forward to seeing you${meetingDayStr} at the ${venueName}! Let me know if you need anything before then.`;
         aiResult = {
           reply,
           language: 'en',
@@ -675,7 +676,7 @@ export async function POST(req: NextRequest) {
         if (globalAiMode === 'DAY' && (isLeadFirstTouch || isMetaLeadInquiry)) {
           const firstName = resolvedName ? resolvedName.split(/\s+/)[0] : '';
           const greetingName = firstName ? ` ${firstName}` : '';
-          const dayModeReply = `Hey${greetingName}! Thanks for reaching out to The Pods Real Estate. I'm a representative from The Pods Real Estate. We received your details regarding the Dubai Property Expo in Leicester (Sept 26–27). Are you looking to attend the event or explore investment options?`;
+          const dayModeReply = `Hey${greetingName}! Thanks for reaching out to The Pods Real Estate. Our representative will be contacting you in few mins.`;
 
           aiResult = {
             reply: dayModeReply,
