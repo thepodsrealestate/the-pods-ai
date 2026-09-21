@@ -12,6 +12,7 @@ export interface AIStructuredOutput {
   language: string;
   action: AIAction;
   lead_updates?: {
+    full_name?: string;
     buyer_location?: string;
     purchase_purpose?: string;
     budget_min?: number;

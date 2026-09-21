@@ -26,18 +26,93 @@ export interface CreateLeadInput {
   };
 }
 
+const BUSINESS_KEYWORDS = [
+  'specialist', 'lashes', 'brow', 'brows', 'salon', 'clinic', 'properties', 'property',
+  'auction', 'realty', 'real estate', 'consultancy', 'consultant', 'solutions', 'services',
+  'enterprise', 'enterprises', 'holding', 'holdings', 'studio', 'academy', 'ltd', 'limited',
+  'llc', 'pvt', 'inc', 'corp', 'store', 'shop', 'agency', 'cleaning', 'dentist', 'dental',
+  'hair', 'nails', 'spa', 'barber', 'builders', 'construction', 'contractors', 'logistics',
+  'transport', 'autos', 'motors', 'cars', 'boutique', 'fashion', 'market', 'cafe', 'restaurant'
+];
+
+const NON_NAME_WORDS = new Set([
+  'yes', 'no', 'ok', 'okay', 'sure', 'fine', 'thanks', 'thank', 'thx', 'cheers',
+  'hello', 'hi', 'hey', 'good', 'morning', 'afternoon', 'evening', 'night',
+  'sunday', 'saturday', 'friday', 'monday', 'tuesday', 'wednesday', 'thursday',
+  'weekend', 'tomorrow', 'today', 'am', 'pm', 'time', 'hour', 'date', 'slot',
+  'leicester', 'marriott', 'hotel', 'danube', 'dubai', 'london', 'uk', 'expo',
+  'property', 'properties', 'apartment', 'villa', 'studio', 'penthouse', 'bedroom',
+  'email', 'phone', 'number', 'address', 'location', 'pass', 'booking', 'meet',
+  'meeting', 'slot', 'brochure', 'price', 'pricing', 'cost', 'budget', 'invest',
+  'investment', 'details', 'info', 'information', 'here', 'send', 'please', 'can',
+  'will', 'would', 'could', 'want', 'interested', 'more', 'about', 'business',
+  'form', 'filled', 'like', 'call', 'message', 'whatsapp', 'view', 'visit'
+]);
+
+export function formatPersonName(name: string): string {
+  return name
+    .trim()
+    .split(/\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}
+
 export function isRealName(name?: string | null): boolean {
   if (!name) return false;
   const trimmed = name.trim();
-  return (
-    trimmed.length > 1 &&
-    trimmed !== '-' &&
-    trimmed !== '--' &&
-    trimmed !== 'VIP Client' &&
-    trimmed.toLowerCase() !== 'unknown' &&
-    trimmed.toLowerCase() !== 'guest' &&
-    !/^[-_\s.]+$/.test(trimmed)
-  );
+  if (
+    trimmed.length <= 1 ||
+    trimmed === '-' ||
+    trimmed === '--' ||
+    trimmed === 'VIP Client' ||
+    trimmed.toLowerCase() === 'unknown' ||
+    trimmed.toLowerCase() === 'guest' ||
+    trimmed.toLowerCase() === 'null' ||
+    trimmed.toLowerCase() === 'undefined' ||
+    /^[-_\s.]+$/.test(trimmed)
+  ) {
+    return false;
+  }
+
+  // Check if it's a business / company name rather than a person's name
+  const lower = trimmed.toLowerCase();
+  if (lower.includes('|') || lower.includes('&') || lower.includes(' co.') || lower.includes(' co ')) {
+    return false;
+  }
+
+  const words = lower.split(/[\s\-_\/]+/);
+  if (words.some(w => BUSINESS_KEYWORDS.includes(w))) {
+    return false;
+  }
+
+  return true;
+}
+
+export function extractNameFromText(text?: string | null): string | undefined {
+  if (!text) return undefined;
+  const trimmed = text.trim();
+
+  // Pattern 1: Explicit introduction: "My name is Fatima Zahra", "I am Fatima Mouali", "Call me Fatima", "Name: Fatima"
+  const explicitMatch = trimmed.match(/(?:my\s*name\s*is|i\s*am|i'm|call\s*me|name\s*is|name:)\s*([a-zA-Z\s'-]{2,40})/i);
+  if (explicitMatch) {
+    const candidate = explicitMatch[1].trim();
+    if (isRealName(candidate)) {
+      return formatPersonName(candidate);
+    }
+  }
+
+  // Pattern 2: Standalone person's name (1 to 4 words, letters/hyphens only, 2-40 chars, e.g. "Fatima zahra mouali")
+  if (/^[a-zA-Z\s'-]{2,40}$/.test(trimmed)) {
+    const words = trimmed.toLowerCase().split(/\s+/).filter(Boolean);
+    if (words.length >= 1 && words.length <= 4) {
+      const hasNonNameWord = words.some(w => NON_NAME_WORDS.has(w));
+      if (!hasNonNameWord && isRealName(trimmed)) {
+        return formatPersonName(trimmed);
+      }
+    }
+  }
+
+  return undefined;
 }
 
 export class LeadService {

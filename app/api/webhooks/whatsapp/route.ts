@@ -2,7 +2,7 @@ import { NextRequest, NextResponse, after } from 'next/server';
 import crypto from 'crypto';
 import { AIService } from '@/lib/services/aiService';
 import { prisma } from '@/lib/prisma';
-import { LeadService, isRealName } from '@/lib/services/leadService';
+import { LeadService, isRealName, extractNameFromText, formatPersonName } from '@/lib/services/leadService';
 import { MessageService } from '@/lib/services/messageService';
 import { NotificationService } from '@/lib/services/notificationService';
 import { CalendarService } from '@/lib/services/calendarService';
@@ -595,8 +595,10 @@ export async function POST(req: NextRequest) {
       const effectivePhone = normalizedPhone || phone || extractedFormPhone || undefined;
       const isUkPhone = effectivePhone && (effectivePhone.startsWith('+44') || effectivePhone.startsWith('44') || effectivePhone.startsWith('0044'));
 
-      const resolvedName = (isRealName(senderName) ? senderName : undefined) 
-        || (isRealName(existingLead?.fullName) ? existingLead.fullName : undefined);
+      const nameFromUserMsg = extractNameFromText(userText);
+      const resolvedName = nameFromUserMsg
+        || (isRealName(existingLead?.fullName) ? existingLead.fullName : undefined)
+        || (isRealName(senderName) ? formatPersonName(senderName) : undefined);
 
       const resolvedEmail = existingLead?.email || extractedFormEmail || undefined;
 
@@ -621,7 +623,24 @@ export async function POST(req: NextRequest) {
 
       let aiResult: any;
 
-      if (isMeetingBooked && isAck) {
+      if (isMeetingBooked && nameFromUserMsg) {
+        const firstName = nameFromUserMsg.split(/\s+/)[0];
+        const venueName = bookingDetails?.location || (isUkPhone ? (getActiveEvents().length > 0 ? 'Leicester Marriott Hotel' : 'Google Meet') : 'The Pods Bluewaters');
+        let meetingDayStr = '';
+        if (bookingDetails?.meetingTime) {
+          try {
+            const mDate = new Date(bookingDetails.meetingTime);
+            meetingDayStr = ' on ' + mDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: bookingDetails.timezone || 'Europe/London' });
+          } catch (_) {}
+        }
+        const reply = `Wonderful to meet you, ${firstName}! I've updated your event pass with your name. Really looking forward to seeing you${meetingDayStr} at the ${venueName}! Let me know if you need anything before then.`;
+        aiResult = {
+          reply,
+          language: 'en',
+          action: 'UPDATE_LEAD',
+          lead_updates: { full_name: nameFromUserMsg },
+        };
+      } else if (isMeetingBooked && isAck) {
         const leadDisplayName = resolvedName && resolvedName !== 'Guest' && resolvedName !== 'VIP Client' ? `, ${resolvedName}` : '';
         const venueName = bookingDetails?.location || (isUkPhone ? (getActiveEvents().length > 0 ? 'Leicester Marriott Hotel, Smith Way, Grove Park, Enderby, Leicester LE19 1SW' : 'Google Meet') : 'The Pods Bluewaters');
 
@@ -748,8 +767,11 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
     const emailMatch = userText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
     const extractedEmail = emailMatch ? emailMatch[0].toLowerCase().trim() : (aiResult.booking_details?.email?.toLowerCase().trim() || aiResult.lead_updates?.email?.toLowerCase().trim() || undefined);
 
+    const nameFromUserMsg = extractNameFromText(userText);
     const nameMatch = userText.match(/(?:full\s*name|name):\s*([^\n\r,]+)/i);
-    const extractedName = nameMatch && isRealName(nameMatch[1].trim()) ? nameMatch[1].trim() : (isRealName(senderName) ? senderName : undefined);
+    const extractedName = nameFromUserMsg 
+      || (nameMatch && isRealName(nameMatch[1].trim()) ? formatPersonName(nameMatch[1].trim()) : undefined)
+      || (isRealName(senderName) ? formatPersonName(senderName) : undefined);
 
     const phoneMatch = userText.match(/(?:phone\s*number|phone|mobile):\s*([+\d\s()-]{7,})/i);
     const extractedFormPhone = phoneMatch && phoneMatch[1].trim().length > 6 ? phoneMatch[1].replace(/[^\d+]/g, '').trim() : phone;
@@ -827,6 +849,22 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         data: { email: extractedEmail },
       });
       lead.email = extractedEmail;
+    }
+
+    const realPersonName = (nameFromUserMsg && isRealName(nameFromUserMsg))
+      ? nameFromUserMsg
+      : (aiResult.lead_updates?.full_name && isRealName(aiResult.lead_updates.full_name))
+        ? formatPersonName(aiResult.lead_updates.full_name)
+        : (extractedName && isRealName(extractedName))
+          ? extractedName
+          : undefined;
+
+    if (realPersonName && (!isRealName(lead.fullName) || lead.fullName !== realPersonName)) {
+      await prisma.lead.update({
+        where: { id: lead.id },
+        data: { fullName: realPersonName },
+      });
+      lead.fullName = realPersonName;
     }
 
     if (aiResult.lead_updates) {
