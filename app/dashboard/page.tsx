@@ -1569,8 +1569,10 @@ export default function MasterDashboardPage() {
                       ) : (
                         paginatedLeads.map((lead: any) => {
                           const attribution = lead.attributions?.[0];
-                          const source = lead.leadSource || attribution?.source || "DIRECT";
-                          const campaign = attribution?.campaign || attribution?.utmCampaign || null;
+                          const rawSource = lead.leadSource || attribution?.source || "DIRECT";
+                          const genericSources = ["DIRECT", "FACEBOOK_ADS", "META_ADS", "GOOGLE_ADS", "WHATSAPP_DIRECT", "ORGANIC"];
+                          const isGeneric = genericSources.includes(rawSource.toUpperCase().trim());
+                          const campaign = attribution?.campaign || attribution?.utmCampaign || (!isGeneric ? rawSource : null);
                           const rawPhone = cleanWhatsAppPhone(lead.phone);
 
                           return (
@@ -1601,9 +1603,9 @@ export default function MasterDashboardPage() {
 
                               <td className="px-6 py-4">
                                 <div className="flex flex-col space-y-1">
-                                  <SourceBadge source={source} />
+                                  <SourceBadge source={rawSource} />
                                   {campaign && (
-                                    <span className="inline-flex items-center text-[10px] text-slate-400 space-x-1 truncate max-w-[160px]" title={campaign}>
+                                    <span className="inline-flex items-center text-[10px] text-slate-300 font-medium space-x-1 truncate max-w-[200px]" title={campaign}>
                                       <Megaphone className="w-3 h-3 text-[#C5A059] shrink-0" />
                                       <span className="truncate">{campaign}</span>
                                     </span>
@@ -1999,11 +2001,27 @@ export default function MasterDashboardPage() {
                         </div>
                       </div>
 
-                      {/* Row 2: Metadata (Phone • Source) */}
-                      <div className="flex items-center space-x-2 pl-0 sm:pl-10 text-[11px] text-slate-400">
+                      {/* Row 2: Metadata (Phone • Source • Campaign) */}
+                      <div className="flex items-center space-x-2 pl-0 sm:pl-10 text-[11px] text-slate-400 overflow-hidden">
                         <span className="font-mono">{selectedConversation.lead.phone}</span>
                         <span className="text-slate-600">•</span>
                         <SourceBadge source={selectedConversation.lead.leadSource} compact={true} />
+                        {(() => {
+                          const attr = selectedConversation.lead.attributions?.[0];
+                          const src = selectedConversation.lead.leadSource || attr?.source || "DIRECT";
+                          const genSources = ["DIRECT", "FACEBOOK_ADS", "META_ADS", "GOOGLE_ADS", "WHATSAPP_DIRECT", "ORGANIC"];
+                          const isGen = genSources.includes(src.toUpperCase().trim());
+                          const camp = attr?.campaign || attr?.utmCampaign || (!isGen ? src : null);
+                          return camp ? (
+                            <>
+                              <span className="text-slate-600">•</span>
+                              <span className="inline-flex items-center space-x-1 text-[#C5A059] font-medium truncate max-w-[220px]" title={camp}>
+                                <Megaphone className="w-3 h-3 shrink-0" />
+                                <span className="truncate">{camp}</span>
+                              </span>
+                            </>
+                          ) : null;
+                        })()}
                       </div>
                     </div>
 
@@ -2998,8 +3016,21 @@ export default function MasterDashboardPage() {
                   </div>
                   <div className="p-3.5 rounded-xl bg-[#151824] border border-[#1E2230]">
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Traffic Source</span>
-                    <div className="mt-1">
+                    <div className="mt-1 flex flex-col space-y-1">
                       <SourceBadge source={selectedLead.leadSource || "DIRECT"} />
+                      {(() => {
+                        const attr = selectedLead.attributions?.[0];
+                        const src = selectedLead.leadSource || attr?.source || "DIRECT";
+                        const genSources = ["DIRECT", "FACEBOOK_ADS", "META_ADS", "GOOGLE_ADS", "WHATSAPP_DIRECT", "ORGANIC"];
+                        const isGen = genSources.includes(src.toUpperCase().trim());
+                        const camp = attr?.campaign || attr?.utmCampaign || (!isGen ? src : null);
+                        return camp ? (
+                          <span className="inline-flex items-center text-[10px] text-slate-300 font-medium space-x-1 truncate max-w-[180px]" title={camp}>
+                            <Megaphone className="w-3 h-3 text-[#C5A059] shrink-0" />
+                            <span className="truncate">{camp}</span>
+                          </span>
+                        ) : null;
+                      })()}
                     </div>
                   </div>
                   <div className="p-3.5 rounded-xl bg-[#151824] border border-[#1E2230]">

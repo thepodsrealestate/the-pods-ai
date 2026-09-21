@@ -248,6 +248,28 @@ export class LeadService {
       if (input.email && input.email.trim() && (!lead.email || lead.email.trim() === '')) {
         updateData.email = input.email.trim().toLowerCase();
       }
+      if (input.leadSource && input.leadSource !== 'DIRECT' && (lead.leadSource === 'DIRECT' || !lead.leadSource)) {
+        updateData.leadSource = input.leadSource;
+      }
+
+      if (input.attribution && (!lead.attributions || lead.attributions.length === 0)) {
+        try {
+          await prisma.leadAttribution.create({
+            data: {
+              leadId: lead.id,
+              source: input.attribution.source || 'DIRECT',
+              medium: input.attribution.medium || null,
+              campaign: input.attribution.campaign || null,
+              campaignId: input.attribution.campaignId || null,
+              adSet: input.attribution.adSet || null,
+              adId: input.attribution.adId || null,
+              utmSource: input.attribution.utmSource || null,
+              utmMedium: input.attribution.utmMedium || null,
+              utmCampaign: input.attribution.utmCampaign || null,
+            }
+          });
+        } catch (_) { /* ignore duplicate attribution */ }
+      }
 
       if (Object.keys(updateData).length > 0) {
         lead = await prisma.lead.update({
