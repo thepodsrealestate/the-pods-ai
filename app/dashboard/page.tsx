@@ -45,7 +45,8 @@ import {
   ExternalLink,
   Filter,
   Maximize2,
-  Minimize2
+  Minimize2,
+  TrendingUp
 } from "lucide-react";
 
 function SourceBadge({ source, compact = false }: { source: string; compact?: boolean }) {
@@ -378,6 +379,7 @@ export default function MasterDashboardPage() {
   // Floating AI Executive Advisor & Ad Metrics State
   const [advisorOpen, setAdvisorOpen] = useState<boolean>(false);
   const [advisorFullscreen, setAdvisorFullscreen] = useState<boolean>(false);
+  const [advisorActiveTab, setAdvisorActiveTab] = useState<'chat' | 'metrics'>('chat');
   const [advisorQuery, setAdvisorQuery] = useState<string>("");
   const [loadingAdvisor, setLoadingAdvisor] = useState<boolean>(false);
   const [adPeriod, setAdPeriod] = useState<string>("last_30d");
@@ -1154,7 +1156,7 @@ export default function MasterDashboardPage() {
         </header>
 
         {/* Dynamic Tab Body */}
-        <div className="p-4 md:p-8 flex-1">
+        <div className="p-4 md:p-8 pb-28 md:pb-8 flex-1">
           
           {/* TAB 1: OVERVIEW */}
           {activeTab === "overview" && (
@@ -2513,18 +2515,18 @@ export default function MasterDashboardPage() {
                 </div>
               </div>
 
-                {/* Campaign-Level Breakdown Table */}
+                {/* Campaign-Level Breakdown Table & Mobile Cards */}
                 {adCampaigns.length > 0 && (
-                <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-6 shadow-xl space-y-4">
-                  <div className="flex items-center justify-between">
+                <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                      <h3 className="text-base font-bold text-white flex items-center space-x-2">
+                      <h3 className="text-sm sm:text-base font-bold text-white flex items-center space-x-2">
                         <Megaphone className="w-4 h-4 text-[#C5A059]" />
                         <span>Individual Campaign Performance</span>
                       </h3>
-                      <p className="text-xs text-slate-400 mt-1">Live per-campaign breakdown from Meta &amp; Google Ads APIs</p>
+                      <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">Live per-campaign breakdown from Meta &amp; Google Ads APIs</p>
                     </div>
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center justify-between sm:justify-end space-x-3">
                       <div className="flex items-center bg-[#151824] p-0.5 rounded-lg border border-[#1E2230]">
                         <button
                           type="button"
@@ -2549,11 +2551,83 @@ export default function MasterDashboardPage() {
                           All ({adCampaigns.length})
                         </button>
                       </div>
-                      <span className="text-[9px] font-mono bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold uppercase">Live API</span>
+                      <span className="text-[9px] font-mono bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold uppercase shrink-0">Live API</span>
                     </div>
                   </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-xs">
+
+                  {/* MOBILE VIEW: Luxury Card List */}
+                  <div className="block sm:hidden space-y-3 pt-1">
+                    {adCampaigns
+                      .filter((c: any) => {
+                        if (campaignStatusFilter === 'all') return true;
+                        return c.status === 'Active';
+                      })
+                      .sort((a: any, b: any) => b.spend - a.spend)
+                      .map((c: any, idx: number) => (
+                        <div
+                          key={`mob-${c.platform}-${c.campaignId}-${idx}`}
+                          className="p-3.5 rounded-xl bg-[#12141E] border border-[#1E2230] space-y-2.5 shadow-md"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <span
+                                className={`inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
+                                  c.platform === 'meta'
+                                    ? 'bg-purple-500/10 text-purple-400 border border-purple-500/30'
+                                    : 'bg-red-500/10 text-red-400 border border-red-500/30'
+                                }`}
+                              >
+                                {c.platform === 'meta' ? 'Meta' : 'Google'}
+                              </span>
+                              {c.status && (
+                                <span
+                                  className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${
+                                    c.status === 'Active'
+                                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                      : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                                  }`}
+                                >
+                                  {c.status}
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-right">
+                              <span className="text-[10px] text-slate-400 block uppercase tracking-wider font-mono">Spend</span>
+                              <span className="font-mono text-xs font-bold text-white">AED {c.spend.toLocaleString()}</span>
+                            </div>
+                          </div>
+
+                          <div className="text-xs font-medium text-slate-100 leading-snug">
+                            {c.campaignName}
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#1E2230]/70">
+                            <div className="bg-[#151824] p-2 rounded-lg text-center">
+                              <span className="text-[9px] text-slate-400 block font-mono uppercase">Leads</span>
+                              <span className="text-xs font-bold text-[#C5A059] font-mono">
+                                {c.leads > 0 ? c.leads.toLocaleString() : '—'}
+                              </span>
+                            </div>
+                            <div className="bg-[#151824] p-2 rounded-lg text-center">
+                              <span className="text-[9px] text-slate-400 block font-mono uppercase">CPL</span>
+                              <span className="text-xs font-bold text-emerald-400 font-mono">
+                                {c.cpl > 0 ? `AED ${c.cpl.toLocaleString()}` : '—'}
+                              </span>
+                            </div>
+                            <div className="bg-[#151824] p-2 rounded-lg text-center">
+                              <span className="text-[9px] text-slate-400 block font-mono uppercase">Clicks / CTR</span>
+                              <span className="text-xs font-semibold text-slate-200 font-mono">
+                                {c.clicks.toLocaleString()} <span className="text-[10px] text-emerald-400">({c.ctr}%)</span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+
+                  {/* DESKTOP/TABLET VIEW: Full Data Table */}
+                  <div className="hidden sm:block overflow-x-auto">
+                    <table className="w-full text-xs min-w-[700px]">
                       <thead>
                         <tr className="border-b border-[#1E2230] text-[10px] text-slate-400 uppercase tracking-wider">
                           <th className="text-left py-3 px-3">Platform</th>
@@ -3017,19 +3091,55 @@ export default function MasterDashboardPage() {
       )}
 
       {/* FLOATING LUXURY AI ACTION BALL (Fixed Bottom Right) */}
-      <div className={`fixed bottom-6 right-6 z-30 ${activeTab === "conversations" && mobileShowChat ? "hidden md:block" : ""}`}>
+      <div className={`fixed bottom-20 right-4 sm:bottom-20 sm:right-6 md:bottom-6 md:right-6 z-30 ${activeTab === "conversations" && mobileShowChat ? "hidden md:block" : ""}`}>
         <button
           onClick={() => setAdvisorOpen(!advisorOpen)}
-          className="relative group p-4 rounded-full bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-black shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center border-2 border-white/20"
+          className="relative group p-3.5 sm:p-4 rounded-full bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-black shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center border-2 border-white/20"
           title="Open AI Executive Advisor"
         >
-          <Sparkles className="w-6 h-6 animate-pulse" />
+          <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" />
           <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
           </span>
         </button>
       </div>
+
+      {/* 📱 NATIVE-APP MOBILE BOTTOM NAVIGATION BAR */}
+      <nav aria-label="Mobile Navigation" className={`md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0D0F17]/95 backdrop-blur-xl border-t border-[#1E2230] px-3 py-1.5 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.5)] ${activeTab === "conversations" && mobileShowChat ? "hidden" : ""}`}>
+        {[
+          { id: "overview", name: "Overview", icon: LayoutDashboard },
+          { id: "leads", name: "Leads", icon: Users },
+          { id: "conversations", name: "Chats", icon: MessageSquare },
+          { id: "bookings", name: "VIP", icon: Calendar },
+          { id: "analytics", name: "Marketing", icon: BarChart3 },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => {
+                setActiveTab(tab.id as any);
+                setMobileShowChat(false);
+              }}
+              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all duration-150 ${
+                isActive
+                  ? "text-[#C5A059]"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <div className={`p-1 rounded-lg transition-colors ${isActive ? "bg-[#C5A059]/15" : ""}`}>
+                <Icon className={`w-4 h-4 ${isActive ? "text-[#C5A059] stroke-[2.5]" : "text-slate-400"}`} />
+              </div>
+              <span className={`text-[10px] tracking-tight mt-0.5 ${isActive ? "font-bold text-[#C5A059]" : "font-medium"}`}>
+                {tab.name}
+              </span>
+            </button>
+          );
+        })}
+      </nav>
 
       {/* AI EXECUTIVE COMMAND CENTER OVERLAY (SIDE DRAWER & FULL SCREEN MODES) */}
       {advisorOpen && (
@@ -3046,34 +3156,36 @@ export default function MasterDashboardPage() {
             }`}
           >
             {/* Drawer / Fullscreen Header */}
-            <div className="p-4 sm:p-5 border-b border-[#1E2230] bg-[#151824] flex items-center justify-between shrink-0">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-xl bg-[#C5A059]/10 border border-[#C5A059]/30 text-[#C5A059]">
-                  <Sparkles className="w-5 h-5" />
+            <div className="p-3.5 sm:p-5 border-b border-[#1E2230] bg-[#151824] flex items-center justify-between shrink-0">
+              <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
+                <div className="p-2 rounded-xl bg-[#C5A059]/10 border border-[#C5A059]/30 text-[#C5A059] shrink-0">
+                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center space-x-2">
-                    <h3 className="text-base font-bold text-white tracking-tight">AI Executive Advisor Console</h3>
+                    <h3 className="text-sm sm:text-base font-bold text-white tracking-tight truncate">
+                      AI Executive Advisor
+                    </h3>
                     {advisorFullscreen && (
                       <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#C5A059]/15 text-[#C5A059] border border-[#C5A059]/30">
-                        Full Screen Cockpit
+                        Cockpit
                       </span>
                     )}
                     <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-[#1E2230] text-slate-400 border border-[#2A2F42]">
-                      ⌘K / Ctrl+K
+                      ⌘K
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-400">Multi-Channel Ad Intelligence &amp; Strategic Real Estate Co-Pilot</p>
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 truncate">Ad Intelligence &amp; Strategy Co-Pilot</p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-1.5 sm:space-x-2">
-                {/* Fullscreen Expansion Toggle Button */}
+              <div className="flex items-center space-x-1 sm:space-x-2 shrink-0">
+                {/* Fullscreen Expansion Toggle Button (Desktop only - mobile is already full-screen) */}
                 <button
                   type="button"
                   onClick={() => setAdvisorFullscreen(!advisorFullscreen)}
                   title={advisorFullscreen ? "Exit Full Screen (Side Drawer)" : "Expand to Full Screen"}
-                  className={`p-2 rounded-xl border transition-all flex items-center space-x-1.5 text-xs font-bold ${
+                  className={`hidden sm:flex p-2 rounded-xl border transition-all items-center space-x-1.5 text-xs font-bold ${
                     advisorFullscreen
                       ? "bg-[#C5A059]/20 border-[#C5A059]/50 text-[#C5A059] shadow-sm"
                       : "bg-[#0D0F17] hover:bg-[#1E2230] border-[#1E2230] text-slate-300 hover:text-white"
@@ -3082,12 +3194,12 @@ export default function MasterDashboardPage() {
                   {advisorFullscreen ? (
                     <>
                       <Minimize2 className="w-4 h-4 text-[#C5A059]" />
-                      <span className="hidden sm:inline">Side View</span>
+                      <span className="hidden md:inline">Side View</span>
                     </>
                   ) : (
                     <>
                       <Maximize2 className="w-4 h-4 text-[#C5A059]" />
-                      <span className="hidden sm:inline">Full Screen</span>
+                      <span className="hidden md:inline">Full Screen</span>
                     </>
                   )}
                 </button>
@@ -3095,8 +3207,8 @@ export default function MasterDashboardPage() {
                 <button
                   type="button"
                   onClick={handleExportAdvisorSession}
-                  title="Copy formatted markdown report to clipboard"
-                  className="px-2.5 py-2 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-xs font-bold text-slate-300 hover:text-white transition-all flex items-center space-x-1.5"
+                  title="Copy formatted report to clipboard"
+                  className="p-2 sm:px-2.5 sm:py-2 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-xs font-bold text-slate-300 hover:text-white transition-all flex items-center space-x-1"
                 >
                   <Share2 className="w-3.5 h-3.5 text-[#C5A059]" />
                   <span className="hidden sm:inline">{copiedAdvisor ? "Copied!" : "Export"}</span>
@@ -3108,7 +3220,7 @@ export default function MasterDashboardPage() {
                   title="Clear conversation history"
                   className="p-2 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-slate-400 hover:text-rose-400 transition-colors"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
 
                 <button
@@ -3116,250 +3228,289 @@ export default function MasterDashboardPage() {
                   onClick={() => setAdvisorOpen(false)}
                   className="p-2 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-slate-400 hover:text-white transition-colors"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             </div>
 
-            {/* Content Container (2-Column in Fullscreen, 1-Column in Drawer) */}
-            <div className={`flex-1 min-h-0 overflow-hidden ${advisorFullscreen ? "grid grid-cols-1 lg:grid-cols-12" : "flex flex-col overflow-y-auto"}`}>
-              {/* LEFT PANEL (Analytics & Prompts) */}
-              <div
-                className={`space-y-5 p-5 overflow-y-auto min-h-0 ${
-                  advisorFullscreen ? "lg:col-span-5 border-b lg:border-b-0 lg:border-r border-[#1E2230] bg-[#0E1018]" : "space-y-6 shrink-0"
-                }`}
-              >
-                {/* SECTION 1: VISUAL MULTI-CHANNEL AD ROI COMPARISON GRAPH & SCORECARDS */}
-                <div className="p-5 rounded-2xl bg-[#151824] border border-[#1E2230] space-y-4 shadow-lg">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <h4 className="text-xs font-extrabold text-white uppercase tracking-wider flex items-center space-x-2">
-                      <BarChart3 className="w-4 h-4 text-[#C5A059]" />
-                      <span>Meta Ads vs Google Ads ROI Comparison</span>
-                    </h4>
-                    <div className="flex items-center space-x-1 bg-[#0D0F17] p-1 rounded-lg border border-[#1E2230] text-[10px] font-bold">
+            {/* Segmented Tab Switcher for Side Drawer (PC Compact) & Mobile Screen */}
+            {!advisorFullscreen && (
+              <div className="px-3.5 py-2.5 border-b border-[#1E2230] bg-[#111420] shrink-0">
+                <div className="flex p-1 bg-[#090B10] rounded-xl border border-[#1E2230] text-xs font-bold">
+                  <button
+                    type="button"
+                    onClick={() => setAdvisorActiveTab('chat')}
+                    className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-2 transition-all ${
+                      advisorActiveTab === 'chat'
+                        ? 'bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black shadow-md font-extrabold'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    <span>AI Query Console</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAdvisorActiveTab('metrics')}
+                    className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-2 transition-all ${
+                      advisorActiveTab === 'metrics'
+                        ? 'bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black shadow-md font-extrabold'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <BarChart3 className="w-3.5 h-3.5" />
+                    <span>Ad ROI &amp; Spend</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Content Container (2-Column in Fullscreen Cockpit, Tabbed in Side Drawer & Mobile) */}
+            <div className={`flex-1 min-h-0 overflow-hidden ${advisorFullscreen ? "grid grid-cols-1 lg:grid-cols-12" : "flex flex-col"}`}>
+              {/* METRICS & AD INTELLIGENCE PANEL */}
+              {(advisorFullscreen || advisorActiveTab === 'metrics') && (
+                <div
+                  className={`p-4 sm:p-5 overflow-y-auto min-h-0 space-y-4 ${
+                    advisorFullscreen ? "lg:col-span-5 border-b lg:border-b-0 lg:border-r border-[#1E2230] bg-[#0E1018]" : "flex-1 bg-[#0E1018]"
+                  }`}
+                >
+                  {/* SECTION 1: VISUAL MULTI-CHANNEL AD ROI COMPARISON GRAPH & SCORECARDS */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-[#151824] border border-[#1E2230] space-y-4 shadow-lg">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <h4 className="text-xs font-extrabold text-white uppercase tracking-wider flex items-center space-x-2">
+                        <BarChart3 className="w-4 h-4 text-[#C5A059]" />
+                        <span>Meta Ads vs Google Ads ROI</span>
+                      </h4>
+                      <div className="flex items-center space-x-1 bg-[#0D0F17] p-1 rounded-lg border border-[#1E2230] text-[10px] font-bold self-start sm:self-auto">
+                        {[
+                          { key: "today", label: "Today" },
+                          { key: "last_7d", label: "7D" },
+                          { key: "last_30d", label: "30D" },
+                          { key: "this_month", label: "Month" },
+                          { key: "maximum", label: "All" },
+                        ].map((btn) => (
+                          <button
+                            key={btn.key}
+                            type="button"
+                            onClick={() => handleSelectAdPeriod(btn.key)}
+                            className={`px-2 py-0.5 rounded transition-all ${
+                              adPeriod === btn.key
+                                ? "bg-[#C5A059] text-black font-extrabold shadow-sm"
+                                : "text-slate-400 hover:text-white"
+                            }`}
+                          >
+                            {btn.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Visual Bar Comparison Chart */}
+                    <div className="space-y-3 bg-[#0D0F17] p-3.5 sm:p-4 rounded-xl border border-[#1E2230]">
+                      {/* Meta Bar */}
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-xs font-semibold">
+                          <span className="text-purple-400 flex items-center space-x-1">
+                            <span className="w-2 h-2 rounded-full bg-purple-400 inline-block"></span>
+                            <span>Meta Ads</span>
+                          </span>
+                          <span className="text-slate-300 font-mono text-[11px]">
+                            {adMetrics.meta.spendAed > 0 
+                              ? `AED ${adMetrics.meta.spendAed.toLocaleString()} · ${adMetrics.meta.clicks} clicks` 
+                              : `CPL: AED ${adMetrics.meta.cplAed}`}
+                          </span>
+                        </div>
+                        <div className="w-full bg-[#151824] rounded-full h-3 overflow-hidden border border-purple-500/30 p-0.5">
+                          <div 
+                            className="h-full bg-gradient-to-r from-purple-600 to-purple-400 rounded-full transition-all duration-500" 
+                            style={{ width: `${adMetrics.summary.totalSpendAed > 0 ? Math.max(5, Math.round((adMetrics.meta.spendAed / adMetrics.summary.totalSpendAed) * 100)) : 0}%` }}
+                          ></div>
+                        </div>
+                      </div>
+
+                      {/* Google Bar */}
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-xs font-semibold">
+                          <span className="text-[#C5A059] flex items-center space-x-1">
+                            <span className="w-2 h-2 rounded-full bg-[#C5A059] inline-block"></span>
+                            <span>Google Ads</span>
+                          </span>
+                          <span className="text-slate-300 font-mono text-[11px]">
+                            {adMetrics.google.spendAed > 0 
+                              ? `AED ${adMetrics.google.spendAed.toLocaleString()} · ${adMetrics.google.clicks} clicks` 
+                              : `CPL: AED ${adMetrics.google.cplAed}`}
+                          </span>
+                        </div>
+                        <div className="w-full bg-[#151824] rounded-full h-3 overflow-hidden border border-[#C5A059]/30 p-0.5">
+                          <div 
+                            className="h-full bg-gradient-to-r from-[#C5A059] to-[#D4B06A] rounded-full transition-all duration-500" 
+                            style={{ width: `${adMetrics.summary.totalSpendAed > 0 ? Math.max(5, Math.round((adMetrics.google.spendAed / adMetrics.summary.totalSpendAed) * 100)) : 0}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 text-xs pt-1">
+                      <div className="bg-[#0D0F17] p-3 rounded-xl border border-[#1E2230]">
+                        <span className="text-[10px] text-slate-400 uppercase font-bold">Total Digital Spend</span>
+                        <p className="text-sm font-mono font-bold text-white mt-0.5">AED {adMetrics.summary.totalSpendAed.toLocaleString()}</p>
+                      </div>
+                      <div className="bg-[#0D0F17] p-3 rounded-xl border border-[#1E2230]">
+                        <span className="text-[10px] text-slate-400 uppercase font-bold">{adMetrics.summary.totalLeads > 0 ? "Overall CPL" : "Overall CPC"}</span>
+                        <p className="text-sm font-mono font-bold text-emerald-400 mt-0.5">AED {adMetrics.summary.totalLeads > 0 ? adMetrics.summary.overallCplAed : adMetrics.summary.overallCpcAed}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SECTION 2: 1-CLICK PROMPT CARDS (Detailed view) */}
+                  <div className="space-y-2.5 p-4 rounded-2xl bg-[#151824]/60 border border-[#1E2230]">
+                    <span className="text-[10px] font-extrabold text-[#C5A059] uppercase tracking-wider flex items-center space-x-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
+                      <span>Executive Analysis Prompts</span>
+                    </span>
+                    <div className="flex flex-col space-y-2">
                       {[
-                        { key: "today", label: "Today" },
-                        { key: "last_7d", label: "7D" },
-                        { key: "last_30d", label: "30D" },
-                        { key: "this_month", label: "Month" },
-                        { key: "maximum", label: "All" },
-                      ].map((btn) => (
+                        { label: "Active Campaign Health & Strategy", query: "Diagnose our active campaign health, pacing, and 3 immediate strategic recommendations.", color: "text-[#C5A059] border-[#C5A059]/40 bg-[#C5A059]/10 hover:bg-[#C5A059]/20" },
+                        { label: "Critique Live Ad Image & Creative", query: "Inspect our live ad image, headline, and creative copy using vision AI. Tell me how it looks and what design/copy flaws are hurting our CTR.", color: "text-purple-300 border-purple-500/40 bg-purple-500/10 hover:bg-purple-500/20" },
+                        { label: "Diagnose 0-Lead Conversion", query: "Why do we have clicks but no form leads yet on our active campaign? How do we fix it?", color: "text-slate-300 border-[#1E2230] bg-[#0D0F17] hover:bg-[#1E2230]" },
+                        { label: "Compare Google vs Meta CPL", query: "Compare Google Ads vs Meta Ads CPL and lead volume.", color: "text-slate-300 border-[#1E2230] bg-[#0D0F17] hover:bg-[#1E2230]" },
+                        { label: "Executive Meeting Brief", query: "Generate an executive 1-paragraph report for our sales meeting.", color: "text-slate-300 border-[#1E2230] bg-[#0D0F17] hover:bg-[#1E2230]" },
+                      ].map((prompt, i) => (
                         <button
-                          key={btn.key}
+                          key={i}
                           type="button"
-                          onClick={() => handleSelectAdPeriod(btn.key)}
-                          className={`px-2 py-0.5 rounded transition-all ${
-                            adPeriod === btn.key
-                              ? "bg-[#C5A059] text-black font-extrabold shadow-sm"
-                              : "text-slate-400 hover:text-white"
-                          }`}
+                          onClick={() => {
+                            setAdvisorActiveTab('chat');
+                            handleQueryAdvisor(prompt.query);
+                          }}
+                          className={`w-full text-left px-3.5 py-2.5 rounded-xl border text-xs font-semibold transition-all ${prompt.color}`}
                         >
-                          {btn.label}
+                          {prompt.label}
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  {/* Visual Bar Comparison Chart */}
-                  <div className="space-y-3 bg-[#0D0F17] p-4 rounded-xl border border-[#1E2230]">
-                    {/* Meta Bar */}
-                    <div className="space-y-1.5">
-                      <div className="flex justify-between text-xs font-semibold">
-                        <span className="text-purple-400 flex items-center space-x-1">
-                          <span className="w-2 h-2 rounded-full bg-purple-400 inline-block"></span>
-                          <span>Meta Ads (FB / IG)</span>
-                        </span>
-                        <span className="text-slate-300 font-mono text-[11px]">
-                          {adMetrics.meta.spendAed > 0 
-                            ? `AED ${adMetrics.meta.spendAed.toLocaleString()} · ${adMetrics.meta.clicks} clicks (${adMetrics.meta.impressions.toLocaleString()} impr)` 
-                            : `CPL: AED ${adMetrics.meta.cplAed} (${adMetrics.meta.leads} leads)`}
-                        </span>
-                      </div>
-                      <div className="w-full bg-[#151824] rounded-full h-3 overflow-hidden border border-purple-500/30 p-0.5">
-                        <div 
-                          className="h-full bg-gradient-to-r from-purple-600 to-purple-400 rounded-full transition-all duration-500" 
-                          style={{ width: `${adMetrics.summary.totalSpendAed > 0 ? Math.max(5, Math.round((adMetrics.meta.spendAed / adMetrics.summary.totalSpendAed) * 100)) : 0}%` }}
-                        ></div>
-                      </div>
-                    </div>
-
-                    {/* Google Bar */}
-                    <div className="space-y-1.5">
-                      <div className="flex justify-between text-xs font-semibold">
-                        <span className="text-[#C5A059] flex items-center space-x-1">
-                          <span className="w-2 h-2 rounded-full bg-[#C5A059] inline-block"></span>
-                          <span>Google Ads (Display &amp; Search)</span>
-                        </span>
-                        <span className="text-slate-300 font-mono text-[11px]">
-                          {adMetrics.google.spendAed > 0 
-                            ? `AED ${adMetrics.google.spendAed.toLocaleString()} · ${adMetrics.google.clicks} clicks (CPC: AED ${adMetrics.google.cpcAed ?? adMetrics.google.cplAed})` 
-                            : `CPL: AED ${adMetrics.google.cplAed} (${adMetrics.google.leads} leads)`}
-                        </span>
-                      </div>
-                      <div className="w-full bg-[#151824] rounded-full h-3 overflow-hidden border border-[#C5A059]/30 p-0.5">
-                        <div 
-                          className="h-full bg-gradient-to-r from-[#C5A059] to-[#D4B06A] rounded-full transition-all duration-500" 
-                          style={{ width: `${adMetrics.summary.totalSpendAed > 0 ? Math.max(5, Math.round((adMetrics.google.spendAed / adMetrics.summary.totalSpendAed) * 100)) : 0}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3 text-xs pt-1">
-                    <div className="bg-[#0D0F17] p-3 rounded-xl border border-[#1E2230]">
-                      <span className="text-[10px] text-slate-400 uppercase font-bold">Total Digital Spend</span>
-                      <p className="text-sm font-mono font-bold text-white mt-0.5">AED {adMetrics.summary.totalSpendAed.toLocaleString()}</p>
-                    </div>
-                    <div className="bg-[#0D0F17] p-3 rounded-xl border border-[#1E2230]">
-                      <span className="text-[10px] text-slate-400 uppercase font-bold">{adMetrics.summary.totalLeads > 0 ? "Overall CPL" : "Overall CPC"}</span>
-                      <p className="text-sm font-mono font-bold text-emerald-400 mt-0.5">AED {adMetrics.summary.totalLeads > 0 ? adMetrics.summary.overallCplAed : adMetrics.summary.overallCpcAed}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* SECTION 3: 1-CLICK PROMPT PILLS */}
-                <div className="space-y-2.5 p-4 rounded-2xl bg-[#151824]/60 border border-[#1E2230]">
-                  <span className="text-[10px] font-extrabold text-[#C5A059] uppercase tracking-wider flex items-center space-x-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
-                    <span>1-Click Executive Prompts</span>
-                  </span>
-                  <div className="flex flex-wrap gap-2">
+                  {!advisorFullscreen && (
                     <button
                       type="button"
-                      onClick={() => handleQueryAdvisor("Diagnose our active campaign health, pacing, and 3 immediate strategic recommendations.")}
-                      className="px-3 py-1.5 rounded-xl bg-[#C5A059]/10 hover:bg-[#C5A059]/20 border border-[#C5A059]/40 text-[#C5A059] text-xs font-semibold transition-all"
+                      onClick={() => setAdvisorActiveTab('chat')}
+                      className="w-full py-3 rounded-xl bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-extrabold text-xs shadow-lg hover:brightness-110 transition-all flex items-center justify-center space-x-2"
                     >
-                      Active Campaign Health &amp; Strategy
+                      <MessageSquare className="w-4 h-4" />
+                      <span>Open AI Query Console &rarr;</span>
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => handleQueryAdvisor("Inspect our live ad image, headline, and creative copy using vision AI. Tell me how it looks and what design/copy flaws are hurting our CTR.")}
-                      className="px-3 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-semibold transition-all"
-                    >
-                      Critique Live Ad Image &amp; Creative
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleQueryAdvisor("Why do we have clicks but no form leads yet on our active campaign? How do we fix it?")}
-                      className="px-3 py-1.5 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
-                    >
-                      Diagnose 0-Lead Conversion
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleQueryAdvisor("Compare Google Ads vs Meta Ads CPL and lead volume.")}
-                      className="px-3 py-1.5 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
-                    >
-                      Compare Google vs Meta CPL
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleQueryAdvisor("Generate an executive 1-paragraph report for our sales meeting.")}
-                      className="px-3 py-1.5 rounded-xl bg-[#0D0F17] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 text-xs transition-all hover:border-[#C5A059]"
-                    >
-                      Executive Meeting Brief
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* RIGHT PANEL (Chat Console & Input) */}
-              <div
-                className={`flex flex-col min-h-0 ${
-                  advisorFullscreen
-                    ? "lg:col-span-7 h-full bg-[#111420] overflow-hidden"
-                    : "flex-1 px-5 pb-5 space-y-4"
-                }`}
-              >
-                <div className="p-4 border-b border-[#1E2230] bg-[#151824] flex items-center justify-between shrink-0">
-                  <h4 className="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center space-x-2">
-                    <MessageSquare className="w-4 h-4 text-[#C5A059]" />
-                    <span>Executive AI Query Console</span>
-                  </h4>
-                  <span className="text-[10px] text-slate-400 font-mono bg-[#0D0F17] px-2 py-0.5 rounded border border-[#1E2230]">
-                    GPT-4o-mini Grounded
-                  </span>
-                </div>
-
-                {/* Messages Container with Beautiful Formatting */}
-                <div
-                  className={`flex-1 min-h-0 overflow-y-auto p-4 sm:p-5 space-y-4 scrollbar-thin scrollbar-thumb-[#1E2230] scrollbar-track-[#0D0F17] ${
-                    advisorFullscreen ? "" : "max-h-96"
-                  }`}
-                >
-                  {advisorMessages.map((m, idx) => (
-                    <div
-                      key={idx}
-                      className={`p-4 sm:p-5 rounded-2xl text-xs space-y-3 shadow-xl transition-all ${
-                        m.role === "user"
-                          ? "bg-[#1E2230] text-slate-100 ml-6 sm:ml-12 border border-[#2A2F42]"
-                          : "bg-[#151824] text-slate-200 border border-[#C5A059]/40 shadow-[#C5A059]/5"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between text-[10px] font-extrabold text-[#C5A059] uppercase tracking-wider pb-2 border-b border-[#1E2230]/60">
-                        <span className="flex items-center space-x-1.5">
-                          <span className={`w-2 h-2 rounded-full ${m.role === "user" ? "bg-slate-400" : "bg-[#C5A059]"}`}></span>
-                          <span>{m.role === "user" ? "Minesh Patel (CEO)" : "AI Executive Advisor"}</span>
-                        </span>
-                        <span className="text-slate-500 font-normal">Real Estate Co-Pilot</span>
-                      </div>
-
-                      {/* Render formatted message content */}
-                      <FormattedAdvisorMessage text={m.text} bullets={m.bullets} />
-                    </div>
-                  ))}
-
-                  {loadingAdvisor && (
-                    <div className="p-4 rounded-2xl bg-[#151824] border border-[#C5A059]/40 text-xs text-[#C5A059] font-bold flex items-center space-x-2.5 animate-pulse shadow-lg">
-                      <RefreshCw className="w-4 h-4 animate-spin text-[#C5A059]" />
-                      <span>Analyzing live Ad APIs, creatives, and CRM context...</span>
-                    </div>
                   )}
                 </div>
+              )}
 
-                {/* Input Bar (Cleanly Pinned with Safe Bottom Padding) */}
+              {/* CHAT CONSOLE & INPUT (Always visible in fullscreen right column, or when chat tab is selected) */}
+              {(advisorFullscreen || advisorActiveTab === 'chat') && (
                 <div
-                  className={`p-3.5 sm:p-4 border-t border-[#1E2230] bg-[#151824] shrink-0 ${
-                    advisorFullscreen ? "pb-4 sm:pb-5 rounded-br-3xl" : "pb-4"
+                  className={`flex flex-col min-h-0 flex-1 ${
+                    advisorFullscreen ? "lg:col-span-7 h-full bg-[#111420] overflow-hidden" : "bg-[#111420]"
                   }`}
                 >
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      handleQueryAdvisor();
-                    }}
-                    className="flex items-center space-x-2"
-                  >
-                    <button
-                      type="button"
-                      onClick={handleToggleVoiceDictation}
-                      title={isListeningVoice ? "Listening... Click to stop" : "Click to speak your prompt"}
-                      className={`p-3 rounded-xl border transition-all shrink-0 ${
-                        isListeningVoice
-                          ? "bg-rose-500 text-white border-rose-400 animate-pulse"
-                          : "bg-[#0D0F17] hover:bg-[#1E2230] border-[#1E2230] text-slate-400 hover:text-[#C5A059]"
-                      }`}
-                    >
-                      <Mic className={`w-4 h-4 ${isListeningVoice ? "animate-bounce" : ""}`} />
-                    </button>
+                  {/* 1-Click Horizontal Carousel for Compact/Mobile Chat */}
+                  <div className="flex items-center overflow-x-auto no-scrollbar space-x-2 px-3.5 py-2.5 bg-[#0D0F17] border-b border-[#1E2230] shrink-0">
+                    <span className="text-[9px] font-extrabold uppercase text-[#C5A059] tracking-wider shrink-0 flex items-center space-x-1">
+                      <Sparkles className="w-3 h-3" />
+                      <span className="hidden xs:inline">Quick:</span>
+                    </span>
+                    {[
+                      { label: "⚡ Campaign Health", query: "Diagnose our active campaign health, pacing, and 3 immediate strategic recommendations." },
+                      { label: "🎨 Critique Creative", query: "Inspect our live ad image, headline, and creative copy using vision AI. Tell me how it looks and what design/copy flaws are hurting our CTR." },
+                      { label: "🔍 0-Lead Conversion", query: "Why do we have clicks but no form leads yet on our active campaign? How do we fix it?" },
+                      { label: "📊 Google vs Meta CPL", query: "Compare Google Ads vs Meta Ads CPL and lead volume." },
+                      { label: "📝 Meeting Brief", query: "Generate an executive 1-paragraph report for our sales meeting." },
+                    ].map((prompt, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => handleQueryAdvisor(prompt.query)}
+                        className="whitespace-nowrap px-2.5 py-1 rounded-lg bg-[#151824] hover:bg-[#1E2230] border border-[#C5A059]/30 hover:border-[#C5A059] text-slate-200 text-[11px] font-semibold transition-all shrink-0"
+                      >
+                        {prompt.label}
+                      </button>
+                    ))}
+                  </div>
 
-                    <input
-                      type="text"
-                      value={advisorQuery}
-                      onChange={(e) => setAdvisorQuery(e.target.value)}
-                      placeholder={isListeningVoice ? "Listening to your voice..." : "Ask AI Advisor about Google Ads, Meta Ads, or leads..."}
-                      className="flex-1 bg-[#0D0F17] border border-[#1E2230] focus:border-[#C5A059] rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 outline-none transition-all"
-                    />
-                    <button
-                      type="submit"
-                      disabled={loadingAdvisor || !advisorQuery.trim()}
-                      className="px-4 py-3 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-lg hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 shrink-0"
+                  {/* Messages Thread (Takes 100% Remaining Height, Smooth Scrolling) */}
+                  <div className="flex-1 min-h-0 overflow-y-auto p-3.5 sm:p-5 space-y-3.5 scrollbar-thin scrollbar-thumb-[#1E2230] scrollbar-track-[#0D0F17]">
+                    {advisorMessages.map((m, idx) => (
+                      <div
+                        key={idx}
+                        className={`p-3.5 sm:p-5 rounded-2xl text-xs space-y-2.5 shadow-xl transition-all ${
+                          m.role === "user"
+                            ? "bg-[#1E2230] text-slate-100 ml-4 sm:ml-12 border border-[#2A2F42]"
+                            : "bg-[#151824] text-slate-200 border border-[#C5A059]/40 shadow-[#C5A059]/5"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between text-[10px] font-extrabold text-[#C5A059] uppercase tracking-wider pb-2 border-b border-[#1E2230]/60">
+                          <span className="flex items-center space-x-1.5">
+                            <span className={`w-2 h-2 rounded-full ${m.role === "user" ? "bg-slate-400" : "bg-[#C5A059]"}`}></span>
+                            <span>{m.role === "user" ? "Minesh Patel (CEO)" : "AI Executive Advisor"}</span>
+                          </span>
+                          <span className="text-slate-500 font-normal">Real Estate Co-Pilot</span>
+                        </div>
+
+                        {/* Render formatted message content */}
+                        <FormattedAdvisorMessage text={m.text} bullets={m.bullets} />
+                      </div>
+                    ))}
+
+                    {loadingAdvisor && (
+                      <div className="p-3.5 rounded-2xl bg-[#151824] border border-[#C5A059]/40 text-xs text-[#C5A059] font-bold flex items-center space-x-2.5 animate-pulse shadow-lg">
+                        <RefreshCw className="w-4 h-4 animate-spin text-[#C5A059]" />
+                        <span>Analyzing live Ad APIs, creatives, and CRM context...</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Input Bar (Cleanly Pinned with Safe Bottom Padding) */}
+                  <div
+                    className={`p-3 sm:p-4 border-t border-[#1E2230] bg-[#151824] shrink-0 ${
+                      advisorFullscreen ? "pb-4 sm:pb-5 rounded-br-3xl" : "pb-safe"
+                    }`}
+                  >
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        handleQueryAdvisor();
+                      }}
+                      className="flex items-center space-x-2"
                     >
-                      <Send className="w-4 h-4" />
-                    </button>
-                  </form>
+                      <button
+                        type="button"
+                        onClick={handleToggleVoiceDictation}
+                        title={isListeningVoice ? "Listening... Click to stop" : "Click to speak your prompt"}
+                        className={`p-2.5 sm:p-3 rounded-xl border transition-all shrink-0 ${
+                          isListeningVoice
+                            ? "bg-rose-500 text-white border-rose-400 animate-pulse"
+                            : "bg-[#0D0F17] hover:bg-[#1E2230] border-[#1E2230] text-slate-400 hover:text-[#C5A059]"
+                        }`}
+                      >
+                        <Mic className={`w-4 h-4 ${isListeningVoice ? "animate-bounce" : ""}`} />
+                      </button>
+
+                      <input
+                        type="text"
+                        value={advisorQuery}
+                        onChange={(e) => setAdvisorQuery(e.target.value)}
+                        placeholder={isListeningVoice ? "Listening to your voice..." : "Ask AI Advisor about Google Ads, Meta Ads, or leads..."}
+                        className="flex-1 bg-[#0D0F17] border border-[#1E2230] focus:border-[#C5A059] rounded-xl px-3.5 py-2.5 sm:py-3 text-xs text-white placeholder-slate-500 outline-none transition-all"
+                      />
+                      <button
+                        type="submit"
+                        disabled={loadingAdvisor || !advisorQuery.trim()}
+                        className="px-3.5 sm:px-4 py-2.5 sm:py-3 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-lg hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 shrink-0"
+                      >
+                        <Send className="w-4 h-4" />
+                      </button>
+                    </form>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
