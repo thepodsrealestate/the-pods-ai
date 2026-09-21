@@ -190,6 +190,25 @@ function cleanWhatsAppPhone(phone?: string | null) {
   return phone.replace(/[^0-9]/g, "");
 }
 
+function getDirectInviteTemplate(leadName?: string | null) {
+  const namePart = leadName ? ` ${leadName}` : "";
+  return `Hello${namePart},
+
+I hope you're keeping well. This is Chetan Sharma from The Pods Real Estate, in partnership with Danube Properties.
+
+We're holding our Dubai Property Expo at the Marriott Hotel, Leicester (Smith Way, LE19 1SW) on 26th and 27th September, and I'd like to arrange a session for you with Mr Muza, one of our senior Danube specialists in UK.
+
+Could you kindly confirm:
+📅 Which date suits you — *26th* or *27th* September?
+💻 Would you prefer to meet in person at the Marriott, or join via Zoom?
+
+Once I have your preference, I'll get this booked in and send you a confirmation.
+
+Kind regards,
+Chetan Sharma
+The Pods Real Estate`;
+}
+
 type ConversationMessage = {
   senderType: string;
   content?: string;
@@ -255,6 +274,7 @@ export default function MasterDashboardPage() {
   const [leadStatusFilter, setLeadStatusFilter] = useState<string>("ALL");
   const [leadSearchQuery, setLeadSearchQuery] = useState<string>("");
   const [leadAiFilter, setLeadAiFilter] = useState<string>("ALL");
+  const [leadChatFilter, setLeadChatFilter] = useState<string>("ALL"); // "ALL", "IN_CHAT", "FORM_ONLY"
 
   // Lead Pagination State
   const [leadPage, setLeadPage] = useState<number>(1);
@@ -263,7 +283,7 @@ export default function MasterDashboardPage() {
   // Auto-reset pagination to Page 1 when filter, search or page size changes
   useEffect(() => {
     setLeadPage(1);
-  }, [leadSearchQuery, leadStatusFilter, leadAiFilter, leadPageSize]);
+  }, [leadSearchQuery, leadStatusFilter, leadAiFilter, leadChatFilter, leadPageSize]);
 
   // Conversation Search & Filter State
   const [convSearchQuery, setConvSearchQuery] = useState<string>("");
@@ -927,6 +947,11 @@ export default function MasterDashboardPage() {
     if (leadAiFilter === "ACTIVE" && !lead.aiEnabled) return false;
     if (leadAiFilter === "PAUSED" && lead.aiEnabled) return false;
 
+    const conversation = conversations.find((item: any) => item.leadId === lead.id);
+    const hasActiveChat = Boolean(conversation && conversation.messages && conversation.messages.length > 0);
+    if (leadChatFilter === "IN_CHAT" && !hasActiveChat) return false;
+    if (leadChatFilter === "FORM_ONLY" && hasActiveChat) return false;
+
     if (leadSearchQuery.trim()) {
       const q = leadSearchQuery.toLowerCase();
       const name = (lead.fullName || "").toLowerCase();
@@ -1551,6 +1576,30 @@ export default function MasterDashboardPage() {
                       </button>
                     ))}
                   </div>
+
+                  <div className="flex items-center space-x-1 bg-[#151824] p-1 rounded-xl border border-[#1E2230] text-[11px] font-bold">
+                    {[
+                      { key: "ALL", label: "All Status" },
+                      { key: "IN_CHAT", label: "💬 In Chat" },
+                      { key: "FORM_ONLY", label: "⚠️ Form Only (No WA)" },
+                    ].map((f) => (
+                      <button
+                        key={f.key}
+                        onClick={() => setLeadChatFilter(f.key)}
+                        className={`px-2.5 py-1 rounded-lg transition-all flex items-center space-x-1 ${
+                          leadChatFilter === f.key
+                            ? f.key === "FORM_ONLY"
+                              ? "bg-amber-500 text-black font-extrabold shadow-sm"
+                              : f.key === "IN_CHAT"
+                              ? "bg-emerald-500 text-black font-extrabold shadow-sm"
+                              : "bg-[#23293D] text-white font-extrabold shadow-sm"
+                            : "text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        <span>{f.label}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -1587,6 +1636,8 @@ export default function MasterDashboardPage() {
                           const isGeneric = genericSources.includes(rawSource.toUpperCase().trim());
                           const campaign = attribution?.campaign || attribution?.utmCampaign || (!isGeneric ? rawSource : null);
                           const rawPhone = cleanWhatsAppPhone(lead.phone);
+                          const conversation = conversations.find((item: any) => item.leadId === lead.id);
+                          const hasActiveChat = Boolean(conversation && conversation.messages && conversation.messages.length > 0);
 
                           return (
                             <tr key={lead.id} className="hover:bg-[#151824]/50 transition-colors group">
@@ -1598,7 +1649,7 @@ export default function MasterDashboardPage() {
                                   </div>
                                   <div>
                                     <p className="font-semibold text-white">{lead.fullName || "WhatsApp Lead"}</p>
-                                    <div className="flex items-center space-x-2 mt-0.5">
+                                    <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                                       <a
                                         href={`https://wa.me/${rawPhone}`}
                                         target="_blank"
@@ -1609,6 +1660,17 @@ export default function MasterDashboardPage() {
                                         <MessageCircle className="w-3 h-3 text-emerald-400" />
                                         <span>{lead.phone}</span>
                                       </a>
+                                      {hasActiveChat ? (
+                                        <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[9px] font-bold text-emerald-400">
+                                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                          <span>In WhatsApp Chat</span>
+                                        </span>
+                                      ) : (
+                                        <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-[9px] font-bold text-amber-300">
+                                          <AlertCircle className="w-2.5 h-2.5 text-amber-400 shrink-0" />
+                                          <span>Form Only (No WA)</span>
+                                        </span>
+                                      )}
                                     </div>
                                   </div>
                                 </div>
@@ -1671,17 +1733,29 @@ export default function MasterDashboardPage() {
                                     {lead.aiEnabled ? <Play className="w-3.5 h-3.5 fill-current" /> : <Pause className="w-3.5 h-3.5 fill-current" />}
                                   </button>
 
-                                  <button
-                                    onClick={() => {
-                                      const conversation = conversations.find((item: any) => item.leadId === lead.id);
-                                      if (conversation) setSelectedConversationId(conversation.id);
-                                      setActiveTab("conversations");
-                                    }}
-                                    title="Open WhatsApp Chat transcript"
-                                    className="p-2 rounded-lg bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 hover:text-white transition-colors"
-                                  >
-                                    <MessageSquare className="w-3.5 h-3.5 text-[#C5A059]" />
-                                  </button>
+                                  {hasActiveChat ? (
+                                    <button
+                                      onClick={() => {
+                                        if (conversation) setSelectedConversationId(conversation.id);
+                                        setActiveTab("conversations");
+                                      }}
+                                      title="Open WhatsApp Chat transcript"
+                                      className="p-2 rounded-lg bg-[#151824] hover:bg-[#1E2230] border border-[#1E2230] text-slate-300 hover:text-white transition-colors"
+                                    >
+                                      <MessageSquare className="w-3.5 h-3.5 text-[#C5A059]" />
+                                    </button>
+                                  ) : (
+                                    <a
+                                      href={`https://wa.me/${rawPhone}?text=${encodeURIComponent(getDirectInviteTemplate(lead.fullName))}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      title="Direct 1-Click WhatsApp: Send Leicester Expo invite directly from your WhatsApp"
+                                      className="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 hover:text-emerald-200 text-xs font-bold transition-all flex items-center space-x-1 shadow-sm"
+                                    >
+                                      <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+                                      <span className="text-[11px] font-bold hidden sm:inline">Direct WA</span>
+                                    </a>
+                                  )}
 
                                   <button
                                     onClick={() => { setSelectedLead(lead); setDrawerOpen(true); setIssuedVoucher(null); }}
@@ -3247,20 +3321,50 @@ export default function MasterDashboardPage() {
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-[#1E2230] bg-[#151824] flex items-center justify-between">
-              <button
-                onClick={() => {
-                  const conversation = conversations.find((item: any) => item.leadId === selectedLead.id);
-                  if (conversation) setSelectedConversationId(conversation.id);
-                  setActiveTab("conversations");
-                  setDrawerOpen(false);
-                }}
-                className="w-full py-3 bg-[#1E2230] hover:bg-[#2A2F42] text-slate-200 font-bold text-xs rounded-xl transition-colors flex items-center justify-center space-x-2"
-              >
-                <MessageSquare className="w-4 h-4 text-[#C5A059]" />
-                <span>Open Full WhatsApp Chat History</span>
-              </button>
-            </div>
+            {(() => {
+              const selectedConv = conversations.find((item: any) => item.leadId === selectedLead.id);
+              const hasChat = Boolean(selectedConv && selectedConv.messages && selectedConv.messages.length > 0);
+              const selRawPhone = cleanWhatsAppPhone(selectedLead.phone);
+
+              return (
+                <div className="p-4 border-t border-[#1E2230] bg-[#151824] space-y-2">
+                  {hasChat ? (
+                    <button
+                      onClick={() => {
+                        if (selectedConv) setSelectedConversationId(selectedConv.id);
+                        setActiveTab("conversations");
+                        setDrawerOpen(false);
+                      }}
+                      className="w-full py-3 bg-[#1E2230] hover:bg-[#2A2F42] text-slate-200 font-bold text-xs rounded-xl transition-colors flex items-center justify-center space-x-2"
+                    >
+                      <MessageSquare className="w-4 h-4 text-[#C5A059]" />
+                      <span>Open Live WhatsApp Chat Feed</span>
+                    </button>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs space-y-1">
+                        <div className="flex items-center space-x-1.5 text-amber-300 font-bold">
+                          <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                          <span>Form Submitted • No WhatsApp Inbound Yet</span>
+                        </div>
+                        <p className="text-[11px] text-slate-300">
+                          This lead filled your Facebook form but has not sent an inbound WhatsApp message yet. Reach out directly:
+                        </p>
+                      </div>
+                      <a
+                        href={`https://wa.me/${selRawPhone}?text=${encodeURIComponent(getDirectInviteTemplate(selectedLead.fullName))}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:brightness-110 text-black font-extrabold text-xs rounded-xl transition-all flex items-center justify-center space-x-2 shadow-lg"
+                      >
+                        <MessageCircle className="w-4 h-4 fill-current" />
+                        <span>Direct 1-Click WhatsApp Reachout (wa.me)</span>
+                      </a>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         </div>
       )}
