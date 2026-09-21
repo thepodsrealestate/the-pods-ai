@@ -93,7 +93,22 @@ export async function POST(req: NextRequest) {
           // Dynamically resolve active campaign for this lead (auto-expiry built in)
           const matchedCampaign = getCampaignForLead({ phone });
           const isUkPhone = phone.startsWith('+44') || phone.startsWith('44');
-          const campaignName = matchedCampaign.type === 'event' ? matchedCampaign.name : 'Meta Instant Form';
+
+          let metaCampaignName = '';
+          const metaAdId = change.value?.ad_id;
+          if (change.value?.campaign_name) {
+            metaCampaignName = change.value.campaign_name;
+          } else if (metaAdId && META_ACCESS_TOKEN) {
+            try {
+              const adRes = await fetch(`https://graph.facebook.com/v21.0/${metaAdId}?fields=campaign{id,name}&access_token=${META_ACCESS_TOKEN}`);
+              const adJson = await adRes.json();
+              if (adJson?.campaign?.name) {
+                metaCampaignName = adJson.campaign.name;
+              }
+            } catch (_) {}
+          }
+
+          const campaignName = metaCampaignName || (matchedCampaign.type === 'event' ? matchedCampaign.name : 'Meta Instant Form');
           const buyerLocation = matchedCampaign.type === 'event' 
             ? `${matchedCampaign.location.country} (${matchedCampaign.displayName})`
             : (matchedCampaign.timezone === 'Europe/London' ? 'United Kingdom' : (matchedCampaign.id === 'uae-default' ? 'Dubai / UAE' : 'International'));
@@ -102,12 +117,14 @@ export async function POST(req: NextRequest) {
           const lead = await LeadService.findOrCreateLead({
             phone,
             fullName,
-            leadSource: 'FACEBOOK_ADS',
+            leadSource: campaignName || 'FACEBOOK_ADS',
             attribution: {
               source: 'FACEBOOK_ADS',
               medium: 'cpc',
               campaign: campaignName,
-              adId: String(leadgenId),
+              campaignId: change.value?.campaign_id ? String(change.value.campaign_id) : undefined,
+              adSet: change.value?.adset_name || (change.value?.adset_id ? String(change.value.adset_id) : undefined),
+              adId: metaAdId ? String(metaAdId) : String(leadgenId),
             },
           });
 

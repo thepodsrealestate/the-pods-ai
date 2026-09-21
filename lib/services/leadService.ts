@@ -252,7 +252,30 @@ export class LeadService {
         updateData.leadSource = input.leadSource;
       }
 
-      if (input.attribution && (!lead.attributions || lead.attributions.length === 0)) {
+      if (input.attribution && input.attribution.campaign) {
+        const hasExisting = lead.attributions?.some(
+          (a: any) => a.campaign === input.attribution?.campaign || (input.attribution?.adId && a.adId === input.attribution?.adId)
+        );
+        if (!hasExisting) {
+          try {
+            await prisma.leadAttribution.create({
+              data: {
+                leadId: lead.id,
+                source: input.attribution.source || 'DIRECT',
+                medium: input.attribution.medium || null,
+                campaign: input.attribution.campaign || null,
+                campaignId: input.attribution.campaignId || null,
+                adSet: input.attribution.adSet || null,
+                adId: input.attribution.adId || null,
+                utmSource: input.attribution.utmSource || null,
+                utmMedium: input.attribution.utmMedium || null,
+                utmCampaign: input.attribution.utmCampaign || null,
+              }
+            });
+            updateData.leadSource = input.attribution.campaign;
+          } catch (_) { /* ignore duplicate attribution */ }
+        }
+      } else if (input.attribution && (!lead.attributions || lead.attributions.length === 0)) {
         try {
           await prisma.leadAttribution.create({
             data: {
