@@ -528,7 +528,7 @@ export default function MasterDashboardPage() {
   const handleExportAdvisorSession = () => {
     const header = `# The Pods Real Estate - Executive AI Advisor Report\n**Generated:** ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Dubai' })} (Dubai GST)\n**Timeframe:** ${adPeriod.toUpperCase().replace('_', ' ')}\n**Meta Spend:** AED ${adMetrics.meta.spendAed.toLocaleString()} | **Impressions:** ${adMetrics.meta.impressions.toLocaleString()}\n\n---\n\n`;
     const body = advisorMessages.map((m) => {
-      const author = m.role === "user" ? "### 👤 Minesh Patel (CEO)" : "### 🤖 AI Executive Advisor";
+      const author = m.role === "user" ? "### Minesh Patel (CEO)" : "### AI Executive Advisor";
       const bullets = m.bullets ? m.bullets.map(b => `- ${b}`).join("\n") : "";
       return `${author}\n${m.text}\n${bullets ? `\n${bullets}` : ""}`;
     }).join("\n\n---\n\n");
@@ -965,7 +965,7 @@ export default function MasterDashboardPage() {
   return (
     <div className="min-h-screen bg-[#07080C] text-slate-100 flex flex-col md:flex-row font-sans antialiased selection:bg-[#C5A059] selection:text-black">
       
-      {/* 📱 MOBILE TOP NAVIGATION BAR */}
+      {/* MOBILE TOP NAVIGATION BAR */}
       <div className="md:hidden bg-[#0D0F17] border-b border-[#1E2230] px-4 py-3 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 rounded-lg bg-white p-0.5 flex items-center justify-center border border-[#C5A059]/40 shadow-sm shrink-0">
@@ -992,7 +992,7 @@ export default function MasterDashboardPage() {
         </button>
       </div>
 
-      {/* 📱 MOBILE DROPDOWN MENU - FIXED OVERLAY */}
+      {/* MOBILE DROPDOWN MENU - FIXED OVERLAY */}
       {mobileMenuOpen && (
         <div className="md:hidden fixed top-14 left-0 right-0 z-50 bg-[#0D0F17]/95 backdrop-blur-xl border-b border-[#1E2230] p-4 space-y-2 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
           {navItems.map((item) => {
@@ -1043,7 +1043,7 @@ export default function MasterDashboardPage() {
         </div>
       )}
 
-      {/* 🖥️ DESKTOP SIDEBAR NAVIGATION */}
+      {/* DESKTOP SIDEBAR NAVIGATION */}
       <aside className="hidden md:flex w-64 bg-[#0D0F17] border-r border-[#1E2230] flex-col justify-between select-none shrink-0 min-h-screen">
         <div>
           {/* Top Brand Header */}
@@ -1126,7 +1126,7 @@ export default function MasterDashboardPage() {
         </div>
       </aside>
 
-      {/* 🏙️ MAIN CONTENT AREA */}
+      {/* MAIN CONTENT AREA */}
       <main className="flex-1 flex flex-col min-w-0">
         {/* Desktop Top Header Bar */}
         <header className="hidden md:flex h-16 border-b border-[#1E2230] bg-[#0D0F17]/80 backdrop-blur-md px-8 items-center justify-between sticky top-0 z-20 select-none">
@@ -2804,7 +2804,7 @@ export default function MasterDashboardPage() {
         </div>
       </main>
 
-      {/* 🔮 LEAD DOSSIER & TAKEOVER SLIDE-OVER DRAWER */}
+      {/* LEAD DOSSIER & TAKEOVER SLIDE-OVER DRAWER */}
       {drawerOpen && selectedLead && (
         <div className="fixed inset-0 z-50 overflow-hidden bg-black/70 backdrop-blur-md flex justify-end">
           <div className="w-full max-w-lg bg-[#0D0F17] border-l border-[#1E2230] h-full flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-300">
@@ -3105,7 +3105,7 @@ export default function MasterDashboardPage() {
         </button>
       </div>
 
-      {/* 📱 NATIVE-APP MOBILE BOTTOM NAVIGATION BAR */}
+      {/* NATIVE-APP MOBILE BOTTOM NAVIGATION BAR */}
       <nav aria-label="Mobile Navigation" className={`md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0D0F17]/95 backdrop-blur-xl border-t border-[#1E2230] px-3 py-1.5 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.5)] ${activeTab === "conversations" && mobileShowChat ? "hidden" : ""}`}>
         {[
           { id: "overview", name: "Overview", icon: LayoutDashboard },
@@ -3418,11 +3418,11 @@ export default function MasterDashboardPage() {
                       <span className="hidden xs:inline">Quick:</span>
                     </span>
                     {[
-                      { label: "⚡ Campaign Health", query: "Diagnose our active campaign health, pacing, and 3 immediate strategic recommendations." },
-                      { label: "🎨 Critique Creative", query: "Inspect our live ad image, headline, and creative copy using vision AI. Tell me how it looks and what design/copy flaws are hurting our CTR." },
-                      { label: "🔍 0-Lead Conversion", query: "Why do we have clicks but no form leads yet on our active campaign? How do we fix it?" },
-                      { label: "📊 Google vs Meta CPL", query: "Compare Google Ads vs Meta Ads CPL and lead volume." },
-                      { label: "📝 Meeting Brief", query: "Generate an executive 1-paragraph report for our sales meeting." },
+                      { label: "Campaign Health", query: "Diagnose our active campaign health, pacing, and 3 immediate strategic recommendations." },
+                      { label: "Critique Creative", query: "Inspect our live ad image, headline, and creative copy using vision AI. Tell me how it looks and what design/copy flaws are hurting our CTR." },
+                      { label: "0-Lead Conversion", query: "Why do we have clicks but no form leads yet on our active campaign? How do we fix it?" },
+                      { label: "Google vs Meta CPL", query: "Compare Google Ads vs Meta Ads CPL and lead volume." },
+                      { label: "Meeting Brief", query: "Generate an executive 1-paragraph report for our sales meeting." },
                     ].map((prompt, i) => (
                       <button
                         key={i}
@@ -3516,7 +3516,7 @@ export default function MasterDashboardPage() {
         </div>
       )}
 
-      {/* 🔒 PASSWORD-PROTECTED DELETE LEAD MODAL */}
+      {/* PASSWORD-PROTECTED DELETE LEAD MODAL */}
       {deleteModalLead && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
           <div className="w-full max-w-md bg-[#0D0F17] border border-rose-500/40 rounded-3xl p-6 shadow-2xl space-y-5">
@@ -3537,8 +3537,9 @@ export default function MasterDashboardPage() {
               <div className="text-xs text-slate-300">
                 <span className="text-slate-500">Phone:</span> <strong className="text-[#C5A059] font-mono ml-1">{deleteModalLead.phone}</strong>
               </div>
-              <p className="text-[11px] text-rose-400/90 leading-relaxed pt-1.5 border-t border-[#1E2230]">
-                ⚠️ This will permanently delete this lead, all WhatsApp chat transcripts, bookings, vouchers, and attribution records.
+              <p className="text-[11px] text-rose-400/90 leading-relaxed pt-1.5 border-t border-[#1E2230] flex items-center space-x-1.5">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-400" />
+                <span>This will permanently delete this lead, all WhatsApp chat transcripts, bookings, vouchers, and attribution records.</span>
               </p>
             </div>
 
