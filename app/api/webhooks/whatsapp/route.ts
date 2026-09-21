@@ -482,7 +482,48 @@ export async function POST(req: NextRequest) {
             text: m.content,
           }));
 
-          // Message history extracted for context
+          // Smart Deduplication for Canned Meta Lead Form Messages
+          // Meta Click-to-WhatsApp thank-you pages often lead users to tap "Chat on WhatsApp" a 2nd time within minutes.
+          // Detect if this exact canned form message was already received from this lead within the last 30 minutes.
+          const cleanIncomingText = (userText || '').trim().toLowerCase();
+          const isFormLeadMsg = 
+            cleanIncomingText.includes('filled in your form') ||
+            cleanIncomingText.includes('filled out your form') ||
+            cleanIncomingText.includes('would like to know more about your business') ||
+            (cleanIncomingText.includes('phone number:') && cleanIncomingText.includes('email:'));
+
+          if (isFormLeadMsg || (cleanIncomingText.length > 40 && conversationHistory.some(m => m.sender === 'LEAD' && m.text.trim().toLowerCase() === cleanIncomingText))) {
+            const thirtyMinsAgo = new Date(Date.now() - 30 * 60 * 1000);
+            const hasRecentDuplicate = existingLead.conversations[0].messages.some((m: any) => {
+              if (m.senderType !== 'LEAD') return false;
+              const msgDate = new Date(m.createdAt);
+              if (msgDate < thirtyMinsAgo) return false;
+
+              const prevTextClean = (m.content || '').trim().toLowerCase();
+              if (prevTextClean === cleanIncomingText) return true;
+              if (isFormLeadMsg && (
+                prevTextClean.includes('filled in your form') ||
+                prevTextClean.includes('filled out your form') ||
+                prevTextClean.includes('would like to know more about your business')
+              )) {
+                return true;
+              }
+              return false;
+            });
+
+            if (hasRecentDuplicate) {
+              console.log(`[DUPLICATE FORM SUPPRESSED] Lead ${phone} re-submitted identical form text within 30m — suppressing duplicate reply & database clutter`);
+              return {
+                status: 'duplicate_form_suppressed',
+                reply: '',
+                ai_reply: '',
+                text: '',
+                action: 'NONE',
+                language: 'en',
+                latency_ms: Date.now() - startTime,
+              };
+            }
+          }
         }
 
         // CRITICAL: If AI is toggled OFF for this lead, save the message but DO NOT generate AI reply
