@@ -92,10 +92,13 @@ export function extractNameFromText(text?: string | null): string | undefined {
   if (!text) return undefined;
   const trimmed = text.trim();
 
-  // Pattern 1: Explicit introduction: "My name is Fatima Zahra", "I am Fatima Mouali", "Call me Fatima", "Name: Fatima"
-  const explicitMatch = trimmed.match(/(?:my\s*name\s*is|i\s*am|i'm|call\s*me|name\s*is|name:)\s*([a-zA-Z\s'-]{2,40})/i);
+  // Pattern 1: Explicit introduction: "My name is Fatima Zahra", "I am Fatima Mouali", "Call me Fatima", "Full name: Fatima", "Name: Fatima"
+  // Match only on the same line (horizontal spaces and name characters only, no newlines)
+  const explicitMatch = trimmed.match(/(?:my\s*name\s*is|i\s*am|i'm|call\s*me|name\s*is|name:)\s*([a-zA-Z\t '-]{2,40})/i);
   if (explicitMatch) {
-    const candidate = explicitMatch[1].trim();
+    let candidate = explicitMatch[1].trim();
+    // Safeguard: Strip any trailing field labels like phone, mobile, email, number, budget
+    candidate = candidate.replace(/\s*(?:phone\s*number|phone|mobile|tel|email|budget|what\s*type|are\s*you).*$/i, '').trim();
     if (isRealName(candidate)) {
       return formatPersonName(candidate);
     }

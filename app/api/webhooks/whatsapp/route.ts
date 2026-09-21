@@ -769,9 +769,15 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
 
     const nameFromUserMsg = extractNameFromText(userText);
     const nameMatch = userText.match(/(?:full\s*name|name):\s*([^\n\r,]+)/i);
+    const cleanedFormName = nameMatch 
+      ? nameMatch[1].replace(/\s*(?:phone\s*number|phone|mobile|tel|email|budget|what\s*type|are\s*you).*$/i, '').trim() 
+      : undefined;
+    const cleanedSenderName = senderName 
+      ? senderName.replace(/\s*(?:phone\s*number|phone|mobile|tel|email|budget|what\s*type|are\s*you).*$/i, '').trim() 
+      : undefined;
     const extractedName = nameFromUserMsg 
-      || (nameMatch && isRealName(nameMatch[1].trim()) ? formatPersonName(nameMatch[1].trim()) : undefined)
-      || (isRealName(senderName) ? formatPersonName(senderName) : undefined);
+      || (cleanedFormName && isRealName(cleanedFormName) ? formatPersonName(cleanedFormName) : undefined)
+      || (cleanedSenderName && isRealName(cleanedSenderName) ? formatPersonName(cleanedSenderName) : undefined);
 
     const phoneMatch = userText.match(/(?:phone\s*number|phone|mobile):\s*([+\d\s()-]{7,})/i);
     const extractedFormPhone = phoneMatch && phoneMatch[1].trim().length > 6 ? phoneMatch[1].replace(/[^\d+]/g, '').trim() : phone;
