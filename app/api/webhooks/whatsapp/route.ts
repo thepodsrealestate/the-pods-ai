@@ -673,18 +673,28 @@ export async function POST(req: NextRequest) {
           userText.includes('[FB]') ||
           userText.includes('[IG]');
 
-        if (globalAiMode === 'DAY' && (isLeadFirstTouch || isMetaLeadInquiry)) {
-          const firstName = resolvedName ? resolvedName.split(/\s+/)[0] : '';
-          const greetingName = firstName ? ` ${firstName}` : '';
-          const dayModeReply = `Hey${greetingName}! Thanks for reaching out to The Pods Real Estate. Our representative will be contacting you in few mins.`;
+        if (globalAiMode === 'DAY') {
+          if (isLeadFirstTouch || isMetaLeadInquiry) {
+            const firstName = resolvedName ? resolvedName.split(/\s+/)[0] : '';
+            const greetingName = firstName ? ` ${firstName}` : '';
+            const dayModeReply = `Hey${greetingName}! Thanks for reaching out to The Pods Real Estate. Our representative will be contacting you in few mins.`;
 
-          aiResult = {
-            reply: dayModeReply,
-            language: 'en',
-            action: 'DAY_MODE_HANDOFF',
-            handoff_reason: 'Day Mode: Greeting dispatched, lead placed in manual takeover queue for marketing team',
-          };
-          console.log(`[DAY-MODE] Dispatched single touchpoint greeting to ${resolvedName || phone} and queued for manual human takeover.`);
+            aiResult = {
+              reply: dayModeReply,
+              language: 'en',
+              action: 'DAY_MODE_HANDOFF',
+              handoff_reason: 'Day Mode: Greeting dispatched, lead placed in manual takeover queue for marketing team',
+            };
+            console.log(`[DAY-MODE] Dispatched single touchpoint greeting to ${resolvedName || phone} and queued for manual human takeover.`);
+          } else {
+            // Day Mode is Human First: Lead is already in touch or has history. AI bot will not reply back!
+            aiResult = {
+              reply: '',
+              language: 'en',
+              action: 'NONE',
+            };
+            console.log(`[DAY-MODE] Inbound message from existing lead ${resolvedName || phone} received during Day Mode — AI kept silent for human takeover.`);
+          }
         } else {
           aiResult = await AIService.generateResponse({
             leadName: resolvedName,
