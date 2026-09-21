@@ -9,6 +9,7 @@ import { CalendarService } from '@/lib/services/calendarService';
 import { WhisperService } from '@/lib/services/whisperService';
 import { LeadStatus } from '@prisma/client';
 import { getCampaignForLead, getActiveEvents, CampaignConfig } from '@/lib/config/campaigns';
+import { SystemConfigService } from '@/lib/services/systemConfigService';
 
 // Sliding Window Rate Limiter (tracks phone -> request timestamps)
 const requestTracker = new Map<string, number[]>();
@@ -660,22 +661,47 @@ export async function POST(req: NextRequest) {
           action: 'NONE',
         };
       } else {
-        aiResult = await AIService.generateResponse({
-          leadName: resolvedName,
-          email: resolvedEmail,
-          phone: effectivePhone,
-          buyerLocation: existingLead?.buyerLocation || (isUkPhone ? 'United Kingdom' : undefined),
-          purchasePurpose: existingLead?.purchasePurpose || undefined,
-          budgetMin: existingLead?.budgetMin || undefined,
-          budgetMax: existingLead?.budgetMax || undefined,
-          timeline: existingLead?.timeline || undefined,
-          adSource: adSource || existingLead?.attributions?.[0]?.source || undefined,
-          campaignName: campaignName || existingLead?.attributions?.[0]?.campaign || undefined,
-          isMeetingBooked,
-          bookingDetails,
-          conversationHistory,
-          userMessage: userText,
-        });
+        const globalAiMode = await SystemConfigService.getGlobalAiMode();
+        const isLeadFirstTouch = !existingLead || conversationHistory.length === 0;
+        const isMetaLeadInquiry = 
+          userTextLower.includes('filled in your form') ||
+          userTextLower.includes('filled out your form') ||
+          userTextLower.includes('signed up for this event') ||
+          userTextLower.includes('looking to invest in dubai property') ||
+          userText.includes('[META]') ||
+          userText.includes('[FB]') ||
+          userText.includes('[IG]');
+
+        if (globalAiMode === 'DAY' && (isLeadFirstTouch || isMetaLeadInquiry)) {
+          const firstName = resolvedName ? resolvedName.split(/\s+/)[0] : '';
+          const greetingName = firstName ? ` ${firstName}` : '';
+          const dayModeReply = `Hey${greetingName}! Thanks for reaching out to The Pods Real Estate. I'm a representative from The Pods Real Estate. We received your details regarding the Dubai Property Expo in Leicester (Sept 26–27). Are you looking to attend the event or explore investment options?`;
+
+          aiResult = {
+            reply: dayModeReply,
+            language: 'en',
+            action: 'DAY_MODE_HANDOFF',
+            handoff_reason: 'Day Mode: Greeting dispatched, lead placed in manual takeover queue for marketing team',
+          };
+          console.log(`[DAY-MODE] Dispatched single touchpoint greeting to ${resolvedName || phone} and queued for manual human takeover.`);
+        } else {
+          aiResult = await AIService.generateResponse({
+            leadName: resolvedName,
+            email: resolvedEmail,
+            phone: effectivePhone,
+            buyerLocation: existingLead?.buyerLocation || (isUkPhone ? 'United Kingdom' : undefined),
+            purchasePurpose: existingLead?.purchasePurpose || undefined,
+            budgetMin: existingLead?.budgetMin || undefined,
+            budgetMax: existingLead?.budgetMax || undefined,
+            timeline: existingLead?.timeline || undefined,
+            adSource: adSource || existingLead?.attributions?.[0]?.source || undefined,
+            campaignName: campaignName || existingLead?.attributions?.[0]?.campaign || undefined,
+            isMeetingBooked,
+            bookingDetails,
+            conversationHistory,
+            userMessage: userText,
+          });
+        }
       }
 
       const latency = Date.now() - startTime;
@@ -1154,7 +1180,7 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
       });
 
       console.log('[BG-LOG] ✅ Meeting Booking created & Google Calendar invite dispatched to', lead.email, 'at', bookingLocation, '(TZ:', bookingTimezone, ') on', meetingTime.toISOString());
-    } else if (aiResult.action === 'HANDOFF') {
+    } else if (aiResult.action === 'HANDOFF' || aiResult.action === 'DAY_MODE_HANDOFF') {
       await prisma.lead.update({
         where: { id: lead.id },
         data: { aiEnabled: false, handoffStatus: true },
@@ -1163,12 +1189,14 @@ async function logToDatabase(body: any, userText: string, senderName: string, ph
         await prisma.handoff.create({
           data: {
             leadId: lead.id,
-            reason: aiResult.handoff_reason || 'Human takeover requested',
+            reason: aiResult.handoff_reason || (aiResult.action === 'DAY_MODE_HANDOFF' ? 'Day Mode: Lead queued for manual chat' : 'Human takeover requested'),
           },
         });
       } catch (_) { /* handoff record may already exist */ }
-      await NotificationService.notifyMineshHandoff(senderName, phone, aiResult.handoff_reason || 'Human takeover requested');
-      console.log('[BG-LOG] ✅ Handoff alert sent & AI paused for this lead!');
+      if (aiResult.action === 'HANDOFF') {
+        await NotificationService.notifyMineshHandoff(senderName, phone, aiResult.handoff_reason || 'Human takeover requested');
+      }
+      console.log(`[BG-LOG] ✅ ${aiResult.action}: AI paused & lead queued for human takeover!`);
     }
 
     console.log('[BG-LOG] ✅ Messages and attribution saved to DB');

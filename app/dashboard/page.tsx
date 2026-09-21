@@ -46,7 +46,9 @@ import {
   Filter,
   Maximize2,
   Minimize2,
-  TrendingUp
+  TrendingUp,
+  Sun,
+  Moon
 } from "lucide-react";
 
 function SourceBadge({ source, compact = false }: { source: string; compact?: boolean }) {
@@ -238,6 +240,8 @@ export default function MasterDashboardPage() {
   const [issuedVoucher, setIssuedVoucher] = useState<any>(null);
   const [generatingVoucher, setGeneratingVoucher] = useState<boolean>(false);
   const [togglingAi, setTogglingAi] = useState<boolean>(false);
+  const [globalAiMode, setGlobalAiMode] = useState<"DAY" | "NIGHT">("DAY");
+  const [togglingGlobalMode, setTogglingGlobalMode] = useState<boolean>(false);
 
   // Settings States
   const [adminPhone, setAdminPhone] = useState<string>("+971509876543");
@@ -756,7 +760,37 @@ export default function MasterDashboardPage() {
         if (data.resendApiKey) setResendApiKey(data.resendApiKey);
       })
       .catch((err) => console.error("Failed to load settings:", err));
+
+    fetch("/api/settings/ai-mode")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.mode) setGlobalAiMode(data.mode);
+      })
+      .catch((err) => console.error("Failed to load AI mode:", err));
   }, []);
+
+  const handleToggleGlobalMode = async (newMode: "DAY" | "NIGHT") => {
+    if (togglingGlobalMode || newMode === globalAiMode) return;
+    setTogglingGlobalMode(true);
+    const prevMode = globalAiMode;
+    setGlobalAiMode(newMode); // Optimistic UI update
+    try {
+      const res = await fetch("/api/settings/ai-mode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode: newMode }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.mode) {
+        setGlobalAiMode(prevMode);
+      }
+    } catch (e) {
+      console.error("Failed to update global AI mode:", e);
+      setGlobalAiMode(prevMode);
+    } finally {
+      setTogglingGlobalMode(false);
+    }
+  };
 
   const handleSaveSettings = async () => {
     setSavingSettings(true);
@@ -967,7 +1001,7 @@ export default function MasterDashboardPage() {
       
       {/* MOBILE TOP NAVIGATION BAR */}
       <div className="md:hidden bg-[#0D0F17] border-b border-[#1E2230] px-4 py-3 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2.5">
           <div className="w-8 h-8 rounded-lg bg-white p-0.5 flex items-center justify-center border border-[#C5A059]/40 shadow-sm shrink-0">
             <img 
               src="/logo_black.jpeg" 
@@ -982,6 +1016,38 @@ export default function MasterDashboardPage() {
             <h1 className="font-extrabold text-white text-xs tracking-wider uppercase">The Pods</h1>
             <p className="text-[9px] text-[#C5A059] font-bold tracking-widest uppercase">Real Estate AI</p>
           </div>
+        </div>
+
+        {/* Mobile AI Mode Segmented Control */}
+        <div className="flex items-center bg-[#07090E] p-0.5 rounded-full border border-[#202536] shadow-inner">
+          <button
+            type="button"
+            onClick={() => handleToggleGlobalMode("DAY")}
+            disabled={togglingGlobalMode}
+            title="Day Mode: Human Marketing First"
+            className={`px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center space-x-1 transition-all ${
+              globalAiMode === "DAY"
+                ? "bg-amber-500/20 border border-amber-400/50 text-amber-200 shadow-[0_0_10px_rgba(245,158,11,0.25)]"
+                : "text-slate-400 border border-transparent"
+            }`}
+          >
+            <Sun className={`w-3 h-3 ${globalAiMode === "DAY" ? "text-amber-400 fill-amber-400/30" : "text-slate-400"}`} />
+            <span>Day</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleToggleGlobalMode("NIGHT")}
+            disabled={togglingGlobalMode}
+            title="Night Mode: Full AI Concierge"
+            className={`px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center space-x-1 transition-all ${
+              globalAiMode === "NIGHT"
+                ? "bg-indigo-500/20 border border-indigo-400/50 text-indigo-200 shadow-[0_0_10px_rgba(99,102,241,0.25)]"
+                : "text-slate-400 border border-transparent"
+            }`}
+          >
+            <Moon className={`w-3 h-3 ${globalAiMode === "NIGHT" ? "text-indigo-300 fill-indigo-300/30" : "text-slate-400"}`} />
+            <span>Night</span>
+          </button>
         </div>
 
         <button
@@ -1095,10 +1161,14 @@ export default function MasterDashboardPage() {
         <div className="p-4 border-t border-[#1E2230] space-y-3">
           <div className="p-3 rounded-xl bg-[#151824] border border-[#1E2230] flex items-center justify-between">
             <div className="flex items-center space-x-2.5">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-              <span className="text-[11px] text-slate-300 font-medium">WhatsApp Concierge</span>
+              <div className={`w-2 h-2 rounded-full ${globalAiMode === "DAY" ? "bg-amber-400" : "bg-emerald-400"} animate-pulse`}></div>
+              <span className="text-[11px] text-slate-300 font-medium">
+                {globalAiMode === "DAY" ? "Day: Human First" : "Night: AI Concierge"}
+              </span>
             </div>
-            <span className="text-[10px] text-emerald-400 font-mono font-bold uppercase">Active</span>
+            <span className={`text-[10px] font-mono font-bold uppercase ${globalAiMode === "DAY" ? "text-amber-400" : "text-emerald-400"}`}>
+              {globalAiMode}
+            </span>
           </div>
 
           <div className="flex items-center justify-between px-2 py-1">
@@ -1138,6 +1208,47 @@ export default function MasterDashboardPage() {
             <span className="text-xs font-medium text-[#C5A059] bg-[#151824] px-3 py-1 rounded-lg border border-[#C5A059]/20">
               Bluewaters & London Luxury Desks
             </span>
+          </div>
+
+          {/* FIGMA-GRADE LUXURY AI MODE TOGGLE */}
+          <div className="flex items-center space-x-3">
+            <div className="relative flex items-center bg-[#07090E] p-1 rounded-full border border-[#202536] shadow-[inset_0_2px_4px_rgba(0,0,0,0.8),0_1px_2px_rgba(255,255,255,0.03)]">
+              <button
+                type="button"
+                onClick={() => handleToggleGlobalMode("DAY")}
+                disabled={togglingGlobalMode}
+                title="Day Mode: Sends initial greeting and pauses AI so Chetan and marketing team can chat manually"
+                className={`relative px-4 py-1.5 rounded-full text-xs font-bold tracking-wide flex items-center space-x-2 transition-all duration-300 active:scale-[0.98] ${
+                  globalAiMode === "DAY"
+                    ? "bg-gradient-to-r from-amber-500/25 via-amber-600/20 to-amber-500/10 border border-amber-400/50 text-amber-200 shadow-[0_0_18px_rgba(245,158,11,0.22)]"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-[#151824]/60 border border-transparent"
+                }`}
+              >
+                <Sun className={`w-3.5 h-3.5 transition-transform ${globalAiMode === "DAY" ? "text-amber-400 fill-amber-400/30 scale-110" : "text-slate-500"}`} />
+                <span>Day Mode: Human First</span>
+                {globalAiMode === "DAY" && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.9)] animate-pulse"></span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleToggleGlobalMode("NIGHT")}
+                disabled={togglingGlobalMode}
+                title="Night Mode: Full autonomous AI Concierge engages leads and books calendar meetings 24/7"
+                className={`relative px-4 py-1.5 rounded-full text-xs font-bold tracking-wide flex items-center space-x-2 transition-all duration-300 active:scale-[0.98] ${
+                  globalAiMode === "NIGHT"
+                    ? "bg-gradient-to-r from-indigo-500/25 via-indigo-600/20 to-purple-500/10 border border-indigo-400/50 text-indigo-200 shadow-[0_0_18px_rgba(99,102,241,0.22)]"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-[#151824]/60 border border-transparent"
+                }`}
+              >
+                <Moon className={`w-3.5 h-3.5 transition-transform ${globalAiMode === "NIGHT" ? "text-indigo-300 fill-indigo-300/30 scale-110" : "text-slate-500"}`} />
+                <span>Night Mode: AI Auto-Pilot</span>
+                {globalAiMode === "NIGHT" && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)] animate-pulse"></span>
+                )}
+              </button>
+            </div>
           </div>
 
           <div className="flex items-center space-x-4">
