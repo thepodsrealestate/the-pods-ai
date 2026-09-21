@@ -527,9 +527,12 @@ export async function POST(req: NextRequest) {
           }
         }
 
-        // CRITICAL: If AI is toggled OFF for this lead, save the message but DO NOT generate AI reply
-        if (existingLead && existingLead.aiEnabled === false) {
-          console.log(`[AI-OFF] AI disabled for ${existingLead.fullName || phone} — saving message only, no AI reply`);
+        // Check global AI mode
+        const globalAiMode = await SystemConfigService.getGlobalAiMode();
+
+        // If in DAY mode and AI is toggled OFF for this lead, save the message but keep AI silent for human agent
+        if (globalAiMode === 'DAY' && existingLead && existingLead.aiEnabled === false) {
+          console.log(`[AI-OFF] AI disabled for ${existingLead.fullName || phone} in Day Mode — saving message only, no AI reply`);
           after(async () => {
             try {
               await logToDatabase(body, userText, senderName, normalizedPhone, { reply: '', action: 'NONE', language: 'en' });
@@ -682,8 +685,8 @@ export async function POST(req: NextRequest) {
             aiResult = {
               reply: dayModeReply,
               language: 'en',
-              action: 'HANDOFF',
-              handoff_reason: 'Day Mode: Greeting dispatched, lead placed in manual takeover queue for marketing team',
+              action: 'DAY_GREETING',
+              handoff_reason: 'Day Mode: Greeting dispatched, lead awaiting manual chat during business hours',
             };
             console.log(`[DAY-MODE] Dispatched single touchpoint greeting to ${resolvedName || phone} and queued for manual human takeover.`);
           } else {
