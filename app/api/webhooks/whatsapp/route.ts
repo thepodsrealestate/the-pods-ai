@@ -682,7 +682,7 @@ export async function POST(req: NextRequest) {
             aiResult = {
               reply: dayModeReply,
               language: 'en',
-              action: 'DAY_MODE_HANDOFF',
+              action: 'HANDOFF',
               handoff_reason: 'Day Mode: Greeting dispatched, lead placed in manual takeover queue for marketing team',
             };
             console.log(`[DAY-MODE] Dispatched single touchpoint greeting to ${resolvedName || phone} and queued for manual human takeover.`);
