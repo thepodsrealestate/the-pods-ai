@@ -56,55 +56,68 @@ function SourceBadge({ source, compact = false }: { source: string; compact?: bo
 
   if (upper.includes("WHATSAPP")) {
     return (
-      <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
-        <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24">
+      <span className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+        <svg className="w-2.5 h-2.5 fill-current shrink-0" viewBox="0 0 24 24">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347z"/>
           <path d="M12 2a10 10 0 0 0-8.59 15.11L2 22l4.99-1.31A10 10 0 1 0 12 2zm0 18a7.95 7.95 0 0 1-4.07-1.12l-.29-.17-3.02.79.81-2.94-.19-.3A7.96 7.96 0 1 1 12 20z"/>
         </svg>
-        <span>{compact ? "Direct" : "WhatsApp Direct"}</span>
+        <span className="whitespace-nowrap">{compact ? "Direct" : "WhatsApp Direct"}</span>
       </span>
     );
   }
 
   if (upper.includes("INSTAGRAM")) {
     return (
-      <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20 shrink-0">
-        <svg className="w-2.5 h-2.5 fill-none stroke-current stroke-[2]" viewBox="0 0 24 24">
+      <span className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20 shrink-0">
+        <svg className="w-2.5 h-2.5 fill-none stroke-current stroke-[2] shrink-0" viewBox="0 0 24 24">
           <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
           <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
           <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
         </svg>
-        <span>{compact ? "IG" : "Instagram Ads"}</span>
+        <span className="whitespace-nowrap">{compact ? "IG" : "Instagram Ads"}</span>
       </span>
     );
   }
 
   if (upper.includes("FACEBOOK") || upper.includes("META")) {
     return (
-      <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 shrink-0">
-        <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24">
+      <span className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 shrink-0">
+        <svg className="w-2.5 h-2.5 fill-current shrink-0" viewBox="0 0 24 24">
           <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
         </svg>
-        <span>{compact ? "Meta" : "Facebook Ads"}</span>
+        <span className="whitespace-nowrap">{compact ? "Meta" : "Facebook Ads"}</span>
       </span>
     );
   }
 
   if (upper.includes("GOOGLE")) {
     return (
-      <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-500/10 text-red-400 border border-red-500/20 shrink-0">
-        <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24">
+      <span className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-red-500/10 text-red-400 border border-red-500/20 shrink-0">
+        <svg className="w-2.5 h-2.5 fill-current shrink-0" viewBox="0 0 24 24">
           <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
         </svg>
-        <span>{compact ? "Google" : "Google Search"}</span>
+        <span className="whitespace-nowrap">{compact ? "Google" : "Google Search"}</span>
       </span>
     );
   }
 
+  // Friendly formatter for campaign names & custom UTM sources
+  let label = upper;
+  if (upper.includes("DANUBE") && upper.includes("LEICESTER")) {
+    label = "Danube Leicester Expo";
+  } else if (upper.includes("GUJARATI") || upper.includes("LEICESTER_SHOW")) {
+    label = "Leicester Gujarati Show";
+  } else {
+    label = upper.replace(/[-_]+/g, " ").trim();
+  }
+
   return (
-    <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-[#C5A059]/10 text-[#C5A059] border border-[#C5A059]/20 shrink-0">
-      <Globe className="w-2.5 h-2.5" />
-      <span>{compact ? upper.split("_")[0] : upper.replace("_", " ")}</span>
+    <span
+      className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#C5A059]/10 text-[#C5A059] border border-[#C5A059]/20 max-w-full min-w-0 truncate"
+      title={source}
+    >
+      <Globe className="w-2.5 h-2.5 shrink-0" />
+      <span className="truncate">{compact ? label.split(" ")[0] : label}</span>
     </span>
   );
 }
@@ -1517,88 +1530,115 @@ export default function MasterDashboardPage() {
                 </div>
               </div>
 
-              {/* Search & Filter Bar */}
-              <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-4 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
-                {/* Search Box */}
-                <div className="relative w-full md:w-80">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={leadSearchQuery}
-                    onChange={(e) => setLeadSearchQuery(e.target.value)}
-                    placeholder="Search by name, phone, or location..."
-                    className="w-full bg-[#151824] border border-[#1E2230] focus:border-[#C5A059] rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 outline-none transition-all font-medium"
-                  />
-                  {leadSearchQuery && (
+              {/* Search & Filter Bar - Figma Luxury Layout */}
+              <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-3.5 sm:p-4 shadow-xl space-y-3">
+                {/* Row 1: Search Box + Optional Reset Pill */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                  <div className="relative flex-1">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={leadSearchQuery}
+                      onChange={(e) => setLeadSearchQuery(e.target.value)}
+                      placeholder="Search leads by name, phone, or location..."
+                      className="w-full bg-[#12141F] border border-[#1E2230] focus:border-[#C5A059] rounded-xl pl-10 pr-9 py-2.5 text-xs text-white placeholder-slate-500 outline-none transition-all font-medium focus:ring-1 focus:ring-[#C5A059]/30"
+                    />
+                    {leadSearchQuery && (
+                      <button
+                        onClick={() => setLeadSearchQuery("")}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                        title="Clear search"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  {(leadSearchQuery || leadStatusFilter !== "ALL" || leadAiFilter !== "ALL" || leadChatFilter !== "ALL") && (
                     <button
-                      onClick={() => setLeadSearchQuery("")}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                      onClick={() => {
+                        setLeadSearchQuery("");
+                        setLeadStatusFilter("ALL");
+                        setLeadAiFilter("ALL");
+                        setLeadChatFilter("ALL");
+                      }}
+                      className="px-3 py-2 text-[11px] font-bold text-[#C5A059] hover:text-white bg-[#C5A059]/10 hover:bg-[#C5A059]/20 border border-[#C5A059]/30 rounded-xl transition-all flex items-center justify-center space-x-1.5 shrink-0 self-end sm:self-auto shadow-sm"
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-3 h-3" />
+                      <span>Reset Filters</span>
                     </button>
                   )}
                 </div>
 
-                {/* Filter Pills */}
-                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                  <div className="flex items-center space-x-1 bg-[#151824] p-1 rounded-xl border border-[#1E2230] text-[11px] font-bold">
-                    {["ALL", "QUALIFIED", "NEW", "HOT", "BOOKED"].map((status) => (
-                      <button
-                        key={status}
-                        onClick={() => setLeadStatusFilter(status)}
-                        className={`px-3 py-1 rounded-lg transition-all ${
-                          leadStatusFilter === status
-                            ? "bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-extrabold shadow-sm"
-                            : "text-slate-400 hover:text-white"
-                        }`}
-                      >
-                        {status}
-                      </button>
-                    ))}
+                {/* Row 2: Touch-Scrollable Filter Groups */}
+                <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-2.5 pt-2 border-t border-[#1E2230]/70">
+                  {/* Lead Pipeline Stage Tabs */}
+                  <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5 -mx-1 px-1">
+                    <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider font-bold shrink-0 hidden sm:inline">Stage:</span>
+                    <div className="inline-flex items-center p-1 bg-[#12141F] border border-[#1E2230] rounded-xl shrink-0 space-x-1">
+                      {["ALL", "QUALIFIED", "NEW", "HOT", "BOOKED"].map((status) => (
+                        <button
+                          key={status}
+                          onClick={() => setLeadStatusFilter(status)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                            leadStatusFilter === status
+                              ? "bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-extrabold shadow-sm"
+                              : "text-slate-400 hover:text-white hover:bg-[#1E2230]/50"
+                          }`}
+                        >
+                          {status}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
-                  <div className="flex items-center space-x-1 bg-[#151824] p-1 rounded-xl border border-[#1E2230] text-[11px] font-bold">
-                    {[
-                      { key: "ALL", label: "All AI" },
-                      { key: "ACTIVE", label: "AI On" },
-                      { key: "PAUSED", label: "AI Paused" },
-                    ].map((mode) => (
-                      <button
-                        key={mode.key}
-                        onClick={() => setLeadAiFilter(mode.key)}
-                        className={`px-2.5 py-1 rounded-lg transition-all ${
-                          leadAiFilter === mode.key
-                            ? "bg-purple-600 text-white font-extrabold shadow-sm"
-                            : "text-slate-400 hover:text-white"
-                        }`}
-                      >
-                        {mode.label}
-                      </button>
-                    ))}
-                  </div>
+                  {/* WhatsApp Channel & AI Status Filters */}
+                  <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5 -mx-1 px-1">
+                    {/* WhatsApp Inbound / Form Filter */}
+                    <div className="inline-flex items-center p-1 bg-[#12141F] border border-[#1E2230] rounded-xl shrink-0 space-x-1">
+                      {[
+                        { key: "ALL", label: "All Channel" },
+                        { key: "IN_CHAT", label: "💬 In Chat" },
+                        { key: "FORM_ONLY", label: "⚠️ Form Only" },
+                      ].map((f) => (
+                        <button
+                          key={f.key}
+                          onClick={() => setLeadChatFilter(f.key)}
+                          className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center space-x-1 ${
+                            leadChatFilter === f.key
+                              ? f.key === "FORM_ONLY"
+                                ? "bg-amber-500 text-black font-extrabold shadow-sm"
+                                : f.key === "IN_CHAT"
+                                ? "bg-emerald-500 text-black font-extrabold shadow-sm"
+                                : "bg-[#23293D] text-white font-extrabold shadow-sm"
+                              : "text-slate-400 hover:text-white hover:bg-[#1E2230]/50"
+                          }`}
+                        >
+                          <span>{f.label}</span>
+                        </button>
+                      ))}
+                    </div>
 
-                  <div className="flex items-center space-x-1 bg-[#151824] p-1 rounded-xl border border-[#1E2230] text-[11px] font-bold">
-                    {[
-                      { key: "ALL", label: "All Status" },
-                      { key: "IN_CHAT", label: "💬 In Chat" },
-                      { key: "FORM_ONLY", label: "⚠️ Form Only (No WA)" },
-                    ].map((f) => (
-                      <button
-                        key={f.key}
-                        onClick={() => setLeadChatFilter(f.key)}
-                        className={`px-2.5 py-1 rounded-lg transition-all flex items-center space-x-1 ${
-                          leadChatFilter === f.key
-                            ? f.key === "FORM_ONLY"
-                              ? "bg-amber-500 text-black font-extrabold shadow-sm"
-                              : f.key === "IN_CHAT"
-                              ? "bg-emerald-500 text-black font-extrabold shadow-sm"
-                              : "bg-[#23293D] text-white font-extrabold shadow-sm"
-                            : "text-slate-400 hover:text-white"
-                        }`}
-                      >
-                        <span>{f.label}</span>
-                      </button>
-                    ))}
+                    {/* AI Concierge Mode Filter */}
+                    <div className="inline-flex items-center p-1 bg-[#12141F] border border-[#1E2230] rounded-xl shrink-0 space-x-1">
+                      {[
+                        { key: "ALL", label: "All AI" },
+                        { key: "ACTIVE", label: "⚡ On" },
+                        { key: "PAUSED", label: "⏸️ Paused" },
+                      ].map((mode) => (
+                        <button
+                          key={mode.key}
+                          onClick={() => setLeadAiFilter(mode.key)}
+                          className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                            leadAiFilter === mode.key
+                              ? "bg-purple-600 text-white font-extrabold shadow-sm"
+                              : "text-slate-400 hover:text-white hover:bg-[#1E2230]/50"
+                          }`}
+                        >
+                          {mode.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1606,7 +1646,7 @@ export default function MasterDashboardPage() {
               {/* Table Container */}
               <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl shadow-xl overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm text-slate-300">
+                  <table className="w-full min-w-[880px] text-left text-sm text-slate-300">
                     <thead className="bg-[#151824] text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-[#1E2230]">
                       <tr>
                         <th className="px-6 py-4">Lead Contact</th>
@@ -2722,34 +2762,41 @@ export default function MasterDashboardPage() {
                 </div>
 
                 {/* Lead traffic source distribution */}
-                <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-6 shadow-xl space-y-4">
-                  <h3 className="text-base font-bold text-white">Lead Traffic Source Attribution</h3>
-                  <p className="text-xs text-slate-400">Ad platforms and marketing campaign performance metrics</p>
+                <div className="bg-[#0D0F17] border border-[#1E2230] rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
+                  <div>
+                    <h3 className="text-sm sm:text-base font-bold text-white">Lead Traffic Source Attribution</h3>
+                    <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">Ad platforms and marketing campaign performance metrics</p>
+                  </div>
 
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-                  {Object.entries(sourceCounts).map(([src, count]: [string, any]) => {
-                    const percentage = Math.round((count / totalLeadsCount) * 100);
-                    
-                    let barColor = "bg-[#C5A059]";
-                    if (src.includes("FACEBOOK")) barColor = "bg-blue-500";
-                    else if (src.includes("INSTAGRAM")) barColor = "bg-purple-500";
-                    else if (src.includes("GOOGLE")) barColor = "bg-red-500";
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
+                    {Object.entries(sourceCounts).map(([src, count]: [string, any]) => {
+                      const percentage = Math.round((count / totalLeadsCount) * 100);
+                      
+                      let barColor = "bg-[#C5A059]";
+                      if (src.includes("FACEBOOK")) barColor = "bg-blue-500";
+                      else if (src.includes("INSTAGRAM")) barColor = "bg-purple-500";
+                      else if (src.includes("GOOGLE")) barColor = "bg-red-500";
 
-                    return (
-                      <div key={src} className="p-4 rounded-xl bg-[#151824] border border-[#1E2230] space-y-2.5">
-                        <div className="flex justify-between items-center text-xs font-semibold">
-                          <SourceBadge source={src} />
-                          <span className="text-slate-300 font-mono text-[11px]">{count} ({percentage}%)</span>
+                      return (
+                        <div key={src} className="p-3.5 sm:p-4 rounded-xl bg-[#12141F] border border-[#1E2230] hover:border-[#2A3146] transition-all space-y-2.5 shadow-sm">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="min-w-0 flex-1 overflow-hidden">
+                              <SourceBadge source={src} />
+                            </div>
+                            <div className="shrink-0 text-right">
+                              <span className="text-slate-300 font-mono text-xs font-bold whitespace-nowrap">
+                                {count} <span className="text-slate-500 text-[10px] font-normal">({percentage}%)</span>
+                              </span>
+                            </div>
+                          </div>
+                          <div className="w-full bg-[#1A1D2B] rounded-full h-1.5 overflow-hidden">
+                            <div className={`h-1.5 rounded-full ${barColor} transition-all duration-500`} style={{ width: `${percentage}%` }}></div>
+                          </div>
                         </div>
-                        <div className="w-full bg-[#1E2230] rounded-full h-1.5 overflow-hidden">
-                          <div className={`h-1.5 rounded-full ${barColor}`} style={{ width: `${percentage}%` }}></div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
 
                 {/* Campaign-Level Breakdown Table & Mobile Cards */}
                 {adCampaigns.length > 0 && (
@@ -3376,10 +3423,10 @@ export default function MasterDashboardPage() {
           className="relative group p-3.5 sm:p-4 rounded-full bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-black shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center border-2 border-white/20"
           title="Open AI Executive Advisor"
         >
-          <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" />
-          <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+          <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+          <span className="absolute top-0.5 right-0.5 flex h-3 w-3">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 ring-2 ring-[#0D0F17]"></span>
           </span>
         </button>
       </div>
