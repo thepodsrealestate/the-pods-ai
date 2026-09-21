@@ -233,6 +233,7 @@ export default function MasterDashboardPage() {
   }, [mobileShowChat]);
 
   const chatScrollEndRef = useRef<HTMLDivElement>(null);
+  const chatTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Lead Slide-Over Drawer States
   const [selectedLead, setSelectedLead] = useState<any>(null);
@@ -291,6 +292,15 @@ export default function MasterDashboardPage() {
   const [chatReplyInput, setChatReplyInput] = useState<string>("");
   const [sendingChatReply, setSendingChatReply] = useState<boolean>(false);
   const [chatSendError, setChatSendError] = useState<string | null>(null);
+
+  // Auto-resize composer textarea to fit pasted or multiline messages cleanly
+  useEffect(() => {
+    if (chatTextareaRef.current) {
+      chatTextareaRef.current.style.height = "auto";
+      const scrollH = chatTextareaRef.current.scrollHeight;
+      chatTextareaRef.current.style.height = `${Math.min(Math.max(scrollH, 44), 220)}px`;
+    }
+  }, [chatReplyInput]);
   // Delete Lead & Chat History State
   const [deleteModalLead, setDeleteModalLead] = useState<any | null>(null);
   const [deletePasscode, setDeletePasscode] = useState<string>("");
@@ -672,6 +682,9 @@ export default function MasterDashboardPage() {
       }
 
       setChatReplyInput("");
+      if (chatTextareaRef.current) {
+        chatTextareaRef.current.style.height = "44px";
+      }
       setData((previous: any) => {
         if (!previous?.conversations) return previous;
         return {
@@ -2115,22 +2128,42 @@ export default function MasterDashboardPage() {
                           e.preventDefault();
                           handleSendManualReply();
                         }}
-                        className="flex items-center space-x-2"
+                        className="space-y-1.5"
                       >
-                        <input
-                          type="text"
-                          value={chatReplyInput}
-                          onChange={(e) => setChatReplyInput(e.target.value)}
-                          placeholder="Type a reply..."
-                          className="flex-1 min-w-0 bg-[#090B10] border border-[#23293D] focus:border-[#C5A059] rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none transition-colors"
-                        />
-                        <button
-                          type="submit"
-                          disabled={!chatReplyInput.trim() || sendingChatReply}
-                          className="min-h-[42px] px-4 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-md hover:brightness-110 disabled:opacity-50 shrink-0 transition-all"
-                        >
-                          {sendingChatReply ? "..." : "Send"}
-                        </button>
+                        <div className="flex items-end space-x-2">
+                          <textarea
+                            ref={chatTextareaRef}
+                            rows={1}
+                            value={chatReplyInput}
+                            onChange={(e) => setChatReplyInput(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                handleSendManualReply();
+                              }
+                            }}
+                            placeholder="Type or paste a message... (Shift + Enter for new line, Enter to send)"
+                            className="flex-1 min-w-0 bg-[#090B10] border border-[#23293D] focus:border-[#C5A059] rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none transition-all resize-none leading-relaxed overflow-y-auto min-h-[44px] max-h-56"
+                          />
+                          <button
+                            type="submit"
+                            disabled={!chatReplyInput.trim() || sendingChatReply}
+                            className="h-[44px] px-4 bg-gradient-to-r from-[#C5A059] to-[#D4B06A] text-black font-bold text-xs rounded-xl shadow-md hover:brightness-110 disabled:opacity-50 shrink-0 transition-all flex items-center justify-center space-x-1.5"
+                          >
+                            <Send className="w-3.5 h-3.5" />
+                            <span>{sendingChatReply ? "..." : "Send"}</span>
+                          </button>
+                        </div>
+                        <div className="flex items-center justify-between px-1 text-[11px] text-slate-500">
+                          <span>
+                            Press <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 font-mono text-[9px] text-slate-300">Shift + Enter</kbd> for line break &bull; <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 font-mono text-[9px] text-slate-300">Enter</kbd> to send
+                          </span>
+                          {chatReplyInput.length > 0 && (
+                            <span className="text-[10px] text-slate-400 font-mono">
+                              {chatReplyInput.length} chars
+                            </span>
+                          )}
+                        </div>
                       </form>
 
                     </div>
